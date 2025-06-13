@@ -6424,11 +6424,10 @@ We hope you enjoyed your stay!"""
 # Add to scheduler
 scheduler.add_job(send_checkout_reminders, 'interval', minutes=1)
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask_apscheduler import APScheduler
+
 
 # Initialize scheduler
-scheduler = APScheduler()
-scheduler.init_app(app)
+scheduler =  BackgroundScheduler()
 scheduler.start()
 
 def send_auto_checkout_email(user):
