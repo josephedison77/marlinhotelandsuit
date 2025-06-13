@@ -1,0 +1,55 @@
+{% extends "admin_base.html" %}
+
+{% block dashboard_title %}System Administration Dashboard{% endblock %}
+
+{% block admin_content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total Rooms</h5>
+                <h1 class="display-4">{{ total_rooms }}</h1>
+                <a href="{{ url_for('room_management') }}" class="text-white">Manage Rooms</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Active Bookings</h5>
+                <h1 class="display-4">{{ active_bookings }}</h1>
+                <a href="{{ url_for('all_bookings') }}" class="text-white">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Staff Members</h5>
+                <h1 class="display-4">{{ total_staff }}</h1>
+                <a href="{{ url_for('staff_list') }}" class="text-white">Manage Staff</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">Recent Maintenance Activity</div>
+    <div class="card-body">
+        <div class="list-group">
+            {% for activity in recent_activity %}
+            <a href="#" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Room {{ activity.room.room_number }}</h6>
+                    <small>{{ activity.created_at|datetimeformat }}</small>
+                </div>
+                <p class="mb-1">{{ activity.description|truncate(50) }}</p>
+                <small>Status: {{ activity.status }}</small>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

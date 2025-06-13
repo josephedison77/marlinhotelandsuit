@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-content">
+    <div class="row">
+        <div class="col-12">
+            <div class="dashboard-card shadow-lg border-0">
+                <div class="card-header bg-gradient-info text-white text-center py-4" >
+                    <h3 class="card-title mb-0">Inventory Reports & Analytics</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-5 g-4">
+                        <div class="col-md-4">
+                            <div class="stat-card shadow-sm">
+                                <div class="card-body d-flex align-items-center p-4">
+                                    <div class="flex-shrink-0 stat-icon bg-light-blue text-blue rounded-circle d-flex align-items-center justify-content-center me-4">
+                                        <i class="bi bi-boxes fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="stat-title text-muted text-uppercase fw-semibold mb-1">Total Items</div>
+                                        <div class="stat-value text-dark fw-bold fs-2">{{ total_items }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card shadow-sm">
+                                <div class="card-body d-flex align-items-center p-4">
+                                    <div class="flex-shrink-0 stat-icon bg-light-orange text-orange rounded-circle d-flex align-items-center justify-content-center me-4">
+                                        <i class="bi bi-exclamation-triangle fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="stat-title text-muted text-uppercase fw-semibold mb-1">Low Stock Items</div>
+                                        <div class="stat-value text-dark fw-bold fs-2">{{ low_stock_items }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card shadow-sm">
+                                <div class="card-body d-flex align-items-center p-4">
+                                    <div class="flex-shrink-0 stat-icon bg-light-purple text-purple rounded-circle d-flex align-items-center justify-content-center me-4">
+                                        <i class="bi bi-cash-stack fs-3"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="stat-title text-muted text-uppercase fw-semibold mb-1">Total Value</div>
+                                        <div class="stat-value text-dark fw-bold fs-2">₦{{ total_value|number_format }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-4 mb-5">
+                        <div class="col-lg-6">
+                            <div class="dashboard-card shadow-sm h-100">
+                                <div class="card-header bg-light border-bottom text-primary py-3">
+                                    <h4 class="card-title mb-0 fw-bold" style="color: white;">Inventory by Category</h4>
+                                </div>
+                                <div class="card-body d-flex align-items-center justify-content-center p-4">
+                                    <canvas id="categoryChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dashboard-card shadow-sm h-100">
+                                <div class="card-header bg-light border-bottom text-primary py-3">
+                                    <h4 class="card-title mb-0 fw-bold" style="color: white;">Inventory Value by Category</h4>
+                                </div>
+                                <div class="card-body d-flex align-items-center justify-content-center p-4">
+                                    <canvas id="valueChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card shadow-sm">
+                        <div class="card-header bg-light border-bottom text-primary py-3">
+                            <h4 class="card-title mb-0 fw-bold" style="color: white;">Low Stock Items</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0 low-stock-table">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Category</th>
+                                            <th>Current Stock</th>
+                                            <th>Reorder Level</th>
+                                            <th>Unit Cost</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in low_stock %}
+                                        <tr>
+                                            <td class="fw-semibold text-dark">{{ item.name }}</td>
+                                            <td>{{ item.category }}</td>
+                                            <td><span class="text-danger fw-semibold">{{ item.quantity }}</span> {{ item.unit }}</td>
+                                            <td>{{ item.reorder_level }} {{ item.unit }}</td>
+                                            <td class="fw-semibold">₦{{ item.unit_cost|number_format }}</td>
+                                            <td>
+                                                <span class="badge bg-danger-gradiant">
+                                                    <i class="bi bi-exclamation-circle me-1"></i> Needs Reorder
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% else %}
+                                        <tr>
+                                            <td colspan="6" class="text-center py-5 text-muted">
+                                                <i class="bi bi-check-circle me-2 fs-4"></i>
+                                                <p class="mt-2 mb-0">Great job! No low stock items currently.</p>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Data for charts
+        const categoryLabels = {{ category_labels|tojson }};
+        const categoryCounts = {{ category_counts|tojson }};
+        const categoryValues = {{ category_values|tojson }};
+
+        // Custom colors for charts (can be extended)
+        const chartColors = [
+            '#42a5f5', '#ff7043', '#ab47bc', '#66bb6a', 
+            '#ffa726', '#26a69a', '#ef5350', '#78909c',
+            '#d4e157', '#ffca28', '#8d6e63', '#9ccc65'
+        ];
+
+        // Category Distribution Chart (Pie)
+        const categoryCtx = document.getElementById('categoryChart');
+        if (categoryCtx && categoryLabels.length > 0) {
+            new Chart(categoryCtx, {
+                type: 'pie',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        data: categoryCounts,
+                        backgroundColor: chartColors.slice(0, categoryLabels.length),
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#344767',
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((acc, current) => acc + current, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1) + '%';
+                                    return `${label}: ${value} items (${percentage})`;
+                                }
+                            },
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 },
+                            padding: 10,
+                            borderRadius: 6
+                        },
+                        title: {
+                            display: false,
+                            text: 'Inventory by Category'
+                        }
+                    }
+                }
+            });
+        } else if (categoryCtx) {
+             categoryCtx.parentNode.innerHTML = '<p class="text-center text-muted py-4"><i class="bi bi-graph-up me-2"></i> No category data available to display.</p>';
+        }
+        
+        // Value Distribution Chart (Bar)
+        const valueCtx = document.getElementById('valueChart');
+        if (valueCtx && categoryLabels.length > 0) {
+            new Chart(valueCtx, {
+                type: 'bar',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: 'Inventory Value (₦)',
+                        data: categoryValues,
+                        backgroundColor: chartColors.map(color => Chart.helpers.color(color).alpha(0.8).rgbString()),
+                        borderColor: chartColors,
+                        borderWidth: 1,
+                        borderRadius: 8, // Rounded bars
+                        barThickness: 30 // Fixed bar thickness
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { 
+                                color: 'rgba(0,0,0,0.08)',
+                                drawBorder: false 
+                            },
+                            ticks: {
+                                callback: function(value) { 
+                                    return '₦' + value.toLocaleString(); 
+                                },
+                                font: { size: 13 },
+                                color: '#555'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Total Value (₦)',
+                                color: '#344767',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 13 },
+                                color: '#555'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { 
+                                    return '₦' + context.raw.toLocaleString() + ' (Value)'; 
+                                }
+                            },
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 },
+                            padding: 10,
+                            borderRadius: 6
+                        },
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: false,
+                            text: 'Inventory Value by Category'
+                        }
+                    }
+                }
+            });
+        } else if (valueCtx) {
+            valueCtx.parentNode.innerHTML = '<p class="text-center text-muted py-4"><i class="bi bi-bar-chart me-2"></i> No value data available to display.</p>';
+        }
+    });
+</script>
+
+<style>
+    /* General body and container styling */
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .dashboard-content {
+        padding: 30px 0;
+    }
+
+    /* Card Styling */
+    .dashboard-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #081f2c, #1b4253); /* Info blue gradient */
+        color: white;
+        padding: 1.5rem 2rem;
+        border-bottom: none;
+        position: relative;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* Softer shadow for stat cards */
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+        color: white;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-light-blue { background-color: #e3f2fd !important; }
+    .text-blue { color: #2196f3 !important; }
+
+    .bg-light-orange { background-color: #fff3e0 !important; }
+    .text-orange { color: #ff9800 !important; }
+
+    .bg-light-purple { background-color: #ede7f6 !important; }
+    .text-purple { color: #9c27b0 !important; }
+
+    .stat-title {
+        font-size: 0.9rem;
+        color: #757575;
+    }
+    .stat-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    /* Chart Card Headers */
+    .dashboard-card .card-header.bg-light {
+        background-color: #f8f9fa !important;
+        border-bottom: 1px solid #e9ecef;
+        padding: 1rem 1.5rem;
+    }
+    .dashboard-card .card-header.bg-light .card-title {
+        font-size: 1.25rem;
+        color: #344767;
+    }
+
+    /* Table Styling */
+    .low-stock-table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .low-stock-table thead th {
+        background-color: #e3f2fd;
+        color: #1a237e;
+        font-weight: 700;
+        padding: 1rem 1.5rem;
+        border-bottom: 2px solid #bbdefb;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .low-stock-table tbody tr {
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .low-stock-table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .low-stock-table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        border-top: 1px solid #eeeeee;
+        font-size: 0.9rem;
+    }
+
+    /* Badges */
+    .badge {
+        padding: 0.6em 0.9em;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .bg-danger-gradiant {
+        background: linear-gradient(45deg, #ef5350, #d32f2f) !important;
+        color: white !important;
+    }
+
+    /* Chart specific adjustments */
+    #categoryChart, #valueChart {
+        max-height: 300px; /* Ensure charts have a consistent height */
+        width: 100%; /* Ensure charts take full width */
+    }
+
+    /* Custom Gradient Classes */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #0d47a1, #1976d2);
+    }
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #0288d1, #03a9f4);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,231 @@
+<!-- admin_shifts.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+    }
+
+    .container {
+       
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        margin-top: 30px;
+        margin-bottom: 40px;
+    }
+
+    h2 {
+        color: var(--primary);
+        border-bottom: 2px solid var(--secondary);
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        font-weight: 600;
+    }
+
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .card-body {
+        padding: 25px;
+    }
+
+    .form-select, .form-control {
+        border-radius: 8px;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        transition: all 0.3s;
+    }
+
+    .form-select:focus, .form-control:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.2);
+        outline: none;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #012435;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(2, 49, 71, 0.25);
+    }
+
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+    }
+
+    .table thead th {
+        background-color: var(--primary);
+        color: white;
+        padding: 16px 20px;
+        font-weight: 500;
+    }
+
+    .table tbody tr {
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: var(--light);
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(2, 49, 71, 0.05);
+    }
+
+    .table td {
+        padding: 14px 20px;
+        vertical-align: middle;
+        border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .pagination {
+        display: flex;
+        gap: 8px;
+        margin-top: 25px;
+    }
+
+    .page-item .page-link {
+        border-radius: 6px;
+        padding: 8px 15px;
+        color: var(--primary);
+        border: 1px solid #ddd;
+    }
+
+    .page-item.active .page-link {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    .page-item:not(.active) .page-link:hover {
+        background: #f8f9fa;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -10px;
+    }
+
+    .col-md-4 {
+        padding: 0 10px;
+        flex: 0 0 33.333%;
+        max-width: 33.333%;
+    }
+
+    @media (max-width: 768px) {
+        .col-md-4 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            margin-bottom: 15px;
+        }
+    }
+</style>
+
+<div class="container mt-4">
+    <h2>Shift Management</h2>
+    
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">Position</label>
+                        <select name="position" class="form-select">
+                            <option value="">All Positions</option>
+                            {% for position in positions %}
+                            <option value="{{ position }}" {% if request.args.get('position') == position %}selected{% endif %}>
+                                {{ position }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="date" class="form-control" 
+                               value="{{ request.args.get('date') }}">
+                    </div>
+                    <div class="col-md-4 align-self-end">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Shifts Table -->
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Staff</th>
+                    <th>Position</th>
+                    <th>Date</th>
+                    <th>Shift Type</th>
+                    <th>Start</th>
+                    <th>End</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shift in shifts.items %}
+                <tr>
+                    <td>{{ shift.staff.first_name }} {{ shift.staff.last_name }}</td>
+                    <td>{{ shift.staff.position }}</td>
+                    <td>{{ shift.shift_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ shift.shift_type }}</td>
+                    <td>{{ shift.start_time.strftime('%H:%M') }}</td>
+                    <td>{{ shift.end_time.strftime('%H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">No shifts found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% for page_num in shifts.iter_pages() %}
+            <li class="page-item {% if page_num == shifts.page %}active{% endif %}">
+                <a class="page-link" href="?page={{ page_num }}&position={{ request.args.get('position', '') }}&date={{ request.args.get('date', '') }}">
+                    {{ page_num }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

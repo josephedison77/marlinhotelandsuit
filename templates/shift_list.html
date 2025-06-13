@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Shift Management{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+    <div class="d-flex justify-content-between align-items-center mb-4" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 class="mb-0" style="margin-bottom: 0; color: #007bff;">Shift Management</h2>
+        <div class="gen" style="padding: 0rem 0.2rem; display: flex; flex-direction: column; gap: 0.7rem;">
+            <div class="gen" style="padding: 0rem 0.2rem; display: flex; flex-direction: column; gap: 0.7rem;">
+                <form action="{{ url_for('generate_rotational_shifts') }}" method="POST" style="margin-bottom: 0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-primary" style="color: #fff; background-color: #007bff; border-color: #007bff; padding: 0.5rem 1rem; font-size: 1rem; border-radius: 0.25rem; cursor: pointer; display: flex; align-items: center;">
+                        <i class="bi bi-arrow-repeat me-2" style="margin-right: 0.5rem;"></i>Generate Shifts
+                    </button>
+                </form>
+                
+                <form action="{{ url_for('clear_shifts') }}" method="POST" style="margin-bottom: 0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger" style="color: #fff; background-color: #dc3545; border-color: #dc3545; padding: 0.5rem 1rem; font-size: 1rem; border-radius: 0.25rem; cursor: pointer; display: flex; align-items: center;">
+                        <i class="bi bi-trash me-2" style="margin-right: 0.5rem;"></i>Clear Shifts
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow" style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.5rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;">
+        <div class="card-body" style="flex: 1 1 auto; padding: 1.25rem;">
+            <div class="table-responsive" style="display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                <table class="table table-hover" style="width: 100%; margin-bottom: 1rem; color: #212529; border-collapse: collapse;">
+                    <thead class="table-light" style="background-color: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Staff Member</th>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Shift Date</th>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Start Time</th>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">End Time</th>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Status</th>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for shift in shifts %}
+                        <tr>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ shift.staff.first_name }} {{ shift.staff.last_name }}</td>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ shift.shift_start.strftime('%Y-%m-%d') }}</td>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ shift.shift_start.strftime('%H:%M') }}</td>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">
+                                {% if shift.shift_end %}
+                                    {{ shift.shift_end.strftime('%H:%M') }}
+                                {% else %}
+                                    <span class="text-muted" style="color: #6c757d !important;">Ongoing</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">
+                                <span class="badge bg-{% if shift.shift_end %}secondary{% else %}success{% endif %}" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; {% if shift.shift_end %}background-color: #6c757d !important;{% else %}background-color: #28a745 !important;{% endif %} color: #fff;">
+                                    {% if shift.shift_end %}Completed{% else %}Active{% endif %}
+                                </span>
+                            </td>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">
+                                {% if not shift.shift_end %}
+                                <form action="{{ url_for('end_shift', shift_id=shift.id) }}" method="POST" class="d-inline" style="display: inline-block !important;">
+                                    <button type="submit" class="btn btn-sm btn-warning" style="color: #212529; background-color: #ffc107; border-color: #ffc107; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem; cursor: pointer;">
+                                        <i class="bi bi-clock-history"></i> End Shift
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4" style="text-align: center !important; color: #6c757d !important; padding-top: 1.5rem !important; padding-bottom: 1.5rem !important;">No shifts found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pagination mt-4" style="margin-top: 1.5rem !important; display: flex; justify-content: center;">
+            {{ macros.pagination_widget(pagination, 'manage_shifts') }}
+        </div>
+    </div>
+</div>
+{% endblock %}

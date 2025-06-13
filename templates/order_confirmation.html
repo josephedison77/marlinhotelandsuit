@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Order Successful</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 0; }
+        .container {
+            max-width: 400px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 32px 24px;
+            text-align: center;
+        }
+        .success { color: #27ae60; font-size: 2em; margin-bottom: 10px; }
+        .btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 10px 24px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success">&#10003;</div>
+        <h2>Order Successful!</h2>
+        <p>Your order #{{ order.id }} has been placed and paid.</p>
+        {% if is_admin %}
+            <p>The receipt will open in a new tab for printing.</p>
+        {% else %}
+            <p>Your receipt will be processed by the bar manager.</p>
+        {% endif %}
+        <a href="{{ url_for('create_order') }}" class="btn">Go to My Orders</a>
+    </div>
+    {% if is_admin %}
+    <script>
+        window.onload = function() {
+            window.open("{{ url_for('order_receipt_html', order_id=order.id, auto_print=1) }}", "_blank");
+        }
+    </script>
+    {% endif %}
+</body>
+</html>

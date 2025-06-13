@@ -1,0 +1,29 @@
+<div class="sidebar-sticky" style="position: relative; top: 0; height: calc(100vh - 48px); padding-top: 0.5rem; overflow-x: hidden; overflow-y: auto;">
+    <ul class="nav flex-column" style="display: flex; flex-direction: column; padding-left: 0; margin-bottom: 0; list-style: none;">
+        <li class="nav-item" style="position: relative; display: block;">
+            <a class="nav-link active" href="{{ url_for('staff_dashboard') }}" style="display: block; padding: 0.5rem 1rem; color: #007bff; text-decoration: none; background-color: rgba(0, 123, 255, 0.1); border-left: 3px solid #007bff;">
+                Dashboard
+            </a>
+        </li>
+        <li class="nav-item" style="position: relative; display: block;">
+            <a class="nav-link" href=" {{ url_for('staff_profile') }}" style="display: block; padding: 0.5rem 1rem; color: #343a40; text-decoration: none;">
+                My Profile
+            </a>
+        </li>
+        <li class="nav-item" style="position: relative; display: block;">
+            <a class="nav-link" href="{{ url_for('staff_shifts') }}" style="display: block; padding: 0.5rem 1rem; color: #343a40; text-decoration: none;">
+                My Shifts
+            </a>
+        </li>
+        <li class="nav-item" style="position: relative; display: block;">
+            <a class="nav-link" href="" style="display: block; padding: 0.5rem 1rem; color: #343a40; text-decoration: none;">
+                Cleaning Assignments
+            </a>
+        </li>
+        <li class="nav-item" style="position: relative; display: block;">
+            <a class="nav-link" href="{{ url_for('logout') }}" style="display: block; padding: 0.5rem 1rem; color: #dc3545; text-decoration: none;">
+                Logout
+            </a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,429 @@
+{% extends "hr/base.html" %}
+{% block title %}Staff Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6 fw-bold text-primary">Staff Management</h1>
+        <a href="{{ url_for('staff_register') }}" class="btn btn-primary-gradient btn-lg">
+            <i class="bi bi-person-plus me-2"></i> Add New Staff
+        </a>
+    </div>
+
+    <ol class="breadcrumb custom-breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ url_for('hr_dashboard') }}">HR Dashboard</a></li>
+        <li class="breadcrumb-item active">Manage Staff Members</li>
+    </ol>
+
+    <div class="card mb-4 shadow-lg border-0">
+        <div class="card-header bg-gradient-primary text-white py-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-people-fill me-2"></i>Current Staff Roster</h5>
+        </div>
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 staff-table" id="staffTable">
+                    <thead class="table-light-blue">
+                        <tr>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Staff ID</th>
+                            <th>Position</th>
+                            <th>Status</th>
+                            <th class="text-center">Actions</th>
+                            <th class="text-center">Account Control</th>
+                            <th class="text-center">Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for staff in staff_members %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar me-3">
+                                        
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark">{{ staff.user.email if staff.user else 'N/A' }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="fw-semibold">{{ staff.first_name }} {{ staff.last_name }}</span></td>
+                            <td><span class="text-muted">{{ staff.staff_id }}</span></td>
+                            <td><span class="badge bg-light-secondary text-secondary fw-semibold">{{ staff.position }}</span></td>
+                            <td>
+                                {% if staff.is_active %}
+                                    <span class="badge bg-success-gradiant">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger-gradiant">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <a href="{{ url_for('edit_staff', staff_id=staff.id) }}" class="btn btn-sm btn-outline-warning-custom btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Staff Details">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="{{ url_for('staff_profile', staff_id=staff.id) }}" class="btn btn-sm btn-outline-info-custom btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="View Staff Profile">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                {% if staff.is_active %}
+                                    <form action="{{ url_for('deactivate_staff', staff_id=staff.id) }}" method="POST" class="d-inline-block">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-warning-gradient btn-toggle" data-bs-toggle="tooltip" data-bs-placement="top" title="Deactivate Staff">
+                                            Deactivate
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url_for('activate_staff', staff_id=staff.id) }}" method="POST" class="d-inline-block">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-success-gradient btn-toggle" data-bs-toggle="tooltip" data-bs-placement="top" title="Activate Staff">
+                                            Activate
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <form action="{{ url_for('delete_staff', staff_id=staff.id) }}" method="POST" class="d-inline-block">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-danger-gradient btn-icon" onclick="return confirm('Are you sure you want to permanently delete this staff member? This action cannot be undone.');" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Staff">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-people me-2 fs-4"></i>
+                                <p class="mt-2 mb-0">No staff members found. Click "Add New Staff" to get started!</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="{{ url_for('hr_dashboard') }}" class="btn btn-outline-secondary-custom btn-lg">
+                    <i class="bi bi-arrow-left me-2"></i> Back to HR Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize DataTables
+        var table = new DataTable('#staffTable', {
+            columnDefs: [
+                { orderable: false, targets: [5, 6, 7] }  // Disable sorting for Actions, Account Control, Remove columns
+            ],
+            order: [[1, 'asc']],  // Default sort by Name
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]], // Customize entries per page
+            "pageLength": 10, // Default page length
+            "language": { // Customize DataTable messages
+                "search": "Filter Staff:",
+                "lengthMenu": "Show _MENU_ entries",
+                "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                "infoEmpty": "No entries to show",
+                "infoFiltered": "(filtered from _MAX_ total entries)",
+                "paginate": {
+                    "first": "First",
+                    "last": "Last",
+                    "next": "Next",
+                    "previous": "Previous"
+                }
+            },
+            "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                   '<"row"<"col-sm-12"tr>>' +
+                   '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>', // Custom DOM layout for better control
+        });
+
+        // Initialize Tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    });
+</script>
+{% endblock %}
+
+<style>
+    /* General Styling */
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Inter', sans-serif;
+        color: #344767;
+    }
+
+    .container-fluid {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    h1 {
+        font-weight: 700;
+        color: #1a237e;
+    }
+
+    /* Breadcrumb */
+    .custom-breadcrumb {
+        background-color: #e9ecef;
+        border-radius: 12px;
+        padding: 0.9rem 1.5rem;
+        font-size: 0.95rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .custom-breadcrumb .breadcrumb-item a {
+        color: #1976d2;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    .custom-breadcrumb .breadcrumb-item a:hover {
+        color: #0d47a1;
+    }
+    .custom-breadcrumb .breadcrumb-item.active {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    /* Card Styling */
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: none;
+        background-color: #ffffff;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #0d47a1, #1976d2); /* Primary blue gradient */
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        font-size: 1.15rem;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, #1e88e5, #42a5f5);
+        border: none;
+        color: white;
+    }
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+        background: linear-gradient(135deg, #1565c0, #2196f3);
+    }
+
+    .btn-warning-gradient {
+        background: linear-gradient(135deg, #ffb300, #fb8c00);
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: 8px;
+    }
+    .btn-warning-gradient:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(255, 165, 0, 0.3);
+        background: linear-gradient(135deg, #e6a000, #e08c00);
+    }
+
+    .btn-success-gradient {
+        background: linear-gradient(135deg, #81c784, #43a047);
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: 8px;
+    }
+    .btn-success-gradient:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(67, 160, 71, 0.3);
+        background: linear-gradient(135deg, #66bb6a, #388e3c);
+    }
+
+    .btn-danger-gradient {
+        background: linear-gradient(135deg, #ef5350, #d32f2f);
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: 8px;
+    }
+    .btn-danger-gradient:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        background: linear-gradient(135deg, #c62828, #b71c1c);
+    }
+
+    .btn-outline-warning-custom {
+        border-color: #ffb300;
+        color: #ffb300;
+        background-color: transparent;
+        box-shadow: none;
+    }
+    .btn-outline-warning-custom:hover {
+        background-color: #ffb300;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(255, 179, 0, 0.2);
+    }
+
+    .btn-outline-info-custom {
+        border-color: #039be5;
+        color: #039be5;
+        background-color: transparent;
+        box-shadow: none;
+    }
+    .btn-outline-info-custom:hover {
+        background-color: #039be5;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(3, 155, 229, 0.2);
+    }
+    
+    .btn-outline-secondary-custom {
+        border-color: #6c757d;
+        color: #6c757d;
+        background-color: transparent;
+        box-shadow: none;
+    }
+    .btn-outline-secondary-custom:hover {
+        background-color: #6c757d;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(108, 117, 125, 0.2);
+    }
+
+    .btn-icon {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .btn-toggle {
+        min-width: 100px; /* Ensure consistent width for activate/deactivate buttons */
+    }
+
+    /* Table Styling */
+    .staff-table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .staff-table thead th {
+        background-color: #e3f2fd;
+        color: #1a237e;
+        font-weight: 700;
+        padding: 1rem 1.5rem;
+        border-bottom: 2px solid #bbdefb;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .staff-table tbody tr {
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .staff-table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .staff-table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        border-top: 1px solid #eeeeee;
+        font-size: 0.9rem;
+    }
+
+    /* Avatar */
+    .avatar img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border: 2px solid #e0e0e0;
+    }
+
+    /* Badges */
+    .badge {
+        padding: 0.6em 0.9em;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .bg-success-gradiant {
+        background: linear-gradient(45deg, #81c784, #43a047) !important;
+        color: white !important;
+    }
+    .bg-danger-gradiant {
+        background: linear-gradient(45deg, #ef5350, #d32f2f) !important;
+        color: white !important;
+    }
+    .bg-light-secondary {
+        background-color: #e0e0e0 !important;
+        color: #616161 !important;
+    }
+
+    /* Datatables Styling */
+    #staffTable_wrapper .row {
+        margin-bottom: 1rem;
+    }
+    #staffTable_filter label, #staffTable_length label {
+        font-weight: 500;
+        color: #495057;
+    }
+    #staffTable_filter input, #staffTable_length select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 0.5rem 0.75rem;
+        margin-left: 0.5rem;
+    }
+    #staffTable_info {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    .dataTables_paginate .pagination .page-item .page-link {
+        border-radius: 8px;
+        margin: 0 4px;
+        border: 1px solid #dee2e6;
+        color: #0d6efd;
+        transition: all 0.2s ease;
+    }
+    .dataTables_paginate .pagination .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+    .dataTables_paginate .pagination .page-item .page-link:hover {
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+        color: #0a58ca;
+    }
+    .dataTables_paginate .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+    }
+</style>

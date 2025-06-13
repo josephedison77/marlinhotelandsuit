@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+    <h2 style="color: #007bff; margin-bottom: 1.5rem;">Your Shifts</h2>
+    <div class="table-responsive" style="display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table class="table table-striped" style="width: 100%; margin-bottom: 1rem; color: #212529; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Date</th>
+                    <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Shift Type</th>
+                    <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Start Time</th>
+                    <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">End Time</th>
+                    <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Status</th>
+                    <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Position</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shift in shifts %}
+                <tr>
+                    <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ shift.shift_date.strftime('%a, %b %d') }}</td>
+                    <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ shift.shift_type }}</td>
+                    
+                    <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ shift.start_time | datetimeformat('%H:%M') }}</td>
+                    <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ shift.end_time | datetimeformat('%H:%M') }}</td>
+                    
+                    <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">
+                        {% if shift.status == "Active" %}
+                            <span class="badge bg-success" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; background-color: #28a745 !important; color: #fff;">Active</span>
+                        {% elif shift.status == "Upcoming" %}
+                            <span class="badge bg-warning" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; background-color: #ffc107 !important; color: #212529 !important;">Upcoming</span>
+                        {% else %}
+                            <span class="badge bg-secondary" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; background-color: #6c757d !important; color: #fff;">Completed</span>
+                        {% endif %}
+                    </td>
+                    
+                    <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ staff.position }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">No shifts scheduled for the next 7 days</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

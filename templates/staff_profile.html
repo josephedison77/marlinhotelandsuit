@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Staff Profile{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="padding-top: 1.5rem !important; padding-bottom: 1.5rem !important;">
+    <div class="row" style="display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;">
+        <div class="col-md-4" style="flex: 0 0 auto; width: 33.333333%; padding-right: 15px; padding-left: 15px;">
+            <div class="card shadow mb-4" style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; margin-bottom: 1.5rem !important;">
+                <div class="card-body text-center" style="flex: 1 1 auto; padding: 1.25rem; text-align: center !important;">
+                    {% if staff.profile_image %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ staff.profile_image) }}" class="img-fluid rounded-circle mb-3" style="max-width: 180px; height: auto; border-radius: 50% !important; margin-bottom: 1rem !important;" alt="Profile Image">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='default_profile.png') }}" class="img-fluid rounded-circle mb-3" style="max-width: 180px; height: auto; border-radius: 50% !important; margin-bottom: 1rem !important;" alt="Profile Image">
+                    {% endif %}
+                    <h4 style="margin-bottom: 0.5rem; color: #212529;">{{ staff.first_name }} {{ staff.last_name }}</h4>
+                    <p class="text-muted mb-1" style="color: #6c757d !important; margin-bottom: 0.25rem !important;">{{ staff.position }}</p>
+                    <p class="text-muted" style="color: #6c757d !important; margin-top: 0; margin-bottom: 1rem;">Staff ID: {{ staff.staff_id }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8" style="flex: 0 0 auto; width: 66.666667%; padding-right: 15px; padding-left: 15px;">
+            <div class="card shadow mb-4" style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; margin-bottom: 1.5rem !important;">
+                <div class="card-header" style="padding: 0.75rem 1.25rem; margin-bottom: 0; background-color: rgba(0, 0, 0, 0.03); border-bottom: 1px solid rgba(0, 0, 0, 0.125);">
+                    <h5 class="mb-0" style="margin-bottom: 0;">Profile Details</h5>
+                </div>
+                <div class="card-body" style="flex: 1 1 auto; padding: 1.25rem;">
+                    <dl class="row" style="display: flex; flex-wrap: wrap;">
+                        <dt class="col-sm-4" style="flex: 0 0 auto; width: 33.333333%; padding-right: 15px; padding-left: 15px; text-align: right;">Email</dt>
+                        <dd class="col-sm-8" style="flex: 0 0 auto; width: 66.666667%; padding-right: 15px; padding-left: 15px; margin-bottom: 0.5rem;">{{ staff.email }}</dd>
+                        <dt class="col-sm-4" style="flex: 0 0 auto; width: 33.333333%; padding-right: 15px; padding-left: 15px; text-align: right;">Phone Number</dt>
+                        <dd class="col-sm-8" style="flex: 0 0 auto; width: 66.666667%; padding-right: 15px; padding-left: 15px; margin-bottom: 0.5rem;">{{ staff.phone_number }}</dd>
+                        <dt class="col-sm-4" style="flex: 0 0 auto; width: 33.333333%; padding-right: 15px; padding-left: 15px; text-align: right;">Position</dt>
+                        <dd class="col-sm-8" style="flex: 0 0 auto; width: 66.666667%; padding-right: 15px; padding-left: 15px; margin-bottom: 0.5rem;">{{ staff.position }}</dd>
+                        <dt class="col-sm-4" style="flex: 0 0 auto; width: 33.333333%; padding-right: 15px; padding-left: 15px; text-align: right;">Staff ID</dt>
+                        <dd class="col-sm-8" style="flex: 0 0 auto; width: 66.666667%; padding-right: 15px; padding-left: 15px; margin-bottom: 0.5rem;">{{ staff.staff_id }}</dd>
+                        <dt class="col-sm-4" style="flex: 0 0 auto; width: 33.333333%; padding-right: 15px; padding-left: 15px; text-align: right;">Joined</dt>
+                        <dd class="col-sm-8" style="flex: 0 0 auto; width: 66.666667%; padding-right: 15px; padding-left: 15px; margin-bottom: 0.5rem;">
+                            {% if staff.created_at %}
+                                {{ staff.created_at.strftime('%Y-%m-%d') }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4" style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; margin-bottom: 1.5rem !important;">
+                <div class="card-header" style="padding: 0.75rem 1.25rem; margin-bottom: 0; background-color: rgba(0, 0, 0, 0.03); border-bottom: 1px solid rgba(0, 0, 0, 0.125);">
+                    <h5 class="mb-0" style="margin-bottom: 0;">Recent Attendance</h5>
+                </div>
+                <div class="card-body" style="flex: 1 1 auto; padding: 1.25rem;">
+                    {% if recent_attendance %}
+                        <ul class="list-group" style="padding-left: 0; margin-bottom: 0;">
+                            {% for att in recent_attendance %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center" style="position: relative; display: flex; padding: 0.75rem 1.25rem; margin-bottom: -1px; background-color: #fff; border: 1px solid rgba(0, 0, 0, 0.125); justify-content: space-between !important; align-items: center !important;">
+                                    {{ att.date.strftime('%Y-%m-%d') }}
+                                    <span class="badge bg-success" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; background-color: #28a745 !important; color: #fff;">{{ att.status }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted" style="color: #6c757d !important; margin-top: 0; margin-bottom: 1rem;">No attendance records found.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

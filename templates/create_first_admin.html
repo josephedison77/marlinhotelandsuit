@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Create First Super Admin{% endblock %}
+{% block content %}
+<style>
+  .admin-container {
+    max-width: 600px;
+    margin: 5rem auto;
+    padding: 0 1rem;
+  }
+  
+  .admin-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    border: none;
+  }
+  
+  .admin-header {
+    background: linear-gradient(135deg, var(--primary), var(--dark));
+    color: white;
+    padding: 1.75rem;
+    text-align: center;
+  }
+  
+  .admin-body {
+    padding: 2.5rem;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-control {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.9rem 1.25rem;
+    border-radius: 10px;
+    transition: all 0.3s;
+  }
+  
+  .form-control:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 0.25rem rgba(197, 168, 128, 0.25);
+  }
+  
+  .btn-create {
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    border: none;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 100%;
+    border-radius: 10px;
+    transition: all 0.3s;
+  }
+  
+  .btn-create:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(197, 168, 128, 0.4);
+  }
+</style>
+
+<div class="admin-container">
+  <div class="admin-card">
+    <div class="admin-header">
+      <h3 class="mb-0">Create First Super Admin</h3>
+    </div>
+    <div class="admin-body">
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('create_first_admin') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="mb-4">
+          <label for="email" class="form-label">Email address</label>
+          <input type="email" 
+                 class="form-control" 
+                 id="email" 
+                 name="email" 
+                 required
+                 placeholder="Enter email">
+        </div>
+
+        <div class="mb-4">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" 
+                 class="form-control" 
+                 id="password" 
+                 name="password" 
+                 required
+                 placeholder="Password">
+        </div>
+
+        <button type="submit" class="btn btn-create">
+          Create Super Admin
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

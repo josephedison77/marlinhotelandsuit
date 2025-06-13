@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Profile - Marlin Hotel{% endblock %}
+{% block content %}
+<style>
+  :root {
+      --primary: #023147; --secondary: #c5a880; --accent: #8c6d46; --light: #f8f9fa;
+      --primary-light-shade: #05334b; 
+      --border-radius-md: 0.8rem;
+      --transition-main: all 0.3s ease;
+  }
+  .profile-section {
+      background-color: var(--primary);
+      padding: 3rem 0;
+      font-family: 'Montserrat', sans-serif;
+  }
+</style>
+<section class="profile-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="profile-sidebar" style="background-color: var(--primary-light-shade); border-radius: var(--border-radius-md); padding: 2rem; border: 1px solid var(--accent);">
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='uploads/ftt.png') }}" alt="Profile Avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 1rem;">
+                        <h3 style="color: var(--light); margin-bottom: 0.25rem;">{{ current_user.username }}</h3>
+                        <p style="color: var(--secondary); margin-bottom: 0;">{{ current_user.email }}</p>
+                    </div>
+                    <hr style="border-color: var(--accent); opacity: 0.5;">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('edit_profile') }}" class="list-group-item list-group-item-action" style="background-color: transparent; color: var(--light); padding: 1rem; border: none; border-left: 3px solid transparent; transition: var(--transition-main);" onmouseover="this.style.backgroundColor='var(--primary)'; this.style.borderLeft='3px solid var(--secondary)';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderLeft='3px solid transparent';">
+                            Edit Profile
+                        </a>
+                        <a href="{{ url_for('my_bookings') }}" class="list-group-item list-group-item-action" style="background-color: transparent; color: var(--light); padding: 1rem; border: none; border-left: 3px solid transparent; transition: var(--transition-main);" onmouseover="this.style.backgroundColor='var(--primary)'; this.style.borderLeft='3px solid var(--secondary)';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderLeft='3px solid transparent';">
+                            My Bookings
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="profile-content" style="background-color: var(--primary-light-shade); border-radius: var(--border-radius-md); padding: 2.5rem; color: var(--light); border: 1px solid var(--accent);">
+                    <h2 class="mb-4" style="color: var(--secondary); font-weight: 600;">Account Overview</h2>
+                    
+                    <h5 style="color: var(--light);">Personal Information</h5>
+                    <dl class="row mt-3" style="line-height: 2;">
+                        <dt class="col-sm-4" style="color: var(--secondary); font-weight: 400;">Username</dt>
+                        <dd class="col-sm-8">{{ current_user.username }}</dd>
+
+                        <dt class="col-sm-4" style="color: var(--secondary); font-weight: 400;">Email</dt>
+                        <dd class="col-sm-8">{{ current_user.email }}</dd>
+
+                        <dt class="col-sm-4" style="color: var(--secondary); font-weight: 400;">Member Since</dt>
+                        <dd class="col-sm-8">{{ current_user.created_at.strftime('%B %d, %Y') }}</dd>
+                    </dl>
+
+                    <hr style="border-color: var(--accent); opacity: 0.5; margin: 2rem 0;">
+
+                    <h5 style="color: var(--light);">Recent Activity</h5>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2" style="color: #adb5bd;">
+                            <i class="bi bi-clock-history me-2"></i> Last login: {{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

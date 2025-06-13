@@ -1,0 +1,459 @@
+<!-- admin_search.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Search - Hotel Marlin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #023147;
+            --secondary: #c5a880;
+            --accent: #8c6d46;
+            --light: #f8f9fa;
+            --dark: #0a1429;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .search-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .search-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            display: flex;
+        }
+        
+        .search-input {
+            border: none;
+            padding: 1.25rem 1.5rem;
+            font-size: 1.1rem;
+            width: 100%;
+            outline: none;
+        }
+        
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-btn:hover {
+            background: var(--dark);
+        }
+        
+        .search-options {
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem 0;
+            background: rgba(2, 49, 71, 0.05);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .search-option {
+            margin: 0 1rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--primary);
+        }
+        
+        .search-option.active, .search-option:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.25rem;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-type {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .result-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .result-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .result-description {
+            color: #495057;
+            line-height: 1.6;
+        }
+        
+        .result-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .result-actions .btn {
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-outline-primary {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-outline-secondary {
+            border: 1px solid var(--secondary);
+            color: var(--dark);
+        }
+        
+        .btn-outline-secondary:hover {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .room-result {
+            border-left-color: var(--info);
+        }
+        
+        .staff-result {
+            border-left-color: var(--success);
+        }
+        
+        .booking-result {
+            border-left-color: var(--warning);
+        }
+        
+        .user-result {
+            border-left-color: var(--danger);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+        .status-checked-in { background: #cce5ff; color: #004085; }
+        .status-checked-out { background: #e2e3e5; color: #383d41; }
+        .status-expired { background: #f8d7da; color: #721c24; }
+        .status-active { background: #d4edda; color: #155724; }
+        .status-inactive { background: #f8d7da; color: #721c24; }
+        .status-available { background: #d4edda; color: #155724; }
+        .status-occupied { background: #f8d7da; color: #721c24; }
+        .status-maintenance { background: #fff3cd; color: #856404; }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+        
+        .highlight {
+            background-color: #fff9c4;
+            font-weight: bold;
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+        
+        .results-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .result-section-title {
+            padding: 10px 0;
+            border-bottom: 2px solid rgba(2, 49, 71, 0.1);
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .search-input {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+            
+            .search-btn {
+                padding: 0 1.5rem;
+            }
+            
+            .search-option {
+                margin: 0 0.5rem;
+                padding: 0.25rem 0.75rem;
+                font-size: 0.9rem;
+            }
+            
+            .result-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <div class="search-header">
+            <div class="logo">
+                <i class="fas fa-hotel"></i>
+                Hotel Marlin
+            </div>
+            <p class="text-muted">Admin Search Dashboard</p>
+        </div>
+        
+        <form action="{{ url_for('admin_search') }}" method="GET">
+            <div class="search-box">
+                <input type="text" 
+                       class="search-input" 
+                       name="q"
+                       value="{{ query }}"
+                       placeholder="Search for rooms, staff, bookings, guests..."
+                       autocomplete="off"
+                       autofocus>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="search-options">
+                <a href="{{ url_for('admin_search', q=query, type='all') }}" 
+                   class="search-option {{ 'active' if filter_type == 'all' }}"
+                   data-type="all">All</a>
+                <a href="{{ url_for('admin_search', q=query, type='rooms') }}" 
+                   class="search-option {{ 'active' if filter_type == 'rooms' }}"
+                   data-type="rooms">Rooms</a>
+                <a href="{{ url_for('admin_search', q=query, type='staff') }}" 
+                   class="search-option {{ 'active' if filter_type == 'staff' }}"
+                   data-type="staff">Staff</a>
+                <a href="{{ url_for('admin_search', q=query, type='bookings') }}" 
+                   class="search-option {{ 'active' if filter_type == 'bookings' }}"
+                   data-type="bookings">Bookings</a>
+                <a href="{{ url_for('admin_search', q=query, type='guests') }}" 
+                   class="search-option {{ 'active' if filter_type == 'guests' }}"
+                   data-type="guests">Guests</a>
+            </div>
+        </form>
+        
+        <div class="results-count">
+            Found <span id="totalResults">{{ total_results }}</span> results in <span id="searchTime">{{ search_time }}</span> seconds
+        </div>
+        
+        <div id="searchResults">
+            {% if total_results == 0 %}
+                <div class="no-results">
+                    <i class="fas fa-search fa-3x"></i>
+                    <h4>No results found</h4>
+                    <p>Try different keywords or filters</p>
+                </div>
+            {% else %}
+                <!-- Room Results -->
+                {% if results.room_results and (filter_type == 'all' or filter_type == 'rooms') %}
+                    <div class="result-section-title"><h5><i class="fas fa-bed me-2"></i>Rooms</h5></div>
+                    {% for room in results.room_results %}
+                    <div class="result-card room-result">
+                        <div class="result-type"><i class="fas fa-bed"></i> Room</div>
+                        <div class="result-title">{{ room.name }}</div>
+                        <div class="result-meta">
+                            <span class="status-badge status-{{ room.status }}">{{ room.status }}</span>
+                            <span>Type: {{ room.room_type }} • Capacity: {{ room.capacity }} • ₦{{ room.price|number_format }}/night</span>
+                        </div>
+                        <div class="result-description">{{ room.description }}</div>
+                        <div class="result-actions">
+                            <a href="{{ url_for('edit_room', room_id=room.id) }}" class="btn btn-outline-primary">View Details</a>
+                            <a href="{{ url_for('edit_room', room_id=room.id) }}" class="btn btn-outline-secondary">Edit</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- Staff Results -->
+                {% if results.staff_results and (filter_type == 'all' or filter_type == 'staff') %}
+                    <div class="result-section-title"><h5><i class="fas fa-user-tie me-2"></i>Staff</h5></div>
+                    {% for staff in results.staff_results %}
+                    <div class="result-card staff-result">
+                        <div class="result-type"><i class="fas fa-user-tie"></i> Staff Member</div>
+                        <div class="result-title">{{ staff.first_name }} {{ staff.last_name }}</div>
+                        <div class="result-meta">
+                            <span class="status-badge status-{{ 'active' if staff.is_active else 'inactive' }}">
+                                {{ 'Active' if staff.is_active else 'Inactive' }}
+                            </span>
+                            <span>{{ staff.position }} • {{ staff.email }}</span>
+                        </div>
+                        <div class="result-description">Phone: {{ staff.phone_number }}</div>
+                        <div class="result-actions">
+                            <a href="{{ url_for('edit_staff', staff_id=staff.id) }}" class="btn btn-outline-primary">View Profile</a>
+                            <a href="{{ url_for('edit_staff', staff_id=staff.id) }}" class="btn btn-outline-secondary">Edit</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- Booking Results -->
+                {% if results.booking_results and (filter_type == 'all' or filter_type == 'bookings') %}
+                    <div class="result-section-title"><h5><i class="fas fa-calendar-check me-2"></i>Bookings</h5></div>
+                    {% for booking in results.booking_results %}
+                    <div class="result-card booking-result">
+                        <div class="result-type"><i class="fas fa-calendar-check"></i> Booking</div>
+                        <div class="result-title">BOOK-{{ booking.id }} - {{ booking.user.username }}</div>
+                        <div class="result-meta">
+                            <span class="status-badge status-{{ booking.check_in_status|lower }}">{{ booking.check_in_status }}</span>
+                            <span>{{ booking.room.name }} • ₦{{ booking.total_amount|number_format }}</span>
+                        </div>
+                        <div class="result-description">
+                            Check-in: {{ booking.check_in_date|datetimeformat }} • 
+                            Check-out: {{ booking.check_out_date|datetimeformat }}
+                        </div>
+                        <div class="result-actions">
+                            <a href="{{ url_for('booking_details', booking_id=booking.id) }}" class="btn btn-outline-primary">View Booking</a>
+                            {% if booking.check_in_status == 'Pending' %}
+                            <a href="{{ url_for('receptionist_manual_check_in', booking_id=booking.id) }}" class="btn btn-outline-secondary">Check-in</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- User Results -->
+                {% if results.user_results and (filter_type == 'all' or filter_type == 'guests') %}
+                    <div class="result-section-title"><h5><i class="fas fa-user me-2"></i>Guests</h5></div>
+                    {% for user in results.user_results %}
+                    <div class="result-card user-result">
+                        <div class="result-type"><i class="fas fa-user"></i> Guest</div>
+                        <div class="result-title">{{ user.username }}</div>
+                        <div class="result-meta">
+                            <span class="status-badge status-{{ user.status }}">{{ user.status }}</span>
+                            <span>{{ user.email }}</span>
+                        </div>
+                        <div class="result-description">
+                            Member since {{ user.created_at|datetimeformat('%Y-%m-%d') }} • 
+                            Last login: {{ user.last_login|datetimeformat if user.last_login else 'Never' }}
+                        </div>
+                        <div class="result-actions">
+                            <a href="{{ url_for('profile', user_id=user.id) }}" class="btn btn-outline-primary">View Profile</a>
+                            <a href="mailto:{{ user.email }}" class="btn btn-outline-secondary">Message</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        </div>
+
+         <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">Back to Dashboard</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchOptions = document.querySelectorAll('.search-option');
+            
+            searchOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    searchOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Add fade-in animation to results
+            document.querySelectorAll('.result-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`;
+            });
+        });
+    </script>
+</body>
+</html>

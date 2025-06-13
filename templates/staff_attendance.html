@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+    <h2 style="color: #007bff; margin-bottom: 1.5rem;">My Attendance Records</h2>
+    
+    <div class="card mb-4" style="margin-bottom: 1.5rem !important; border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
+        <div class="card-body" style="flex: 1 1 auto; padding: 1.25rem;">
+            <div class="btn-group" role="group" style="position: relative; display: inline-flex; vertical-align: middle;">
+                <a href="{{ url_for('staff_attendance', filter='all') }}" 
+                   class="btn btn-outline-secondary {% if filter_type == 'all' %}active{% endif %}" style="color: #6c757d; background-color: #fff; border-color: #6c757d; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem; text-decoration: none; {% if filter_type == 'all' %}background-color: #6c757d; color: #fff;{% endif %}">
+                    All Time
+                </a>
+                <a href="{{ url_for('staff_attendance', filter='week') }}" 
+                   class="btn btn-outline-secondary {% if filter_type == 'week' %}active{% endif %}" style="color: #6c757d; background-color: #fff; border-color: #6c757d; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem; text-decoration: none; {% if filter_type == 'week' %}background-color: #6c757d; color: #fff;{% endif %}">
+                    Last 7 Days
+                </a>
+                <a href="{{ url_for('staff_attendance', filter='month') }}" 
+                   class="btn btn-outline-secondary {% if filter_type == 'month' %}active{% endif %}" style="color: #6c757d; background-color: #fff; border-color: #6c757d; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem; text-decoration: none; {% if filter_type == 'month' %}background-color: #6c757d; color: #fff;{% endif %}">
+                    Last 30 Days
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card" style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
+        <div class="card-body" style="flex: 1 1 auto; padding: 1.25rem;">
+            <div class="table-responsive" style="display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                <table class="table table-striped" style="width: 100%; margin-bottom: 1rem; color: #212529; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Date</th>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Clock In</th>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Clock Out</th>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Duration</th>
+                            <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attendance in attendances.items %}
+                        <tr>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ attendance.date.strftime('%b %d, %Y') }}</td>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">
+                                {% if attendance.clock_in_time %}
+                                    {{ attendance.clock_in_time.strftime('%I:%M %p') }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">
+                                {% if attendance.clock_out_time %}
+                                    {{ attendance.clock_out_time.strftime('%I:%M %p') }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">
+                                {% if attendance.clock_in_time and attendance.clock_out_time %}
+                                    {{ (attendance.clock_out_time - attendance.clock_in_time).seconds // 3600 }}h
+                                    {{ ((attendance.clock_out_time - attendance.clock_in_time).seconds % 3600) // 60 }}m
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">
+                                {% if attendance.status %}
+                                    <span class="badge bg-success" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; background-color: #28a745 !important; color: #fff;">{{ attendance.status }}</span>
+                                {% else %}
+                                    <span class="badge bg-warning" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; background-color: #ffc107 !important; color: #212529 !important;">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center" style="text-align: center !important; padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">No attendance records found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <nav style="display: block;">
+                <ul class="pagination justify-content-center" style="display: flex; padding-left: 0; list-style: none; border-radius: 0.25rem; justify-content: center !important; margin-top: 1rem;">
+                    {% if attendances.has_prev %}
+                    <li class="page-item" style="margin: 0 2px;">
+                        <a class="page-link" href="{{ url_for('staff_attendance', page=attendances.prev_num, filter=filter_type) }}" style="position: relative; display: block; padding: 0.5rem 0.75rem; margin-left: -1px; line-height: 1.25; color: #007bff; background-color: #fff; border: 1px solid #dee2e6; text-decoration: none;">Previous</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled" style="margin: 0 2px;">
+                        <span class="page-link" style="position: relative; display: block; padding: 0.5rem 0.75rem; margin-left: -1px; line-height: 1.25; color: #6c757d; background-color: #fff; border: 1px solid #dee2e6; cursor: not-allowed;">Previous</span>
+                    </li>
+                    {% endif %}
+                    
+                    {% for page_num in attendances.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num == attendances.page %}
+                            <li class="page-item active" style="margin: 0 2px;">
+                                <span class="page-link" style="position: relative; display: block; padding: 0.5rem 0.75rem; margin-left: -1px; line-height: 1.25; color: #fff; background-color: #007bff; border: 1px solid #007bff;">{{ page_num }}</span>
+                            </li>
+                            {% else %}
+                            <li class="page-item" style="margin: 0 2px;">
+                                <a class="page-link" href="{{ url_for('staff_attendance', page=page_num, filter=filter_type) }}" style="position: relative; display: block; padding: 0.5rem 0.75rem; margin-left: -1px; line-height: 1.25; color: #007bff; background-color: #fff; border: 1px solid #dee2e6; text-decoration: none;">{{ page_num }}</a>
+                            </li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item disabled" style="margin: 0 2px;">
+                                <span class="page-link" style="position: relative; display: block; padding: 0.5rem 0.75rem; margin-left: -1px; line-height: 1.25; color: #6c757d; background-color: #fff; border: 1px solid #dee2e6; cursor: not-allowed;">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if attendances.has_next %}
+                    <li class="page-item" style="margin: 0 2px;">
+                        <a class="page-link" href="{{ url_for('staff_attendance', page=attendances.next_num, filter=filter_type) }}" style="position: relative; display: block; padding: 0.5rem 0.75rem; margin-left: -1px; line-height: 1.25; color: #007bff; background-color: #fff; border: 1px solid #dee2e6; text-decoration: none;">Next</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled" style="margin: 0 2px;">
+                        <span class="page-link" style="position: relative; display: block; padding: 0.5rem 0.75rem; margin-left: -1px; line-height: 1.25; color: #6c757d; background-color: #fff; border: 1px solid #dee2e6; cursor: not-allowed;">Next</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

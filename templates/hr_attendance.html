@@ -1,0 +1,297 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    body {
+        background-color: var(--light);
+        color: var(--text);
+    }
+    .container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    h2 {
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+    .card {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        border: none;
+        overflow: hidden;
+    }
+    .card-header {
+        background-color: var(--light);
+        border-bottom: 1px solid var(--gold-light);
+        font-weight: 600;
+        color: var(--primary);
+        padding: 1rem 1.5rem;
+    }
+    .card-body {
+        padding: 1.5rem;
+    }
+    .form-label {
+        font-weight: 500;
+        color: var(--primary);
+    }
+    .form-select, .form-control {
+        border-radius: 0.5rem;
+        border: 1px solid var(--gold-light);
+        padding: 0.5rem 0.75rem;
+    }
+    .btn-primary {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: var(--light) !important;
+        border-radius: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+    .btn-primary:hover {
+        background-color: var(--dark) !important;
+        border-color: var(--dark) !important;
+    }
+    .table {
+        --bs-table-color: var(--text);
+        --bs-table-bg: var(--light);
+        --bs-table-border-color: var(--gold-light);
+        --bs-table-hover-color: var(--text);
+        --bs-table-hover-bg: rgba(0,0,0,0.03);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    .table thead th {
+        background-color: var(--primary);
+        color: var(--light);
+        border-color: var(--primary);
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+    }
+    .table tbody tr td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+    }
+    .badge {
+        padding: 0.5em 0.75em;
+        border-radius: 0.35rem;
+        font-weight: 600;
+    }
+    .badge.bg-success {
+        background-color: var(--accent) !important;
+        color: var(--light) !important;
+    }
+    .badge.bg-danger {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+    .badge.bg-warning {
+        background-color: var(--secondary) !important;
+        color: var(--dark) !important;
+    }
+    .badge.bg-info {
+        background-color: var(--gold-light) !important;
+        color: var(--dark) !important;
+    }
+    .pagination {
+        --bs-pagination-color: var(--primary);
+        --bs-pagination-hover-color: var(--light);
+        --bs-pagination-hover-bg: var(--primary);
+        --bs-pagination-active-bg: var(--primary);
+        --bs-pagination-active-border-color: var(--primary);
+        --bs-pagination-focus-box-shadow: none;
+        --bs-pagination-border-radius: 0.35rem;
+    }
+    .page-link {
+        color: var(--primary) !important;
+        border: 1px solid var(--gold-light) !important;
+        transition: var(--transition);
+    }
+    .page-link:hover {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+        border-color: var(--primary) !important;
+    }
+    .page-item.active .page-link {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+    .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border-color: #bee5eb;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.25rem;
+    }
+</style>
+<div class="container mt-4">
+    <h2>Staff Attendance Records</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Filter Records</h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Staff Member</label>
+                    <select name="staff_id" class="form-select">
+                        <option value="">All Staff</option>
+                        {% for staff in staff_members %}
+                        <option value="{{ staff.id }}" 
+                            {% if filters.staff_id == staff.id %}selected{% endif %}>
+                            {{ staff.first_name }} {{ staff.last_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        {% for status in status_options %}
+                        <option value="{{ status }}" 
+                            {% if filters.status == status %}selected{% endif %}>
+                            {{ status|title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label">Date Range</label>
+                    <div class="input-group">
+                        <select name="date_filter" class="form-select" id="dateFilterSelect">
+                            <option value="all" {% if filters.date_filter == 'all' %}selected{% endif %}>All Dates</option>
+                            <option value="today" {% if filters.date_filter == 'today' %}selected{% endif %}>Today</option>
+                            <option value="week" {% if filters.date_filter == 'week' %}selected{% endif %}>This Week</option>
+                            <option value="month" {% if filters.date_filter == 'month' %}selected{% endif %}>This Month</option>
+                            <option value="custom" {% if filters.date_filter == 'custom' %}selected{% endif %}>Custom Range</option>
+                        </select>
+                        <input type="date" name="start_date" class="form-control custom-date" 
+                               value="{{ filters.start_date }}" {% if filters.date_filter != 'custom' %}disabled{% endif %}>
+                        <input type="date" name="end_date" class="form-control custom-date" 
+                               value="{{ filters.end_date }}" {% if filters.date_filter != 'custom' %}disabled{% endif %}>
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            {% if attendances.items %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Staff Member</th>
+                            <th>Date</th>
+                            <th>Clock In</th>
+                            <th>Clock Out</th>
+                            <th>Hours Worked</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attendance in attendances.items %}
+                        <tr>
+                            <td>{{ attendance.staff.first_name }} {{ attendance.staff.last_name }}</td>
+                            <td>{{ attendance.date }}</td>
+                            <td>{{ attendance.clock_in }}</td>
+                            <td>{{ attendance.clock_out if attendance.clock_out else '-' }}</td>
+                            <td>
+                                {% if attendance.clock_out %}
+                                    {{ (attendance.clock_out - attendance.clock_in).seconds // 3600 }}h 
+                                    {{ ((attendance.clock_out - attendance.clock_in).seconds % 3600) // 60 }}m
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 
+                                    'success' if attendance.status == 'present' else 
+                                    'danger' if attendance.status == 'absent' else 
+                                    'warning' if attendance.status == 'late' else 
+                                    'info' 
+                                }}">
+                                    {{ attendance.status|replace('_', ' ')|title }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <nav>
+                <ul class="pagination">
+                    {% if attendances.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" 
+                           href="{{ url_for('hr_attendance', page=attendances.prev_num, **request.args) }}">
+                            Previous
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for page_num in attendances.iter_pages() %}
+                    <li class="page-item {% if page_num == attendances.page %}active{% endif %}">
+                        <a class="page-link" 
+                           href="{{ url_for('hr_attendance', page=page_num, **request.args) }}">
+                            {{ page_num }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                    
+                    {% if attendances.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" 
+                           href="{{ url_for('hr_attendance', page=attendances.next_num, **request.args) }}">
+                            Next
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            
+            {% else %}
+            <div class="alert alert-info">
+                No attendance records found matching your filters
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Enable/disable custom date inputs based on selection
+document.getElementById('dateFilterSelect').addEventListener('change', function() {
+    const customDates = document.querySelectorAll('.custom-date');
+    const isCustom = this.value === 'custom';
+    
+    customDates.forEach(input => {
+        input.disabled = !isCustom;
+        if (isCustom) input.removeAttribute('disabled');
+        else input.setAttribute('disabled', 'disabled');
+    });
+});
+</script>
+{% endblock %}

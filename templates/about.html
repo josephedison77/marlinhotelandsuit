@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}About Marlin Hotel | Luxury Redefined{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+      --primary: #023147;
+      --secondary: #c5a880;
+      --accent: #8c6d46;
+      --light: #f8f9fa;
+      --dark: #0a1429;
+      --text: #333;
+      --gold-light: #e6c78a;
+      --gold-dark: #b08d57;
+      --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+  
+  body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(55deg, #031924 0%, var(--primary) 100%);
+      color: var(--light);
+      overflow-x: hidden;
+      line-height: 1.6;
+  }
+
+  .about-hero {
+      position: relative;
+      height: 70vh;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 30px 4px 4px 90px;
+      background: linear-gradient(rgba(12, 26, 50, 0.07), rgba(12, 26, 50, 0.04)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+  }
+  
+  .about-hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, transparent 10%, var(--primary) 90%);
+      z-index: 1;
+  }
+  
+  .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center; /* Centered text */
+      max-width: 900px;
+      padding: 0 20px;
+  }
+  
+  .about-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--gold-light);
+      text-shadow: 0 0 15px rgba(0,0,0,0.7), 0 0 25px rgba(0,0,0,0.5); /* More visible text shadow */
+      letter-spacing: 1px;
+      animation: fadeInDown 1.2s ease-out;
+  }
+  
+  .about-hero p {
+      font-size: 1.4rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      color: rgba(255,255,255,0.95); /* Slightly brighter text */
+      text-shadow: 0 0 8px rgba(0,0,0,0.5); /* Text shadow for readability */
+      animation: fadeIn 1.5s ease-out 0.3s forwards;
+      opacity: 0;
+  }
+
+  .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+  }
+  
+  .section-title {
+      text-align: center;
+      margin-bottom: 4rem;
+      padding-top: 5rem;
+  }
+  
+  .section-title h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.2rem;
+      color: var(--gold-light);
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+  }
+  
+  .section-title h2::after {
+      content: "";
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--secondary);
+  }
+  
+  .section-title p {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.7);
+      max-width: 700px;
+      margin: 2rem auto 0;
+  }
+
+  .card {
+      background: rgba(255, 255, 255, 0.014);
+      backdrop-filter: blur(10);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      transition: var(--transition);
+      position: relative;
+      transform: translateY(0);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(197, 168, 128, 0.15);
+      color: var(--light); /* Ensure text within cards is light */
+  }
+  
+  .card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      border-color: rgba(197, 168, 128, 0.3);
+  }
+
+  .card-body h3 {
+      color: var(--gold-light);
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 1.5rem;
+  }
+
+  .card-body ul {
+      list-style: none;
+      padding: 0;
+  }
+
+  .card-body ul li {
+      margin-bottom: 0.8rem;
+      color: rgba(255,255,255,0.9);
+  }
+
+  .card-body p {
+      color: rgba(255,255,255,0.9);
+  }
+
+  .management-team .card-img-top {
+      border-bottom: 2px solid rgba(197, 168, 128, 0.15);
+  }
+
+  .management-team .card-title {
+      color: var(--gold-light);
+      font-family: 'Playfair Display', serif;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+  }
+
+  .management-team .card-text {
+      color: rgba(255,255,255,0.8);
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+      40% { transform: translateY(-20px) translateX(-50%); }
+      60% { transform: translateY(-10px) translateX(-50%); }
+  }
+  
+  .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  
+  .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+      .about-hero h1 {
+          font-size: 3rem;
+      }
+      
+      .about-hero p {
+          font-size: 1.1rem;
+      }
+      
+      .section-title h2 {
+          font-size: 2.5rem;
+      }
+  }
+</style>
+
+<section class="about-hero py-5 bg-light">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-12 animate-on-scroll"> {# Changed to col-md-12 to center the content horizontally #}
+        <div class="hero-content"> {# Added hero-content wrapper for centering #}
+          <h1 class="display-4 mb-4">Our Story</h1>
+          <p class="lead">Where Nigerian Hospitality Meets Global Luxury Standards</p>
+        </div>
+      </div>
+      {# Removed the image column from the hero section as per the original about.html structure #}
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="section-title animate-on-scroll">
+      <h2>Why Choose Marlin Hotel?</h2>
+      <p>Discover the pillars that define our commitment to excellence and unparalleled guest satisfaction.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 animate-on-scroll">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <h3><i class="fas fa-medal me-2"></i>Recognition</h3>
+            <ul class="list-unstyled">
+              <li class="mb-2"> Best Luxury Hotel </li>
+              <li class="mb-2">Sustainable Tourism Award </li>
+              <li class="mb-2">Excellence in Hospitality</li>
+              <li class="mb-2">Top Business Hotel (Lagos)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 animate-on-scroll">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <h3><i class="fas fa-bullseye me-2"></i>Our Mission</h3>
+            <p>Our mission is to redefine luxury hospitality by seamlessly blending authentic Nigerian warmth and cultural richness with world-class service standards. We strive to create unforgettable experiences that delight and inspire every guest.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 animate-on-scroll">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <h3><i class="fas fa-eye me-2"></i>Our Vision</h3>
+            <p>To be Africa's premier destination for discerning travelers seeking not just luxurious accommodation, but also authentic cultural immersion and personalized experiences that reflect the vibrant spirit of Nigeria.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5 bg-dark management-team">
+  <div class="container">
+    <div class="section-title animate-on-scroll">
+      <h2>Meet Our Esteemed Management Team</h2>
+      <p>Behind every exceptional stay is a dedicated team committed to service excellence and innovation.</p>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4 animate-on-scroll">
+        <div class="card h-100 border-0 shadow-sm">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734bca9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+               class="card-img-top" 
+               alt="CEO Profile"
+               style="height: 280px; object-fit: cover;"
+               loading="lazy">
+          <div class="card-body text-center">
+            <h4 class="card-title">Amina Adebayo</h4>
+            <p class="text-muted">Chief Executive Officer</p>
+            <p class="card-text">With over 20 years of transformative leadership in luxury hospitality, Amina is the visionary behind Marlin Hotel's success. Her passion for excellence and deep understanding of global luxury trends, combined with a commitment to showcasing Nigerian culture, drives our unique guest experience.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 animate-on-scroll">
+        <div class="card h-100 border-0 shadow-sm">
+          <img src="https://images.unsplash.com/photo-1600486212175-69b7f58a74b4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+               class="card-img-top"
+               alt="General Manager Profile"
+               style="height: 280px; object-fit: cover;"
+               loading="lazy">
+          <div class="card-body text-center">
+            <h4 class="card-title">David Okoro</h4>
+            <p class="text-muted">General Manager</p>
+            <p class="card-text">David brings a wealth of international experience in hotel operations and guest relations. His meticulous attention to detail ensures every aspect of your stay, from check-in to check-out, is seamless and memorable. He is dedicated to upholding Marlin's reputation for impeccable service.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 animate-on-scroll">
+        <div class="card h-100 border-0 shadow-sm">
+          <img src="https://images.unsplash.com/photo-1542178243-bc20204b769f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+               class="card-img-top"
+               alt="Head Chef Profile"
+               style="height: 280px; object-fit: cover;"
+               loading="lazy">
+          <div class="card-body text-center">
+            <h4 class="card-title">Chef Bola Ahmed</h4>
+            <p class="text-muted">Executive Head Chef</p>
+            <p class="card-text">Chef Bola is the culinary mastermind behind our exquisite dining experiences. With a fusion of traditional Nigerian flavors and international gourmet techniques, she crafts innovative menus that tantalize the taste buds and leave a lasting impression on our guests.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="section-title animate-on-scroll">
+      <h2>Our Commitment to Sustainability</h2>
+      <p>Marlin Hotel is dedicated to responsible tourism and minimizing our environmental footprint.</p>
+    </div>
+    <div class="row g-4 align-items-center">
+      <div class="col-md-6 animate-on-scroll">
+        <img src="https://images.unsplash.com/photo-1506765349479-ec12a95c5172?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+             class="img-fluid rounded shadow" 
+             alt="Sustainable Practices"
+             loading="lazy">
+      </div>
+      <div class="col-md-6 animate-on-scroll">
+        <h3 class="text-primary"><i class="fas fa-leaf me-2"></i>Green Initiatives</h3>
+        <p>At Marlin Hotel, we believe luxury and sustainability can go hand-in-hand. We are committed to a range of eco-friendly practices including:</p>
+        <ul class="list-unstyled">
+          <li class="mb-2"><i class="fas fa-check-circle me-2 text-secondary"></i>Solar power integration for reduced energy consumption.</li>
+          <li class="mb-2"><i class="fas fa-check-circle me-2 text-secondary"></i>Waste reduction and comprehensive recycling programs.</li>
+          <li class="mb-2"><i class="fas fa-check-circle me-2 text-secondary"></i>Sourcing local, organic produce for our restaurants.</li>
+          <li class="mb-2"><i class="fas fa-check-circle me-2 text-secondary"></i>Water conservation strategies throughout the property.</li>
+          <li class="mb-2"><i class="fas fa-check-circle me-2 text-secondary"></i>Community engagement and support for local environmental projects.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const animatedItems = document.querySelectorAll('.animate-on-scroll');
+      
+      const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('visible');
+              } else {
+                  // Optional: remove 'visible' class when out of view
+                  // entry.target.classList.remove('visible'); 
+              }
+          });
+      }, { threshold: 0.1 });
+      
+      animatedItems.forEach(item => {
+          observer.observe(item);
+      });
+  });
+</script>
+{% endblock %}

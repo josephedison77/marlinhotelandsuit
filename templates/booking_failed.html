@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Booking Failed{% endblock %}
+
+{% block content %}
+<style>
+  .failure-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .failure-icon {
+    font-size: 5rem;
+    color: #dc3545;
+    margin-bottom: 2rem;
+  }
+  
+  .failure-title {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .failure-message {
+    max-width: 600px;
+    color: var(--dark);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    border: none;
+    padding: 0.9rem 2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(197, 168, 128, 0.3);
+  }
+  
+  .btn-outline {
+    background: white;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+</style>
+
+<div class="failure-container">
+  <div class="failure-icon">
+    <i class="bi bi-x-circle-fill"></i>
+  </div>
+  
+  <h1 class="failure-title">Booking Failed</h1>
+  
+  <p class="failure-message">
+    We're sorry, but we were unable to process your booking request. 
+    This may be due to payment issues or room availability. 
+    Please try again or contact our support team for assistance.
+  </p>
+  
+  <div class="action-buttons">
+    <a href="{{ url_for('home') }}" class="btn btn-primary">
+      Return Home
+    </a>
+    <a href="{{ url_for('contact') }}" class="btn btn-outline">
+      Contact Support
+    </a>
+  </div>
+</div>
+{% endblock %}

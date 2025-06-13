@@ -1,0 +1,56 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Activity Logs</h1>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">System Activities</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Action</th>
+                            <th>Description</th>
+                            <th>User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs.items %}
+                        <tr>
+                            <td>{{ log.timestamp|datetimeformat }}</td>
+                            <td>{{ log.title }}</td>
+                            <td>{{ log.description }}</td>
+                            <td>
+                                {% if log.initiator %}
+                                    {{ log.initiator.username }}
+                                {% else %}
+                                    System
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="mt-3">
+                {% if logs.has_prev %}
+                    <a href="{{ url_for('activity_logs', page=logs.prev_num) }}" class="btn btn-sm btn-outline-primary">Previous</a>
+                {% endif %}
+                
+                <span class="mx-2">Page {{ logs.page }} of {{ logs.pages }}</span>
+                
+                {% if logs.has_next %}
+                    <a href="{{ url_for('activity_logs', page=logs.next_num) }}" class="btn btn-sm btn-outline-primary">Next</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

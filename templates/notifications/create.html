@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Create Notification</h2>
+    
+    <form method="POST" id="notification-form">
+        {{ form.hidden_tag() }}
+        
+        <!-- Basic Info -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.title.label(class="form-label") }}
+                    {{ form.title(class="form-control") }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.category.label(class="form-label") }}
+                    {{ form.category(class="form-control") }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Message -->
+        <div class="form-group mb-4">
+            {{ form.message.label(class="form-label") }}
+            {{ form.message(class="form-control", rows=4) }}
+        </div>
+
+        <!-- Recipient Selection -->
+        <div class="card mb-4">
+            <div class="card-header">Recipient Selection</div>
+            <div class="card-body">
+                <div class="form-group">
+                    {{ form.send_to.label(class="form-label") }}
+                    {{ form.send_to(class="form-control") }}
+                </div>
+
+                <!-- Conditional Fields -->
+                <div id="role-group" class="filter-group" style="display: none;">
+                    {{ form.roles.label(class="form-label") }}
+                    {{ form.roles(class="form-control") }}
+                </div>
+
+                <div id="custom-users-group" class="filter-group" style="display: none;">
+                    {{ form.custom_users.label(class="form-label") }}
+                    {{ form.custom_users(class="form-control") }}
+                </div>
+
+                <div id="days-threshold-group" class="filter-group" style="display: none;">
+                    {{ form.days_threshold.label(class="form-label") }}
+                    {{ form.days_threshold(class="form-control") }}
+                </div>
+
+                <div id="min-bookings-group" class="filter-group" style="display: none;">
+                    {{ form.min_bookings.label(class="form-label") }}
+                    {{ form.min_bookings(class="form-control") }}
+                </div>
+
+                <div id="inactive-days-group" class="filter-group" style="display: none;">
+                    {{ form.inactive_days.label(class="form-label") }}
+                    {{ form.inactive_days(class="form-control") }}
+                </div>
+
+                <div id="min-spending-group" class="filter-group" style="display: none;">
+                    {{ form.min_spending.label(class="form-label") }}
+                    {{ form.min_spending(class="form-control") }}
+                </div>
+
+                <div id="room-type-group" class="filter-group" style="display: none;">
+                    {{ form.room_types.label(class="form-label") }}
+                    {{ form.room_types(class="form-control") }}
+                </div>
+
+                <div id="last-activity-group" class="filter-group" style="display: none;">
+                    {{ form.last_activity_days.label(class="form-label") }}
+                    {{ form.last_activity_days(class="form-control") }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Expiration -->
+        <div class="form-group mb-4">
+            {{ form.expires_at.label(class="form-label") }}
+            <input type="datetime-local" 
+                   class="form-control" 
+                   id="{{ form.expires_at.id }}" 
+                   name="{{ form.expires_at.name }}"
+                   value="{{ form.expires_at.data.strftime('%Y-%m-%dT%H:%M') if form.expires_at.data }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i> Send Notification
+        </button>
+    </form>
+</div>
+
+<style>
+.filter-group {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+}
+select[multiple] {
+    min-height: 200px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterGroups = document.querySelectorAll('.filter-group');
+    const sendTo = document.getElementById('{{ form.send_to.id }}');
+    
+    function updateFilterVisibility() {
+        const value = sendTo.value;
+        filterGroups.forEach(group => group.style.display = 'none');
+        
+        const visibleGroups = {
+            'role': '#role-group',
+            'custom': '#custom-users-group',
+            'new_users': '#days-threshold-group',
+            'frequent_customers': '#min-bookings-group',
+            'inactive_users': '#inactive-days-group',
+            'high_value': '#min-spending-group',
+            'room_type': '#room-type-group',
+            'recent_activity': '#last-activity-group'
+        }[value];
+        
+        if (visibleGroups) {
+            document.querySelector(visibleGroups).style.display = 'block';
+        }
+    }
+    
+    sendTo.addEventListener('change', updateFilterVisibility);
+    updateFilterVisibility(); // Initial update
+});
+</script>
+{% endblock %}

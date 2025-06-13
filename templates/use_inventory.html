@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Use Item from Inventory</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    
+    <div class="form-group">
+        {{ form.item_id.label }}
+        {{ form.item_id(class="form-control") }}
+    </div>
+    
+    <div class="form-group">
+        {{ form.quantity.label }}
+        {{ form.quantity(class="form-control") }}
+    </div>
+    
+    <div class="form-group">
+        {{ form.notes.label }}
+        {{ form.notes(class="form-control") }}
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Use Item</button>
+</form>
+{% endblock %}

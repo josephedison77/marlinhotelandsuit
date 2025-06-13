@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Marlin Hotel{% endblock %}
+
+{% block content %}
+<style>
+    
+  :root {
+      --primary: #023147;
+      --secondary: #c5a880;
+      --accent: #8c6d46;
+      --light: #f8f9fa;
+      --dark: #0a1429;
+      --text: #333;
+      --gold-light: #e6c78a;
+      --gold-dark: #b08d57;
+      --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+  
+  body {
+      font-family: 'Montserrat', sans-serif;
+     
+      color: var(--light);
+      overflow-x: hidden;
+      background: linear-gradient(55deg, #031924 0%, var(--primary) 100%), url('https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+      line-height: 1.6;
+
+      
+  }
+   .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3px 20px;
+  }
+
+  .card-body{background: rgba(255, 255, 255, 0);
+      backdrop-filter: blur(10);
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      transition: var(--transition);
+      position: relative;
+      transform: translateY(0);
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--accent);
+      padding: 3rem 0.5rem;
+      color: var(--light); }
+  
+.mb-3 input{background-color: var(--gold-light); border-radius: 20px; border: 1px solid var(--accent); color: var(--gold-light);margin: 0.5rem }
+input:hover{background-color: #c5a880;}
+label{color: #e6c78a; font-style: italic; font-size: 0.8rem;}
+input::placeholder{font-size: 0.7rem;}
+
+.text-center{padding: 1rem 1rem;}
+
+@media (max-width: 868px) {.hrr{display: none;} .mb-3{width: 14rem;}}
+ 
+</style>
+<section class="auth-section py-5">
+    <div class="container">
+        
+        <div class="row justify-content-center" style="margin-top: -3rem;" >
+            <div class="col-md-6" style="background-color: none;">
+                    
+                    <div class="card-body">
+                        <img src="{{ url_for('static', filename='uploads/ftt.png') }} " style="width: 14rem;margin-left: 5.9rem; margin-bottom: 1rem; " class="hrr">
+                
+                        <h2 class="card-title text-center mb-4" style="color: var(--gold-light) ; font-family: monospace;">Create Account</h2>
+                        
+                        <form method="POST" action="{{ url_for('register') }}">
+                            {{ form.csrf_token }}
+                            
+                            <div class="mb-3">
+                                <label class="form-label">firstname</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="username" 
+                                       required
+                                       placeholder="Enter firstname">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       name="email" 
+                                       required
+                                       placeholder="Enter email">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <div class="input-group">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           name="password" 
+                                           required
+                                           id="password"
+                                           placeholder="Enter password">
+                                    <button class="btn btn-outline-secondary" 
+                                            type="button" 
+                                            id="togglePassword">
+                                        <i class="bi bi-eye" style="color: var(--gold-light); width: 3rem;border: none;"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       name="confirm_password" 
+                                       required
+                                       placeholder="Confirm password">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mb-3 " style="background-color:var(--primary) ; border-radius: 20px; padding: 0.6rem; margin: 0rem;">Register</button>
+                            
+                            <div class="text-center">
+                                <span class="text" style="color: var(--gold-light);"><p>Already have an account?</p> </span>
+                                <a href="{{ url_for('login') }}">Sign In</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+    
+    togglePassword.addEventListener('click', function() {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+});
+</script>
+{% endblock %}

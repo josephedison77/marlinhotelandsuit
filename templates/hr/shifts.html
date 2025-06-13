@@ -1,0 +1,363 @@
+{% extends "hr/base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="display-6 fw-bold text-primary">Shift Management</h2>
+        <div>
+            <a href="{{ url_for('generate_rotational_shifts') }}" class="btn btn-primary-gradient me-2">
+                <i class="bi bi-arrow-repeat me-2"></i>Generate Shifts
+            </a>
+            <a href="{{ url_for('clear_shifts') }}" class="btn btn-danger-gradient">
+                <i class="bi bi-trash me-2"></i>Clear Shifts
+            </a>
+        </div>
+    </div>
+    
+    <div class="row mb-4 g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-light-blue text-primary py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-funnel me-2"></i>Filter Shifts</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="GET" action="{{ url_for('hr_shift_management') }}">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Position</label>
+                            <select class="form-select form-control-lg" name="position">
+                                <option value="">All Positions</option>
+                                {% for position in positions %}
+                                <option value="{{ position }}" {% if request.args.get('position') == position %}selected{% endif %}>
+                                    {{ position }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Date Range</label>
+                            <div class="input-group input-group-lg">
+                                <input type="date" class="form-control" name="start_date" 
+                                       value="{{ request.args.get('start_date') }}">
+                                <span class="input-group-text bg-light-blue text-primary fw-semibold">to</span>
+                                <input type="date" class="form-control" name="end_date" 
+                                       value="{{ request.args.get('end_date') }}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary-gradient mt-3 w-100">
+                            <i class="bi bi-filter me-2"></i>Apply Filters
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-light-blue text-primary py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-gear me-2"></i>Shift Actions</h5>
+                </div>
+                <div class="card-body d-flex flex-column justify-content-center p-4">
+                    <div class="d-grid gap-3">
+                        <a href="{{ url_for('shift_schedule') }}" class="btn btn-outline-primary-custom">
+                            <i class="bi bi-calendar-week me-2"></i>View Schedule
+                        </a>
+                        <a href="{{url_for('export_sjifts_csv')}}" class="btn btn-outline-success-custom">
+                            <i class="bi bi-file-earmark-spreadsheet me-2"></i>Export to Excel
+                        </a>
+                        <a href="#" class="btn btn-outline-info-custom">
+                            <i class="bi bi-printer me-2"></i>Print Schedule
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-light-blue text-primary py-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-calendar3 me-2"></i>Upcoming & Recent Shifts</h5>
+        </div>
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 shift-table">
+                    <thead class="table-light-blue">
+                        <tr>
+                            <th>Staff Member</th>
+                            <th>Position</th>
+                            <th>Shift Type</th>
+                            <th>Date</th>
+                            <th>Start Time (Local)</th>
+                            <th>End Time (Local)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead><tbody>
+    {% for shift in shifts %}
+    <tr>
+        <td>
+            <div class="d-flex align-items-center">
+                <div class="avatar me-3">
+                    <img src="https://via.placeholder.com/40/{{ (loop.index * 100) % 999 }}FA4A/ffffff?text={{ shift.staff.first_name[0] }}" alt="" class="rounded-circle">
+                </div>
+                <div>
+                    <div class="fw-semibold text-dark">{{ shift.staff.first_name }} {{ shift.staff.last_name }}</div>
+                    <div class="text-muted small">{{ shift.staff.staff_id }}</div>
+                </div>
+            </div>
+        </td>
+        <td><span class="badge bg-light-primary text-primary fw-semibold">{{ shift.position }}</span></td>
+        <td><span class="badge bg-light-secondary text-secondary fw-semibold">{{ shift.shift_type }}</span></td>
+        <td>{{ shift.shift_date.strftime('%Y-%m-%d') }}</td>
+       <td class="fw-semibold text-success">{{ shift.start_time | datetimeformat('%H:%M') }}</td>
+                    <td class="fw-semibold text-danger">{{ shift.end_time | datetimeformat('%H:%M') }}</td>
+                    
+                    <td>
+            {% if shift.status == "Active" %}
+                <span class="badge bg-success-gradiant">Active</span>
+            {% elif shift.status == "Upcoming" %}
+                <span class="badge bg-warning-gradiant text-dark">Upcoming</span>
+            {% else %}
+                <span class="badge bg-secondary-gradiant">Completed</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="7" class="text-center py-5 text-muted">
+            <i class="bi bi-calendar-x me-2 fs-4"></i>
+            <p class="mt-2 mb-0">No shifts found for the selected filters.</p>
+            <a href="{{ url_for('generate_rotational_shifts') }}" class="btn btn-outline-primary-custom mt-3">Generate New Shifts</a>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+                </table>
+            </div>
+            
+            <div class="mt-4 text-muted small text-center p-3 border-top">
+                <p class="mb-1">Current Server Time (WAT): <span class="fw-semibold">{{ current_local.strftime('%Y-%m-%d %I:%M %p %Z') }}</span></p>
+                <p class="mb-0">All shift times are displayed in your local timezone.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <a href="{{ url_for('hr_dashboard') }}" class="btn btn-outline-secondary-custom btn-lg">
+            <i class="bi bi-arrow-left me-2"></i> Back to HR Dashboard
+        </a>
+    </div>
+</div>
+
+<style>
+    /* General Styling */
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Inter', sans-serif;
+        color: #344767;
+    }
+
+    .container-fluid {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    h2 {
+        font-weight: 700;
+        color: #1a237e;
+    }
+
+    /* Card Styling */
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: none;
+        background-color: #ffffff;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Light blue gradient */
+        color: #1a237e;
+        border-radius: 15px 15px 0 0 !important;
+        font-size: 1.15rem;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, #1e88e5, #42a5f5);
+        border: none;
+        color: white;
+    }
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+        background: linear-gradient(135deg, #1565c0, #2196f3);
+    }
+
+    .btn-danger-gradient {
+        background: linear-gradient(135deg, #ef5350, #e53935);
+        border: none;
+        color: white;
+    }
+    .btn-danger-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+        background: linear-gradient(135deg, #c62828, #d32f2f);
+    }
+
+    .btn-outline-primary-custom {
+        border-color: #1976d2;
+        color: #1976d2;
+        background-color: transparent;
+        box-shadow: none;
+    }
+    .btn-outline-primary-custom:hover {
+        background-color: #1976d2;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(25, 118, 210, 0.2);
+    }
+
+    .btn-outline-success-custom {
+        border-color: #43a047;
+        color: #43a047;
+        background-color: transparent;
+        box-shadow: none;
+    }
+    .btn-outline-success-custom:hover {
+        background-color: #43a047;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(67, 160, 71, 0.2);
+    }
+
+    .btn-outline-info-custom {
+        border-color: #039be5;
+        color: #039be5;
+        background-color: transparent;
+        box-shadow: none;
+    }
+    .btn-outline-info-custom:hover {
+        background-color: #039be5;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(3, 155, 229, 0.2);
+    }
+    
+    .btn-outline-secondary-custom {
+        border-color: #6c757d;
+        color: #6c757d;
+        background-color: transparent;
+        box-shadow: none;
+    }
+    .btn-outline-secondary-custom:hover {
+        background-color: #6c757d;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(108, 117, 125, 0.2);
+    }
+
+
+    /* Form Controls */
+    .form-control, .form-select {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 0.8rem 1.2rem;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #42a5f5;
+        box-shadow: 0 0 0 0.2rem rgba(66, 165, 245, 0.25);
+        outline: none;
+    }
+    .input-group-text {
+        background-color: #e3f2fd;
+        border: 1px solid #bbdefb;
+        border-radius: 10px;
+        padding: 0.8rem 1.2rem;
+    }
+
+    /* Table Styling */
+    .shift-table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .shift-table thead th {
+        background-color: #e3f2fd;
+        color: #1a237e;
+        font-weight: 700;
+        padding: 1rem 1.5rem;
+        border-bottom: 2px solid #bbdefb;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .shift-table tbody tr {
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .shift-table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .shift-table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        border-top: 1px solid #eeeeee;
+        font-size: 0.9rem;
+    }
+
+    /* Avatar */
+    .avatar img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border: 2px solid #e0e0e0;
+    }
+
+    /* Badges */
+    .badge {
+        padding: 0.6em 0.9em;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .bg-success-gradiant {
+        background: linear-gradient(45deg, #81c784, #43a047) !important;
+        color: white !important;
+    }
+    .bg-warning-gradiant {
+        background: linear-gradient(45deg, #ffb300, #fb8c00) !important;
+        color: white !important;
+    }
+    .bg-secondary-gradiant {
+        background: linear-gradient(45deg, #a7a7a7, #757575) !important;
+        color: white !important;
+    }
+    .bg-light-primary {
+        background-color: #e3f2fd !important;
+        color: #1976d2 !important;
+    }
+    .bg-light-secondary {
+        background-color: #e0e0e0 !important;
+        color: #616161 !important;
+    }
+
+    /* Footer Time Info */
+    .text-muted p {
+        margin-bottom: 0.25rem;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --sidebar-bg: #052f41;
+            --sidebar-text: #e7e7e5;
+            --sidebar-text-hover: #ffffff;
+            --sidebar-active-bg: #1F6FEB;
+            --content-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --font-family-sans-serif: 'Inter', sans-serif;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-orange: #ea580c;
+            --accent-pink: #db2777;
+            --accent-teal: #0d9488;
+        }
+
+        body {
+            font-family: var(--font-family-sans-serif);
+            background-color: var(--content-bg);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .dashboard-sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1050;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-sidebar.collapsed {
+            width: 70px;
+        }
+
+        .dashboard-sidebar.collapsed .sidebar-header .app-logo span,
+        .dashboard-sidebar.collapsed .sidebar-user-info,
+        .dashboard-sidebar.collapsed .nav-link span:not(.badge),
+        .dashboard-sidebar.collapsed .nav-link .badge,
+        .dashboard-sidebar.collapsed .dropdown-toggle::after,
+        .dashboard-sidebar.collapsed .nav-heading span {
+            display: none;
+        }
+
+        .dashboard-sidebar.collapsed .app-logo .bi { 
+            font-size: 1.5rem;
+            margin-right: 0;
+        }
+
+        .dashboard-sidebar.collapsed .sidebar-user { 
+            justify-content: center;
+            padding: 0.75rem;
+        }
+
+        .dashboard-sidebar.collapsed .sidebar-user img { 
+            margin-right: 0; 
+        }
+
+        .dashboard-sidebar.collapsed .nav-item { 
+            text-align: center; 
+        }
+
+        .dashboard-sidebar.collapsed .nav-link i { 
+            margin-right: 0; 
+            font-size: 1.1rem; 
+        }
+
+        .dashboard-sidebar.collapsed .collapse { 
+            display: none !important; 
+        }
+
+        .dashboard-sidebar .sidebar-header {
+            padding: 0.5rem 1.25rem 1rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(231, 231, 229, 0.1);
+            position: relative;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--sidebar-text);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .dashboard-sidebar .sidebar-header .app-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .dashboard-sidebar .sidebar-user {
+            padding: 1rem 1.45rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(231, 231, 229, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-sidebar .sidebar-user img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            object-fit: cover;
+            border: 2px solid var(--sidebar-text-hover);
+        }
+
+        .dashboard-sidebar .sidebar-user-info .user-name {
+            font-weight: 600;
+            color: var(--sidebar-text-hover);
+            font-size: 0.9rem;
+            margin-bottom: 0.1rem;
+        }
+
+        .dashboard-sidebar .sidebar-user-info .user-role {
+            font-size: 0.75rem;
+            color: var(--sidebar-text);
+            opacity: 0.8;
+        }
+
+        .dashboard-sidebar .sidebar-nav {
+            padding: 0 0.75rem;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-item {
+            margin-bottom: 0.15rem;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link {
+            color: var(--sidebar-text);
+            opacity: 0.85;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link i {
+            font-size: 1.1rem;
+            margin-right: 0.85rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--sidebar-text-hover);
+            opacity: 1;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link.active {
+            background-color: var(--sidebar-active-bg);
+            color: var(--sidebar-text-hover);
+            font-weight: 600;
+            opacity: 1;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link .badge {
+            font-size: 0.55rem;
+            margin-left: auto;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-heading {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--sidebar-text);
+            opacity: 0.6;
+            padding: 1rem 1rem 0.3rem 1rem;
+        }
+
+        /* Main Container */
+        .main-container {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        .sidebar-collapsed .main-container {
+            margin-left: 70px;
+            width: calc(100% - 70px);
+        }
+
+        /* Header Styles */
+        .dashboard-header {
+            background-color: var(--card-bg);
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .dashboard-header .page-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0;
+        }
+
+        .dashboard-header .header-actions .form-control {
+            font-size: 0.8rem;
+            max-width: 250px;
+        }
+
+        .dashboard-header .header-actions .btn-icon {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .dashboard-header .header-actions .btn-icon:hover {
+            color: var(--text-primary);
+        }
+
+        .dashboard-header .user-dropdown img {
+            width: 32px;
+            height: 32px;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 1.5rem;
+        }
+
+        /* Card Styles */
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            transform: translateY(-2px);
+        }
+
+        .dashboard-card .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-card .card-header .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom:0;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .stat-card .card-body { padding: 1rem; }
+        .stat-card .stat-title {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .stat-card .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        .stat-card .stat-meta { font-size: 0.75rem; }
+        .stat-card .stat-icon {
+            font-size: 1.5rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+        
+        .bg-light-blue { background-color: rgba(37, 99, 235, 0.1) !important; }
+        .text-blue { color: var(--accent-blue) !important; }
+        .bg-light-green { background-color: rgba(22, 163, 74, 0.1) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .bg-light-orange { background-color: rgba(234, 88, 12, 0.1) !important; }
+        .text-orange { color: var(--accent-orange) !important; }
+        .bg-light-purple { background-color: rgba(124, 58, 237, 0.1) !important; }
+        .text-purple { color: var(--accent-purple) !important; }
+        .bg-light-teal { background-color: rgba(13, 148, 136, 0.1) !important; }
+        .text-teal { color: var(--accent-teal) !important; }
+
+        /* Table Styles */
+        .table-container {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table tbody td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr:first-child td {
+            border-top: none;
+        }
+
+        .table tbody tr:hover td {
+            background-color: #f8fafc;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-logo {
+            flex-grow: 1;
+        }
+
+        .sidebar-toggle {
+            position: relative;
+            margin-left: 3rem;
+            margin-top: -2rem; gap: 1rem;
+            font-weight: bolder;
+            color: #052f41;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-card {
+            height: 100%;
+        }
+        
+        .chart-card .card-body {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .dashboard-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .dashboard-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-container {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .sidebar-collapsed .main-container {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+            }
+            
+            .dashboard-header .header-actions {
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+            
+            .dashboard-header .header-actions .form-control {
+                max-width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+            
+            .dashboard-card .card-body {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-content {
+                padding: 1rem;
+            }
+            
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card .stat-value {
+                font-size: 1rem;
+            }
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 0.4em 0.65em;
+            border-radius: 0.5rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        @media (max-width: 992px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+        
+        .attendance-status {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+        }
+        
+        .status-completed {
+            background-color: rgba(22, 163, 74, 0.1);
+            color: var(--accent-green);
+        }
+        
+        .status-inprogress {
+            background-color: rgba(234, 88, 12, 0.1);
+            color: var(--accent-orange);
+        }
+        
+        .status-absent {
+            background-color: rgba(219, 39, 119, 0.1);
+            color: var(--accent-pink);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="{{ url_for('home') }}" class="app-logo">
+                <i class="bi bi-buildings"></i> <span>Marlin Hotel</span>
+            </a>
+          
+        </div>
+        <div class="sidebar-user">
+            <img src="https://placehold.co/80x80/052f41/e7e7e5?text={{ current_user.name[0] if current_user.name else (current_user.email[0] if current_user.email else 'A') }}" alt="User Avatar">
+            <div class="sidebar-user-info">
+                <div class="user-name">{{ current_user.name | default(current_user.email, true) }}</div>
+                <div class="user-role">
+                    {% if current_user.has_role('super_admin') %}Super Admin
+                    {% elif current_user.has_role('hr') %}HR Manager
+                    {% elif current_user.has_role('receptionist') %}Receptionist
+                    {% else %}Staff{% endif %}
+                </div>
+            </div>
+        </div>
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('hr_staff_management') }}">
+                    <i class="bi bi-people"></i> <span>Staff Management</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('hr_shift_management') }}">
+                    <i class="bi bi-calendar-check"></i> <span>Shift Management</span>
+                </a>
+            </li>
+
+             <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('manage_shifts') }}">
+                    <i class="bi bi-calendar-check"></i> <span>See shift</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('hr_attendance') }}">
+                    <i class="bi bi-clock-history"></i> <span>Attendance</span>
+                </a>
+            </li>
+            
+            <li class="nav-heading"><span>Administration</span></li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin_approvals') }}">
+                    <i class="bi bi-shield-lock"></i> <span>Admin Approvals</span>
+                </a>
+            </li>
+            
+            <div class="gen" style="padding: 0rem 0.2rem; display: flex; flex-direction: column; gap: 0.7rem;" >
+            <li class="nav-item">
+                <div class="gen" style="padding: 0rem 0.2rem; display: flex; flex-direction: column; gap: 0.7rem;">
+    <form action="{{ url_for('generate_rotational_shifts') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-arrow-repeat me-2"></i>Generate Shifts
+        </button>
+    </form>
+    
+    <form action="{{ url_for('clear_shifts') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash me-2"></i>Clear Shifts
+        </button>
+    </form>
+</div>
+             </li>
+            <li>
+           
+            </li>
+            </div>
+            <li class="nav-heading"><span>System</span></li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('user_settings') }}">
+                    <i class="bi bi-gear"></i> <span>Settings</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="bi bi-box-arrow-left"></i> <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-container" id="mainContainer">
+        <header class="dashboard-header">
+            <div class="d-flex align-items-center">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                  <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+                <h1 class="page-title">HR Dashboard</h1>
+            </div>
+            <div class="header-actions d-flex align-items-center">
+                <div class="input-group me-3" style="max-width: 300px;">
+                    
+                </div>
+                 <a href="{{ url_for('notifications') }}" class="btn btn-icon me-2 position-relative" aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+                    {% if not current_user.unread_notifications  %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ current_user.unread_notifications }}
+                    </span>
+                    {% endif %}
+                </a>
+                <div class="dropdown user-dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://placehold.co/64x64/052f41/e7e7e5?text={{ current_user.name[0] if current_user.name else (current_user.email[0] if current_user.email else 'A') }}" alt="User" class="rounded-circle">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url_for('profile') }}"><i class="bi bi-person me-2"></i> Profile</a></li>
+                         {% if current_user.has_role('super_admin') %}
+                                    <li><a class="dropdown-item text-danger" href="{{ url_for('admin_dashboard') }}">
+                                        <i class="bi bi-speedometer2 me-2"></i>Super Admin Dashboard
+                                    </a></li>
+                                {% endif %}
+                        <li><a class="dropdown-item" href="{{ url_for('user_settings') }}"><i class="bi bi-gear me-2"></i> Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <!-- Stats Grid -->
+            <div class="stat-grid">
+                <!-- Total Staff Card -->
+<div class="stat-card">
+    <div class="card-body d-flex align-items-center">
+        <div class="flex-shrink-0 stat-icon bg-light-blue text-blue p-3 me-3 rounded">
+            <i class="bi bi-people-fill"></i>
+        </div>
+        <div class="flex-grow-1">
+            <div class="stat-title">Total Staff</div>
+            <div class="stat-value">{{ total_staff }}</div>
+            <div class="stat-meta">
+                {{ active_staff }} active, {{ inactive_staff }} inactive
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Shifts Card -->
+<div class="stat-card">
+    <div class="card-body d-flex align-items-center">
+        <div class="flex-shrink-0 stat-icon bg-light-green text-green p-3 me-3 rounded">
+            <i class="bi bi-calendar-check"></i>
+        </div>
+        <div class="flex-grow-1">
+            <div class="stat-title">Upcoming Shifts</div>
+            <div class="stat-value">{{ upcoming_shifts }}</div>
+            <div class="stat-meta">
+                {{ tomorrow_shifts }} tomorrow
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Admins Card -->
+<div class="stat-card">
+    <div class="card-body d-flex align-items-center">
+        <div class="flex-shrink-0 stat-icon bg-light-orange text-orange p-3 me-3 rounded">
+            <i class="bi bi-shield-lock"></i>
+        </div>
+        <div class="flex-grow-1">
+            <div class="stat-title">Pending Admins</div>
+            <div class="stat-value">{{ pending_admins }}</div>
+            <div class="stat-meta">
+                Admin approval requests
+            </div>
+        </div>
+    </div>
+</div>
+                
+                <div class="stat-card">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="flex-shrink-0 stat-icon bg-light-teal text-teal p-3 me-3 rounded">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="stat-title">Recent Attendance</div>
+                            <div class="stat-value">{{ recent_attendance|length }}</div>
+                            <div class="stat-meta">
+                                Today's records
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="chart-container">
+                <div class="dashboard-card chart-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Staff Distribution by Position</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="positionChart" height="250"></canvas>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card chart-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Shift Type Distribution</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="shiftChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+    <div class="card-header">
+        <h5>Today's Attendance</h5>
+    </div>
+    <div class="card-body">
+        <canvas id="attendanceChart"></canvas>
+    </div>
+</div>
+          <!-- staff_dashboard.html -->
+           <!-- Check-in Verification Widget -->
+<!-- Add this to staff dashboard template -->
+<div class="card mt-4">
+    <div class="card-header bg-primary text-white">
+        <h5>Clock In</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('clock_in') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="mb-3">
+                <label for="otp" class="form-label">Enter OTP</label>
+                <input type="text" class="form-control" id="otp" name="otp" required>
+                <small class="form-text text-muted">Check your email for today's OTP</small>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Clock In</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- In hr_dashboard.html - update attendance section -->
+<div class="dashboard-card">
+    <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Attendance</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Staff Member</th>
+                        <th>Date</th>
+                        <th>Shift</th>
+                        <th>Clock In</th>
+                        <th>Clock Out</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in recent_attendance %}
+                    <tr>
+                        <td>{{ record.staff.first_name }} {{ record.staff.last_name }}</td>
+                        <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if record.shift %}
+                                {{ record.shift.shift_type }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.clock_in_time %}
+                                {{ record.clock_in_time.strftime('%H:%M') }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.clock_out_time %}
+                                {{ record.clock_out_time.strftime('%H:%M') }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.status == 'absent' %}
+                                <span class="badge bg-danger">Absent</span>
+                            {% elif record.clock_in_time and record.clock_out_time %}
+                                <span class="badge bg-success">Completed</span>
+                            {% elif record.clock_in_time %}
+                                <span class="badge bg-warning">In Progress</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Pending</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No attendance records found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+                <!-- Replace the entire recent shifts table with this -->
+<div class="dashboard-card">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Recent Shifts</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Staff Member</th>
+                        <th>Position</th>
+                        <th>Shift Type</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for shift in shifts %}
+                    <tr>
+                        <td>{{ shift.staff.first_name }} {{ shift.staff.last_name }}</td>
+                        <td>{{ shift.position }}</td>
+                        <td>{{ shift.shift_type }}</td>
+                        <td>{{ shift.shift_date.strftime('%Y-%m-%d') }}</td>
+                        
+                        <!-- Display times in local time -->
+                       <td>{{ shift.start_time | datetimeformat('%H:%M') }}</td>
+                    <td>{{ shift.end_time | datetimeformat('%H:%M') }}</td>
+                        <!-- Status with badges -->
+                        <td>
+                            {% if shift.status == "Active" %}
+                                <span class="badge bg-success">Active</span>
+                            {% elif shift.status == "Upcoming" %}
+                                <span class="badge bg-warning">Upcoming</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Completed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">No shifts scheduled for the next 7 days</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Staff Position Distribution Chart
+        const positionCtx = document.getElementById('positionChart');
+        if (positionCtx) {
+            new Chart(positionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: {{ positions | tojson }},
+                    datasets: [{
+                        data: {{ position_counts | tojson }},
+                        backgroundColor: [
+                            '#4dc9f6', '#a8e6cf', '#ffd3b6', 
+                            '#ffaaa5', '#d8b5ff', '#9fe6a0',
+                            '#ff9a8b', '#4a536b', '#f8a5c2'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                boxWidth: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    return `${ctx.label}: ${ctx.raw} staff (${Math.round(ctx.raw/total*100)}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        const searchForm = document.querySelector('.header-actions form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = this.querySelector('input').value.trim();
+            if (query) {
+                window.location.href = `/search?q=${encodeURIComponent(query)}`;
+            }
+        });
+    }
+
+    
+        // Shift Type Distribution Chart
+        const shiftCtx = document.getElementById('shiftChart');
+        if (shiftCtx) {
+            new Chart(shiftCtx, {
+                type: 'bar',
+                data: {
+                    labels: {{ shift_types | tojson }},
+                    datasets: [{
+                        label: 'Shifts Scheduled',
+                        data: {{ shift_counts | tojson }},
+                        backgroundColor: '#667eea',
+                        borderRadius: 6,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { 
+                                color: 'rgba(0,0,0,0.05)' 
+                            }
+                        },
+                        x: { 
+                            grid: { display: false } 
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+    });
+
+
+</script>
+<script>
+      document.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar
+            const sidebar = document.getElementById('sidebar');
+            const mainContainer = document.getElementById('mainContainer');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            
+            // Toggle sidebar on desktop
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    mainContainer.classList.toggle('sidebar-collapsed');
+                    
+                    // Update toggle icon
+                    const icon = sidebarToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.classList.remove('bi-chevron-left');
+                        icon.classList.add('bi-chevron-right');
+                    } else {
+                        icon.classList.remove('bi-chevron-right');
+                        icon.classList.add('bi-chevron-left');
+                    }
+                });
+            }
+            
+            // Toggle sidebar on mobile
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+            }
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth < 992) {
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickInsideMobileBtn = mobileMenuBtn.contains(event.target);
+                    
+                    if (!isClickInsideSidebar && !isClickInsideMobileBtn && sidebar.classList.contains('show')) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });       
+        });
+
+</script>
+
+</body>
+</html>

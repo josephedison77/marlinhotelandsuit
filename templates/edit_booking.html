@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Edit Booking #{{ booking.id }}{% endblock %}
+{% block content %}
+<style>
+    .booking-edit-container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+    .card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+    .card-header {
+        background: linear-gradient(to right, #023147, #002738);
+        color: white;
+        padding: 1.2rem 1.5rem;
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #0a1429;
+    }
+    .form-control {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #c5a880;
+        box-shadow: 0 0 0 0.25rem rgba(197, 168, 128, 0.25);
+    }
+    .btn-success {
+        background: linear-gradient(to right, #28a745, #1e7e34);
+        border: none;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+    }
+    .warning-note {
+        background-color: rgba(255, 193, 7, 0.15);
+        border-left: 4px solid #ffc107;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="container py-5 booking-edit-container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h4>Edit Booking #{{ booking.id }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.check_in_date.label(class="form-label") }}
+                            {{ form.check_in_date(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.check_out_date.label(class="form-label") }}
+                            {{ form.check_out_date(class="form-control") }}
+                        </div>
+                        <div class="warning-note">
+                            <h4 style="color: red;">please kindly retake the booking again in the booking page so as to process your payment thanks...</h4>
+                        </div>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <a href="{{ url_for('booking_details', booking_id=booking.id) }}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Date picker enhancement
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        dateInputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.style.borderColor = '#c5a880';
+                input.style.boxShadow = '0 0 0 0.25rem rgba(197, 168, 128, 0.25)';
+            });
+            input.addEventListener('blur', () => {
+                input.style.borderColor = '#dee2e6';
+                input.style.boxShadow = 'none';
+            });
+        });
+
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const checkIn = document.getElementById('check_in_date').value;
+            const checkOut = document.getElementById('check_out_date').value;
+            
+            if (new Date(checkOut) <= new Date(checkIn)) {
+                e.preventDefault();
+                alert('Check-out date must be after check-in date');
+            }
+        });
+    });
+</script>
+{% endblock %}

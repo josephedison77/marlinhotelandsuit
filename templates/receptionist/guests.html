@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-content">
+    <div class="row">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title">Guest Directory</h3>
+                    <div>
+                        <a href="{{ url_for('export_guests_csv') }}" class="btn btn-sm btn-outline-light">
+                            <i class="bi bi-download me-1"></i> Export CSV
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Filters -->
+                    <form class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Search Guests</label>
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control" 
+                                       placeholder="Search by name or email" value="{{ search_query }}">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Statuses</option>
+                                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                                <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 align-self-end">
+                            <a href="{{ url_for('guest_list') }}" class="btn btn-outline-secondary">Reset Filters</a>
+                        </div>
+                    </form>
+                    
+                    <!-- Guests Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Guest</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Bookings</th>
+                                    <th>Last Visit</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for guest in guests %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://placehold.co/80x80/052f41/e7e7e5?text={{ guest.name[0] if guest.name else (guest.email[0] if guest.email else 'G') }}" 
+                                                 alt="{{ guest.username }}" class="rounded-circle me-3" width="40">
+                                            <div>
+                                                <strong>{{ guest.username }}</strong>
+                                                <div class="text-muted small">{{ guest.name }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ guest.email }}</td>
+                                    <td>{{ guest.phone or 'N/A' }}</td>
+                                    <td>{{ guest.bookings|length }}</td>
+                                    <td>
+                                        {% if guest.last_login %}
+                                            {{ guest.last_login|datetimeformat }}
+                                        {% else %}
+                                            Never
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if guest.status == 'active' %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% elif guest.status == 'pending' %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <i class="bi bi-people me-2"></i> No guests found
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav>
+                        <ul class="pagination justify-content-end">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

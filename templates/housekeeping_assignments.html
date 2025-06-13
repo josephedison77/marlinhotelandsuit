@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    body {
+        background-color: var(--light);
+        color: var(--text);
+    }
+    .container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    h2 {
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+    .card {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        border: none;
+        overflow: hidden;
+    }
+    .card-header {
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .card-header.bg-danger {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+    .card-header.bg-warning {
+        background-color: var(--secondary) !important;
+        color: var(--dark) !important;
+    }
+    .card-header.bg-secondary {
+        background-color: var(--accent) !important;
+        color: var(--light) !important;
+    }
+    .card-body {
+        padding: 1.5rem;
+    }
+    .form-label {
+        font-weight: 500;
+        color: var(--primary);
+    }
+    .form-control, .form-select {
+        border-radius: 0.5rem;
+        border: 1px solid var(--gold-light);
+        padding: 0.5rem 0.75rem;
+    }
+    .btn-success {
+        background-color: var(--accent) !important;
+        border-color: var(--accent) !important;
+        color: var(--light) !important;
+        border-radius: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+    .btn-success:hover {
+        background-color: var(--gold-dark) !important;
+        border-color: var(--gold-dark) !important;
+    }
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-color: #c3e6cb;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.25rem;
+    }
+    .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border-color: #bee5eb;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.25rem;
+    }
+    .btn-outline-primary {
+        color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        border-radius: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+    .btn-outline-primary:hover {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2>Housekeeping Assignments</h2>
+    
+    <div class="row">
+        {% for assignment in assignments %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-{% if assignment.priority == 1 %}danger text-white{% elif assignment.priority == 2 %}warning{% else %}secondary text-white{% endif %}">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-0">Room {{ assignment.room.name }}</h5>
+                        <span>
+                            Priority: 
+                            {% if assignment.priority == 1 %}High{% elif assignment.priority == 2 %}Medium{% else %}Low{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Assigned To:</strong></p>
+                            <p>{{ assignment.staff.first_name }} {{ assignment.staff.last_name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Due By:</strong></p>
+                            <p>{{ assignment.due_by | datetimeformat }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <p class="mb-1"><strong>Status:</strong></p>
+                        <span class="badge bg-{% if assignment.status == 'completed' %}success{% elif assignment.status == 'in_progress' %}info{% else %}warning{% endif %}">
+                            {{ assignment.status|replace('_', ' ')|title }}
+                        </span>
+                    </div>
+                    
+                    {% if assignment.status != 'completed' %}
+                    <form method="POST" action="{{ url_for('complete_assignment', assignment_id=assignment.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="notes-{{ assignment.id }}" class="form-label">Notes:</label>
+                            <textarea class="form-control" id="notes-{{ assignment.id }}" 
+                                      name="notes" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Mark as Completed
+                        </button>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> 
+                        {% if assignment.logs %}
+    Completed on {{ assignment.logs[0].end_time | datetimeformat }}
+{% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> 
+                No active housekeeping assignments at this time.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+     <a href="{{ url_for('housekeeping_dashboard') }}" 
+                   class="btn btn-outline-primary"> Back to dashboard
+                 
+                </a>
+</div>
+{% endblock %}

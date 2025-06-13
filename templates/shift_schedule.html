@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+    <h2 class="mb-4" style="margin-bottom: 1.5rem; color: #007bff;">Shift Schedule</h2>
+    
+    {% if not dates %}
+    <div class="alert alert-warning" style="color: #856404; background-color: #fff3cd; border-color: #ffeeba; padding: 0.75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: 0.25rem;">
+        No shifts found. Generate shifts first.
+    </div>
+    {% endif %}
+
+    {% for date in dates %}
+    <div class="card mb-4" style="margin-bottom: 1.5rem !important; border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
+        <div class="card-header bg-primary text-white" style="padding: 0.75rem 1.25rem; margin-bottom: 0; background-color: #007bff !important; color: #fff !important; border-bottom: 1px solid rgba(0, 0, 0, 0.125); border-top-left-radius: calc(0.25rem - 1px); border-top-right-radius: calc(0.25rem - 1px);">
+            <h4 style="margin-bottom: 0;">{{ date.strftime('%A, %B %d, %Y') }}</h4>
+        </div>
+        
+        <div class="card-body" style="flex: 1 1 auto; padding: 1.25rem;">
+            <div class="row" style="display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;">
+                {% for position in positions %}
+                <div class="col-md-4 mb-3" style="flex: 0 0 auto; width: 33.333333%; padding-right: 15px; padding-left: 15px; margin-bottom: 1rem !important;">
+                    <div class="card h-100" style="height: 100% !important; border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
+                        <div class="card-header bg-secondary text-white" style="padding: 0.75rem 1.25rem; margin-bottom: 0; background-color: #6c757d !important; color: #fff !important; border-bottom: 1px solid rgba(0, 0, 0, 0.125); border-top-left-radius: calc(0.25rem - 1px); border-top-right-radius: calc(0.25rem - 1px);">
+                            {{ position }} Department
+                        </div>
+                        <div class="card-body" style="flex: 1 1 auto; padding: 1.25rem;">
+                            {% for shift in shifts if shift.shift_date == date and shift.position == position %}
+                            <div class="shift-card mb-2 p-2 border rounded" style="margin-bottom: 0.5rem !important; padding: 0.5rem !important; border: 1px solid #dee2e6 !important; border-radius: 0.25rem !important; transition: transform 0.2s; background-color: #f8f9fa;">
+                                <div class="d-flex justify-content-between align-items-center" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <strong style="color: #212529;">{{ shift.staff.first_name }} {{ shift.staff.last_name }}</strong>
+                                        <div class="text-muted small" style="color: #6c757d !important; font-size: 0.875em;">
+                                            {{ shift.shift_type }} Shift
+                                        </div>
+                                    </div>
+                                    <div class="text-end" style="text-align: end !important;">
+                                        <div class="text-success" style="color: #28a745 !important;">
+                                            {{ shift.start_time.strftime('%I:%M %p') }} - 
+                                            {{ shift.end_time.strftime('%I:%M %p') }}
+                                        </div>
+                                        <span class="badge bg-info" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; background-color: #17a2b8 !important; color: #fff;">
+                                            {{ shift.position }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="text-muted" style="color: #6c757d !important;">No shifts scheduled</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .shift-card {
+        transition: transform 0.2s;
+        background-color: #f8f9fa;
+    }
+    .shift-card:hover {
+        transform: translateY(-2px);
+        background-color: #e9ecef;
+    }
+    .position-card {
+        transition: transform 0.2s;
+    }
+    .position-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .shift-item {
+        background-color: #f8f9fa;
+        transition: background-color 0.2s;
+    }
+    .shift-item:hover {
+        background-color: #e9ecef;
+    }
+</style>
+{% endblock %}

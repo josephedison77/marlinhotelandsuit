@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Booking Confirmation | Marlin Hotel{% endblock %}
+
+{% block content %}
+<style>
+  .confirmation-section {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, #20e250 0%, #0b4c4e 100%);
+    min-height: 100vh;
+  }
+  
+  .confirmation-card {
+    max-width: 700px;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    border: none;
+  }
+  
+  .confirmation-header {
+    background: linear-gradient(135deg, var(--primary), var(--dark));
+    color: white;
+    text-align: center;
+    padding: 3rem;
+    border-bottom: 4px solid var(--secondary);
+  }
+  
+  .confirmation-icon {
+    font-size: 5rem;
+    color: var(--secondary);
+    margin-bottom: 1.5rem;
+  }
+  
+  .confirmation-body {
+    padding: 3rem;
+    background: white;
+  }
+  
+  .detail-card {
+    background: rgba(248, 249, 250, 0.5);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .detail-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .detail-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  
+  .detail-label {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+  }
+  
+  .detail-value {
+    font-size: 1.1rem;
+    color: var(--dark);
+  }
+  
+  .price-value {
+    color: var(--secondary);
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    border: none;
+    padding: 0.9rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(197, 168, 128, 0.3);
+  }
+  
+  .btn-outline {
+    background: white;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+  }
+</style>
+
+<section class="confirmation-section">
+  <div class="confirmation-card">
+    <div class="confirmation-header">
+      <div class="confirmation-icon">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <h1 class="mb-3">Booking Confirmed!</h1>
+      <p class="lead">Thank you for choosing Marlin Hotel</p>
+    </div>
+    
+    <div class="confirmation-body">
+      <h4 class="text-center mb-4" style="color: var(--primary);">Booking Reference: #{{ booking.id }}</h4>
+      
+      <div class="detail-card">
+        <div class="detail-item">
+          <div class="detail-label">Room</div>
+          <div class="detail-value">{{ room.name }}</div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Dates</div>
+          <div class="detail-value">
+            {{ booking.check_in_date.strftime('%b %d, %Y') }} - 
+            {{ booking.check_out_date.strftime('%b %d, %Y') }}
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Guests</div>
+          <div class="detail-value">{{ booking.guests }}</div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-label">Total Price</div>
+          <div class="detail-value price-value">{{ booking.total_amount|format_currency }}</div>
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <a href="{{ url_for('my_bookings') }}" class="btn btn-primary">
+          View My Bookings
+        </a>
+        <a href="{{ url_for('home') }}" class="btn btn-outline">
+          Return Home
+        </a>
+      </div>
+    </div>
+    <a href="{{ url_for('booking_receipt', booking_id=booking.id) }}" target="_blank" class="btn btn-primary">
+    Print Receipt
+</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Manual Booking{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --primary: #023147; --accent: #8c6d46; --light: #f8f9fa; --border-color: #ced4da;
+    --border-radius: 0.5rem; --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+</style>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card" style="border: none; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                <div class="card-body" style="padding: 2.5rem;">
+                    <div class="text-center mb-4">
+                        <h2 style="color: var(--primary); font-weight: 700;">Manual Guest Booking</h2>
+                        <p style="color: #6c757d;">Create a new booking for a walk-in guest.</p>
+                    </div>
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="email" class="form-label" style="color: var(--primary); font-weight: 500;">Guest Email</label>
+                            <input type="email" name="email" class="form-control" required style="border-radius: var(--border-radius); padding: 12px; border: 1px solid var(--border-color); transition: var(--transition);" onfocus="this.style.borderColor='var(--accent)'; this.style.boxShadow='0 0 0 3px rgba(140, 109, 70, 0.2)';" onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label" style="color: var(--primary); font-weight: 500;">Guest Password</label>
+                            <input type="password" name="password" class="form-control" required style="border-radius: var(--border-radius); padding: 12px; border: 1px solid var(--border-color); transition: var(--transition);" onfocus="this.style.borderColor='var(--accent)'; this.style.boxShadow='0 0 0 3px rgba(140, 109, 70, 0.2)';" onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
+                            <small class="form-text" style="color: #6c757d;">Guest can use this to log in later.</small>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn" style="background-color: var(--accent); color: white; padding: 14px; font-weight: 600; border-radius: var(--border-radius); transition: var(--transition); border: none;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Create Booking</button>
+                            <a href="{{ url_for('receptionist_dashboard') }}" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: #555; padding: 14px; font-weight: 600; border-radius: var(--border-radius); transition: var(--transition);" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

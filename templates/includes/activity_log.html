@@ -1,0 +1,72 @@
+<div class="recent-activity">
+    <h3>Recent Activities</h3>
+    <ul class="activity-list">
+        {% for activity in recent_activities %}
+            <li class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-{% if 'Create' in activity.title %}plus{% elif 'Update' in activity.title %}pencil-alt{% else %}trash{% endif %}"></i>
+                </div>
+                <div class="activity-content">
+                    <strong>{{ activity.title }}</strong>
+                    <p>{{ activity.description }}</p>
+                    <small class="text-muted">
+                        <i class="far fa-clock"></i> 
+                        {{ activity.timestamp|datetimeformat('%Y-%m-%d %H:%M') }}
+                    </small>
+                </div>
+            </li>
+        {% else %}
+            <li class="activity-item">No recent activities</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<style>
+.recent-activity {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+}
+
+.activity-item {
+    display: flex;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    margin-right: 15px;
+    font-size: 18px;
+    color: #4e73df;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-content strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.activity-content p {
+    margin: 5px 0;
+    color: #6c757d;
+}
+
+.text-muted {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+</style>

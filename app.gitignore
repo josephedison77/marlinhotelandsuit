@@ -1,0 +1,11 @@
+# Environment files
+.env
+*.env
+
+# Database
+*.db
+*.sqlite
+
+# Python cache
+__pycache__/
+*.py[cod]

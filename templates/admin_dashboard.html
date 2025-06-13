@@ -1,0 +1,1490 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    /* from the standalone design - this will style your dashboard */
+    :root {
+        --sidebar-bg: #052f41; /* Dark blue from your base.html/reference image */
+        --sidebar-text: #e7e7e5; /* Metallic gold / light text from your base.html */
+        --sidebar-text-hover: #ffffff;
+        --sidebar-active-bg: #1F6FEB; /* A brighter blue for active items */
+        --content-bg: #f8fafc; /* Light background for content area */
+        --card-bg: #ffffff;
+        --text-primary: #1e293b; /* Darker text for content */
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --font-family-sans-serif: 'Inter', sans-serif;
+
+        --accent-blue: #2563eb;
+        --accent-green: #16a34a;
+        --accent-purple: #7c3aed;
+        --accent-orange: #ea580c;
+        --accent-pink: #db2777;
+        --accent-teal: #0d9488;
+    }
+
+    /* Reset some potential base.html body styles for this specific page */
+    body {
+        font-family: var(--font-family-sans-serif);
+        background-color: var(--content-bg) !important; /* Ensure override */
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        margin: 0;
+        display: flex; /* This is key for the new layout */
+        min-height: 100vh;
+        padding-top: 0 !important; /* Override potential padding from base.html nav */
+    }
+
+    /* Hide base.html's main navigation and footer for this dashboard page */
+    nav.navbar.royal-blue-bg, footer.royal-blue-bg {
+        display: none !important;
+    }
+    /* Adjust main container from base.html if it exists and adds padding */
+    main.container.my-5 {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        flex-grow: 1; /* Allow it to take space if body is flex */
+    }
+
+/* NEW QUICK ACTIONS STYLES */
+        .quick-actions-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+        
+        .quick-actions-header {
+            background-color: #f8fafc;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Changed to 2fr for clarity, 1fr is fine */
+            gap: 0.75rem;
+            padding: 1rem;
+        }
+        
+        .quick-action-item {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+        }
+        
+        .quick-action-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-color: var(--accent-blue);
+        }
+        
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        .action-icon.blue { background-color: rgba(37, 99, 235, 0.1); color: var(--accent-blue); }
+        .action-icon.green { background-color: rgba(22, 163, 74, 0.1); color: var(--accent-green); }
+        .action-icon.purple { background-color: rgba(124, 58, 237, 0.1); color: var(--accent-purple); }
+        .action-icon.teal { background-color: rgba(13, 148, 136, 0.1); color: var(--accent-teal); }
+        
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .action-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Fix for dropdown issue */
+        .dropdown-toggle::after {
+            display: inline-block !important;
+        }
+        
+        .dropdown-menu {
+            min-width: 300px !important;
+            z-index: 1060 !important;
+        }
+
+        @media (max-width: 768px) {
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    /* --- Sidebar --- */
+    .admin-dashboard-sidebar { /* Specific class to avoid conflict */
+        width: 280px;
+        background-color: var(--sidebar-bg);
+        color: var(--sidebar-text);
+        padding: 1rem 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1050;
+        overflow-y: auto;
+        transition: width 0.3s ease, transform 0.3s ease;
+    }
+    .admin-dashboard-sidebar .sidebar-header {
+        padding: 0.5rem 1.25rem 1rem 1.25rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(231, 231, 229, 0.1);
+    }
+    .admin-dashboard-sidebar .sidebar-header .app-logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--sidebar-text);
+        text-decoration: none;
+    }
+    .admin-dashboard-sidebar .sidebar-user {
+        padding: 1rem 1.45rem;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(231, 231, 229, 0.1);
+        margin-bottom: 0.5rem;
+    }
+    .admin-dashboard-sidebar .sidebar-user img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 0.75rem;
+        object-fit: cover;
+        border: 2px solid var(--sidebar-text-hover);
+    }
+    .admin-dashboard-sidebar .sidebar-user-info .user-name {
+        font-weight: 600;
+        color: var(--sidebar-text-hover);
+        font-size: 0.9rem;
+        margin-bottom: 0.1rem;
+        
+    }
+    .admin-dashboard-sidebar .sidebar-user-info .user-role {
+        font-size: 0.75rem;
+        color: var(--sidebar-text);
+        opacity: 0.8;
+    }
+
+    .admin-dashboard-sidebar .sidebar-nav { padding: 0 0.75rem; }
+    .admin-dashboard-sidebar .sidebar-nav .nav-item { margin-bottom: 0.15rem; }
+    .admin-dashboard-sidebar .sidebar-nav .nav-link {
+        color: var(--sidebar-text);
+        opacity: 0.85;
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-decoration: none; /* Ensure no underline from base styles */
+    }
+    .admin-dashboard-sidebar .sidebar-nav .nav-link i {
+        font-size: 1.1rem;
+        margin-right: 0.85rem;
+        width: 20px;
+        text-align: center;
+    }
+    .admin-dashboard-sidebar .sidebar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--sidebar-text-hover);
+        opacity: 1;
+    }
+    .admin-dashboard-sidebar .sidebar-nav .nav-link.active {
+        background-color: var(--sidebar-active-bg);
+        color: var(--sidebar-text-hover);
+        font-weight: 600;
+        opacity: 1;
+    }
+    .admin-dashboard-sidebar .sidebar-nav .nav-link .badge { font-size: 0.55rem; margin-left: auto; }
+    .admin-dashboard-sidebar .sidebar-nav .dropdown-toggle::after {
+        margin-left: auto;
+        transition: transform 0.2s ease;
+    }
+    .admin-dashboard-sidebar .sidebar-nav .nav-link[aria-expanded="true"]::after { transform: rotate(90deg); }
+    .admin-dashboard-sidebar .sidebar-nav .collapse .nav-link {
+        padding-left: 2.75rem;
+        font-size: 0.8rem;
+    }
+    .admin-dashboard-sidebar .sidebar-nav .nav-heading {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--sidebar-text);
+        opacity: 0.6;
+        padding: 1rem 1rem 0.3rem 1rem;
+    }
+
+    /* Add to your existing CSS */
+.activity-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    padding: 1rem;
+}
+
+.activity-card .card-header {
+    padding: 0;
+    border: none;
+}
+
+.activity-card .card-body {
+    padding: 0;
+    margin-top: 0.75rem;
+}
+
+.activity-list .list-group-item {
+    padding: 0.75rem 0;
+    border-color: rgba(0,0,0,0.05);
+}
+
+.activity-list .list-group-item:first-child {
+    padding-top: 0;
+}
+
+.activity-list .list-group-item:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+    
+    .admin-dashboard-sidebar.collapsed { width: 80px; }
+    .admin-dashboard-sidebar.collapsed .sidebar-header .app-logo span,
+    .admin-dashboard-sidebar.collapsed .sidebar-user-info,
+    .admin-dashboard-sidebar.collapsed .nav-link span:not(.badge),
+    .admin-dashboard-sidebar.collapsed .nav-link .badge,
+    .admin-dashboard-sidebar.collapsed .dropdown-toggle::after,
+    .admin-dashboard-sidebar.collapsed .nav-heading span {
+        display: none;
+    }
+    .admin-dashboard-sidebar.collapsed .app-logo .bi { font-size: 1.5rem; }
+    .admin-dashboard-sidebar.collapsed .sidebar-user img { margin-right: 0; }
+    .admin-dashboard-sidebar.collapsed .sidebar-user { justify-content: center; padding: 0.75rem;}
+    .admin-dashboard-sidebar.collapsed .nav-item { text-align: center; }
+    .admin-dashboard-sidebar.collapsed .nav-link i { margin-right: 0; font-size: 1.1rem; }
+    .admin-dashboard-sidebar.collapsed .collapse { display: none !important; }
+
+    .admin-main-container {
+        margin-left: 280px; /* Adjusted to match sidebar width */
+        width: calc(100% - 280px); /* Adjusted to match sidebar width */
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        transition: margin-left 0.3s ease, width 0.3s ease;
+    }
+    .admin-dashboard-sidebar.collapsed ~ .admin-main-container {
+        margin-left: 80px;
+        width: calc(100% - 80px);
+    }
+
+     .flex{background-color: #74a4f1;
+    align-self: center;
+padding: 4px 4px;
+border-radius: 100px;}
+
+    .admin-page-header {
+        background-color: var(--card-bg);
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 60px;
+    }
+    .admin-page-header .page-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0;
+    }
+     .admin-page-header .header-actions .form-control {
+        font-size: 0.8rem;
+        max-width: 250px;
+    }
+    .admin-page-header .header-actions .btn-icon {
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+    .admin-page-header .header-actions .btn-icon:hover { color: var(--text-primary); }
+    .admin-page-header .user-dropdown img { width: 32px; height: 32px; }
+
+
+    .admin-content-wrapper { /* New wrapper for content and right panel */
+        display: flex;
+        flex-grow: 1;
+        overflow: hidden; /* Prevent content from breaking layout */
+    }
+    .admin-content-area {
+        padding: 2.5rem;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .stat-card, .chart-card, .activity-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        transition: all 0.2s ease;
+    }
+    .stat-card:hover, .chart-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+        transform: translateY(-2px);
+    }
+    .stat-card .card-body { padding: 1rem; }
+    .stat-card .stat-title {
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        padding-right: 3rem;
+    }
+    .stat-card .stat-value {
+        font-size: 1rem;
+        padding-right: 1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+    .stat-card .stat-meta { font-size: 0.75rem; }
+    .stat-card .stat-icon {
+        font-size: 1.2rem;
+        padding: 0.6rem;
+        border-radius: 6px;
+    }
+    /* Helper classes for stat icon colors */
+    .bg-light-blue { background-color: rgba(37, 99, 235, 0.1) !important; }
+    .text-blue { color: var(--accent-blue) !important; }
+    .bg-light-green { background-color: rgba(22, 163, 74, 0.1) !important; }
+    .text-green { color: var(--accent-green) !important; }
+    .bg-light-orange { background-color: rgba(234, 88, 12, 0.1) !important; }
+    .text-orange { color: var(--accent-orange) !important; }
+    .bg-light-purple { background-color: rgba(124, 58, 237, 0.1) !important; }
+    .text-purple { color: var(--accent-purple) !important; }
+
+
+    .chart-card .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .chart-card .card-header .card-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom:0;
+    }
+    .chart-card .card-header .card-options .btn,
+    .chart-card .card-header .form-select {
+        font-size: 0.75rem; padding: 0.2rem 0.5rem;
+    }
+    .chart-card .card-body { padding: 1rem; }
+    .chart-canvas { max-height: 200px; width: 100% !important; }
+   
+    .occupancy-summary, .ratings-summary { font-size: 0.8rem; }
+    .occupancy-summary .total-rooms { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
+    .occupancy-summary ul { list-style: none; padding-left: 0; }
+    .occupancy-summary ul li span:first-child { min-width: 100px; display: inline-block;}
+    .overall-rating-value { font-size: 1.8rem; font-weight: 700; color: var(--text-primary); }
+    .rating-bar-label { font-size: 0.75rem; margin-bottom: 0.1rem; display: block; }
+    .progress.rating-progress { height: 8px; margin-bottom: 0.5rem; border-radius: 4px;}
+
+    .activity-list .list-group-item {
+        padding: 0.65rem 1rem; border-color: var(--border-color); font-size: 0.8rem; background: transparent;
+    }
+    .activity-list .list-group-item:last-child { border-bottom: none;  }
+    .activity-list .activity-icon {
+        width: 32px; height: 32px; font-size: 0.9rem;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        
+    }
+    .activity-list .activity-time { font-size: 0.7rem; color: var(--text-secondary); }
+
+    .admin-right-panel {
+        width: 280px;
+        background-color: var(--card-bg);
+        border-left: 1px solid var(--border-color);
+        padding: 1.5rem;
+        height: calc(100vh - 60px); /* Adjust for page header height */
+        overflow-y: auto;
+        transition: width 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+        display: none; /* Default for desktop, shown by JS for 3-col mobile or if toggled */
+    }
+    .admin-right-panel .card-title { font-size: 0.95rem; font-weight: 600; }
+
+
+    .sidebar-toggler-btn, .right-panel-toggler-btn {
+        background: none; border: none; color: var(--text-secondary);
+        font-size: 1.3rem; cursor: pointer; padding: 0.25rem 0.5rem;
+    }
+    .sidebar-toggler-btn:hover, .right-panel-toggler-btn:hover { color: var(--text-primary); }
+    .desktop-sidebar-toggler { display: none; }
+
+
+    @media (max-width: 991.98px) {
+        .admin-dashboard-sidebar { transform: translateX(-100%); }
+        .admin-dashboard-sidebar.open { transform: translateX(0); box-shadow: 0 0 25px rgba(0,0,0,0.1); }
+        .admin-main-container { margin-left: 0; width: 100%; }
+        .admin-page-header .desktop-sidebar-toggler { display: none; }
+        .admin-page-header .mobile-sidebar-toggler { display: inline-block !important; }
+        .admin-right-panel {
+            position: fixed; top: 60px; /* Below page header */ right:0; transform: translateX(100%);
+            z-index: 1045; box-shadow: 0 0 25px rgba(0,0,0,0.1); display: block;
+             height: calc(100vh - 60px); /* Full height below header */
+        }
+        .admin-right-panel.open { transform: translateX(0); }
+        .admin-page-header .mobile-right-panel-toggler { display: inline-block !important; }
+    }
+    @media (min-width: 992px) {
+        .admin-page-header .desktop-sidebar-toggler { display: inline-block !important; }
+        .admin-right-panel { /* Show right panel on desktop if not explicitly hidden by a class */
+            display: block;
+            height: calc(100vh - 60px); /* Adjust for page header height */
+        }
+        .admin-content-wrapper.no-right-panel .admin-right-panel { display: none; }
+        .admin-content-wrapper.no-right-panel .admin-content-area { flex-basis: 100%; }
+
+    }
+
+    /* Optional: Overlay for mobile off-canvas sidebars */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1040; /* Below sidebar (1050), above content */
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    @media (max-width: 767.98px) {
+        body.mobile-3-column-active { display: flex; overflow-x: hidden; }
+        .mobile-3-column-active .admin-dashboard-sidebar {
+            /* These lines are modified from your original code to ensure off-canvas behavior */
+            transform: translateX(-100%) !important; /* Explicitly ensure it's off-screen */
+            position: fixed; /* Ensure it stays fixed for overlay */
+            top: 0; /* Align with header */
+            left: 0;
+            height: 100vh;
+            z-index: 1050; /* Keep high z-index for overlay */
+            width: 280px; /* Maintain full width for off-canvas */
+            flex-shrink: 0;
+            padding: 1rem 0;
+        }
+        .mobile-3-column-active .admin-dashboard-sidebar.open {
+            transform: translateX(0) !important;
+        }
+        .mobile-3-column-active .admin-dashboard-sidebar .sidebar-header .app-logo span,
+        .mobile-3-column-active .admin-dashboard-sidebar .sidebar-user-info,
+        .mobile-3-column-active .admin-dashboard-sidebar .nav-link span:not(.badge),
+        .mobile-3-column-active .admin-dashboard-sidebar .nav-link .badge,
+        .mobile-3-column-active .admin-dashboard-sidebar .dropdown-toggle::after,
+        .mobile-3-column-active .admin-dashboard-sidebar .nav-heading span { display: flex; flex-direction: column; }
+        .mobile-3-column-active .admin-dashboard-sidebar .app-logo .bi { font-size: 1.6rem; }
+        .mobile-3-column-active .admin-dashboard-sidebar .sidebar-user img { width:30px; height:30px; margin-right: 0; }
+        .mobile-3-column-active .admin-dashboard-sidebar .sidebar-user { justify-content: center; padding: 0.75rem 0.5rem;}
+        .mobile-3-column-active .admin-dashboard-sidebar .nav-item { text-align: center; }
+        .mobile-3-column-active .admin-dashboard-sidebar .nav-link i { margin-right: 0; font-size: 1.2rem; }
+
+        .mobile-3-column-active .admin-main-container { margin-left: 0 !important; width: 100%; flex-grow: 1; }
+        .mobile-3-column-active .admin-content-wrapper { display: flex; flex-grow: 1; }
+        .mobile-3-column-active .admin-content-area { flex-grow: 1; padding: 0.75rem; min-width: 0; }
+        .mobile-3-column-active .admin-page-header { padding: 0.5rem 0.75rem; min-height: 50px;}
+        .mobile-3-column-active .admin-page-header .page-title { font-size: 1rem; }
+        .mobile-3-column-active .admin-page-header .header-actions .form-control { display: none; }
+
+        .mobile-3-column-active .admin-right-panel {
+            /* These lines are modified from your original code to ensure off-canvas behavior */
+            transform: translateX(100%) !important; /* Explicitly ensure it's off-screen */
+            position: fixed; /* Ensure it stays fixed for overlay */
+            top: 50px; /* Adjust to be below the mobile header */
+            right: 0;
+            z-index: 1045; /* Below left sidebar z-index */
+            width: 280px; /* Maintain full width for off-canvas */
+            flex-shrink: 0;
+            border-left: 1px solid var(--border-color);
+            padding: 0.75rem;
+            display: block !important; /* Ensure it's block so transform works */
+            height: calc(100vh - 50px); /* Adjust for mobile page header */
+        }
+        .mobile-3-column-active .admin-right-panel.open {
+            transform: translateX(0) !important;
+        }
+        .mobile-3-column-active .admin-right-panel .card-title { font-size: 0.8rem; }
+        .mobile-3-column-active .activity-list .list-group-item { padding: 0.5rem; font-size: 0.7rem;}
+        .mobile-3-column-active .activity-list .activity-icon { width: 24px; height: 24px; font-size: 0.75rem;}
+        .mobile-3-column-active .activity-list .activity-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+        .mobile-3-column-active .mobile-sidebar-toggler,
+        .mobile-3-column-active .mobile-right-panel-toggler { display: inline-block !important; } /* Ensure togglers are visible on smallest screens */
+    }
+
+    .admin-dashboard-sidebar::-webkit-scrollbar { width: 6px; }
+    .admin-dashboard-sidebar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    .admin-dashboard-sidebar::-webkit-scrollbar-thumb { background: var(--sidebar-text); opacity: 0.5; border-radius: 3px;}
+    .admin-dashboard-sidebar::-webkit-scrollbar-thumb:hover { opacity: 0.8; }
+</style>
+
+<div class="d-flex"> 
+    <aside class="admin-dashboard-sidebar" id="adminDashboardSidebar">
+        <div class="sidebar-header">
+            <a href="{{ url_for('home') }}" class="app-logo">
+                <i class="bi bi-buildings"></i> <span>Marlin Hotel</span>
+            </a>
+        </div>
+        <div class="sidebar-user">
+            <img src="https://placehold.co/80x80/052f41/e7e7e5?text={{ current_user.name[0] if current_user.name else (current_user.email[0] if current_user.email else 'A') }}" alt="User Avatar">
+            <div class="sidebar-user-info">
+                <div class="user-name">{{ current_user.name | default(current_user.email, true) }}</div>
+                <div class="user-role">
+                    {% if current_user.has_role('super_admin') %}Super Admin
+                    {% elif current_user.has_role('hr') %}HR Manager
+                    {% elif current_user.has_role('receptionist') %}Receptionist
+                    {% else %}Staff{% endif %}
+                </div>
+            </div>
+        </div>
+        <ul class="nav flex-column sidebar-nav" id="adminMenu">
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
+                    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint in ['admin_rooms', 'create_room'] %}active{% endif %}" href="#roomsSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="bi bi-door-open"></i> <span>Rooms</span>
+                </a>
+                <ul class="collapse nav flex-column" id="roomsSubmenu" data-bs-parent="#adminMenu">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_rooms') }}">Manage Rooms</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('create_room') }}">Add New Room</a></li>
+                </ul>
+            </li>
+             <li class="nav-item">
+                <a class="nav-link {% if request.endpoint in ['staff_list', 'staff_register'] %}active{% endif %}" href="#staffSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <i class="bi bi-people"></i> <span>Staff</span>
+                </a>
+                <ul class="collapse nav flex-column" id="staffSubmenu" data-bs-parent="#adminMenu">
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_dashboard') }}">Staff Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_list') }}">Staff List</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_register') }}">Register Staff</a></li>
+                </ul>
+            </li>
+             
+
+            <li class="nav-heading"><span>Management</span></li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'hr_dashboard' %}active{% endif %}" href="{{ url_for('hr_dashboard') }}">
+                    <i class="bi bi-person-badge"></i> <span>HR Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'bar_dashboard' %}active{% endif %}" href="{{ url_for('bar_dashboard') }}">
+                    <i class="bi bi-cup-straw"></i> <span>Bar Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'receptionist_dashboard' %}active{% endif %}" href="{{ url_for('receptionist_dashboard') }}">
+                    <i class="bi bi-reception-4"></i> <span>Receptionist Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'housekeeping_dashboard' %}active{% endif %}" href="{{ url_for('housekeeping_dashboard') }}">
+                    <i class="bi bi-house me-2"></i> <span>housekeeping_dashboard</span>
+                </a>
+            </li>
+
+            
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'housekeeping_dashboard' %}active{% endif %}" href="{{ url_for('finance_dashboard') }}">
+                    <i class="bi bi-bank me-2"></i> <span>finance_dashboard</span>
+                </a>
+            </li>
+
+            <!-- Add this to your admin dashboard navigation or quick links section -->
+<a href="{{ url_for('inventory_dashboard') }}" class="btn btn-outline-primary">
+    <i class="bi bi-box-seam me-2"></i> Inventory Dashboard
+</a>
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ url_for('inventory_list') }}">
+        <i class="bi bi-box-seam"></i> <span>Inventory</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{{ url_for('inventory_reports') }}">
+        <i class="bi bi-graph-up"></i> <span>Inventory Reports</span>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ url_for('use_inventory_item') }}">
+        <i class="bi bi-graph-up"></i> <span>use inventory</span>
+    </a>
+</li>
+
+
+
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'admin_approvals' %}active{% endif %}" href="{{ url_for('admin_approvals') }}">
+                    <i class="bi bi-check2-circle"></i> <span>Approvals</span>
+                     
+                        <span class="badge bg-danger rounded-pill">{{ admin_approvals }}</span>
+                    
+                </a>
+            </li>
+
+            
+            <li class="nav-item">
+                <a class="nav-link" href="#"> <i class="bi bi-file-earmark-text"></i> <span>Reports</span> </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('create_notification') }}"> <i class="bi bi-file-earmark-text"></i> <span>create notification</span> </a>
+            </li>
+
+
+            <li class="nav-heading"><span>System</span></li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('user_settings') }}"> <i class="bi bi-gear"></i> <span>Settings</span></a>
+            </li>
+             <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('maintenance_requests') }}"> <i class="bi bi-gear"></i> <span>Maintainance</span></a>
+            </li>
+             <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="bi bi-box-arrow-left"></i> <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="admin-main-container" id="adminMainContainer">
+        <header class="admin-page-header">
+            <div class="d-flex align-items-center">
+                <button class="sidebar-toggler-btn me-3 desktop-sidebar-toggler" id="desktopAdminSidebarToggler" aria-label="Toggle desktop sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                 <button class="sidebar-toggler-btn me-3 d-lg-none mobile-sidebar-toggler" id="mobileAdminSidebarToggler" aria-label="Toggle mobile sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h1 class="page-title">Admin Dashboard</h1>
+            </div>
+            <div class="header-actions d-flex align-items-center ms-auto">
+                <form class="d-none d-md-inline-block me-3">
+                    <input type="search" class="form-control form-control-sm" placeholder="Search...">
+                </form>
+                <a href="{{ url_for('notifications') }}" class="btn btn-icon me-2 position-relative" aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+                    {% if not current_user.unread_notifications  %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ current_user.unread_notifications }}
+                    </span>
+                    {% endif %}
+                </a>
+                <div class="dropdown user-dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://placehold.co/64x64/052f41/e7e7e5?text={{ current_user.name[0] if current_user.name else (current_user.email[0] if current_user.email else 'A') }}" alt="User" class="rounded-circle">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url_for('profile') }}"><i class="bi bi-person me-2"></i> Profile</a></li>
+                         {% if current_user.has_role('super_admin') %}
+                                    <li><a class="dropdown-item text-danger" href="{{ url_for('admin_dashboard') }}">
+                                        <i class="bi bi-speedometer2 me-2"></i>Super Admin Dashboard
+                                    </a></li>
+                                {% endif %}
+                        <li><a class="dropdown-item" href="{{ url_for('user_settings') }}"><i class="bi bi-gear me-2"></i> Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+                 <button class="sidebar-toggler-btn ms-2 d-lg-none mobile-right-panel-toggler" id="mobileAdminRightPanelToggler" aria-label="Toggle right panel">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="admin-content-wrapper" id="adminContentWrapper">
+            <main class="admin-content-area">
+                {% include '_flash_messages.html' %}
+                
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+    <div class="stat-card">
+        <div class="card-body d-flex align-items-center">
+            <div class="flex-shrink-0 stat-icon bg-light-blue text-blue p-3 me-3 rounded">
+                <i class="bi bi-cash-coin"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="stat-title">Daily Revenue</div>
+                <div class="stat-value">{{ daily_revenue|format_currency if daily_revenue is not none else '$0.00' }}</div>
+                <div class="stat-meta {% if daily_revenue_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    <i class="bi {% if daily_revenue_change >= 0 %}bi-arrow-up-short{% else %}bi-arrow-down-short{% endif %}"></i> 
+                    {{ daily_revenue_change|abs }}%
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="flex-shrink-0 stat-icon bg-light-green text-green p-3 me-3 rounded">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="stat-title">Total Revenue</div>
+                                    <div class="stat-value">{{ total_revenue|format_currency if total_revenue is not none else '$0.00' }}</div>
+                                    <div class="stat-meta {% if total_revenue_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        <i class="bi {% if total_revenue_change >= 0 %}bi-arrow-up-short{% else %}bi-arrow-down-short{% endif %}"></i> 
+                                        {{ total_revenue_change|abs }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="flex-shrink-0 stat-icon bg-light-orange text-orange p-3 me-3 rounded">
+                                    <i class="bi bi-journal-plus"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="stat-title">New Bookings</div>
+                                    <div class="stat-value">{{ new_bookings|length if new_bookings is iterable else new_bookings }}</div>
+                                    <div class="stat-meta {% if new_bookings_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        <i class="bi {% if new_bookings_change >= 0 %}bi-arrow-up-short{% else %}bi-arrow-down-short{% endif %}"></i> 
+                                        {{ new_bookings_change|abs }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="flex-shrink-0 stat-icon bg-light-purple text-purple p-3 me-3 rounded">
+                                    <i class="bi bi-person-check-fill"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="stat-title">Check-ins Today</div>
+                                    <div class="stat-value">{{ checkins_today if checkins_today is not none else 0 }}</div>
+                                    <div class="stat-meta {% if checkins_today_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        <i class="bi {% if checkins_today_change >= 0 %}bi-arrow-up-short{% else %}bi-arrow-down-short{% endif %}"></i> 
+                                        {{ checkins_today_change|abs }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add this after your main stats cards in finance_dashboard.html -->
+<div class="dashboard-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">Revenue Breakdown</h3>
+    </div>
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            {% for label, value in revenue_breakdown.items() %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ label }}</span>
+                <span class="fw-bold">{{ value|format_currency }}</span>
+            </li>
+            {% endfor %}
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                <span>Total Revenue</span>
+                <span class="fw-bold">{{ total_revenue|format_currency }}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Revenue Overview</h3>
+                                <div class="card-options">
+                                    <select class="form-select form-select-sm" style="width: auto;">
+                                        <option>Last 6 Months</option>
+                                        <option>Last 30 Days</option>
+                                        <option>Last 7 Days</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body"><canvas id="revenueChart" class="chart-canvas" style="max-height: 265px;"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="chart-card">
+                            <div class="card-header"><h3 class="card-title">Room Occupancy</h3></div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-7 occupancy-summary">
+                                        <div class="total-rooms">{{ total_rooms if total_rooms is not none else 0 }}</div>
+                                        <div class="text-muted mb-2" style="font-size:0.8rem;">Total Rooms</div>
+                                        <ul class="small">
+                                            <li><span><i class="bi bi-circle-fill text-primary me-1"></i> Occupied</span> <strong>{{ occupied_rooms if occupied_rooms is not none else 0 }}</strong></li>
+                                            <li><span><i class="bi bi-circle-fill text-success me-1"></i> Available</span> <strong>{{ available_rooms if available_rooms is not none else 0 }}</strong></li>
+                                            <li><span><i class="bi bi-circle-fill text-warning me-1"></i> Reserved</span> <strong>{{ reserved_rooms if reserved_rooms is not none else 0 }}</strong></li>
+                                            <li><span><i class="bi bi-circle-fill text-secondary me-1"></i> Maintenance</span> <strong>{{ maintenance_rooms if maintenance_rooms is not none else 0 }}</strong></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-5">
+                                        <canvas id="roomOccupancyChart" class="chart-canvas" style="max-height: 160px;"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-lg-4">
+                        <div class="chart-card">
+                            <div class="card-header"><h3 class="card-title">Guests This Week</h3></div>
+                            <div class="card-body"><canvas id="guestsChart" class="chart-canvas"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="chart-card">
+                            <div class="card-header"><h3 class="card-title">Monthly Bookings</h3></div>
+                            <div class="card-body"><canvas id="bookingsChart" class="chart-canvas"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="chart-card">
+                            <div class="card-header"><h3 class="card-title">Bookings by Platform</h3></div>
+                            <div class="card-body"><canvas id="bookingsPlatformChart" class="chart-canvas" style="max-height:170px;"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <div class="card-header"><h3 class="card-title">User Engagement</h3></div>
+                            <div class="card-body"><canvas id="bubbleChart" class="chart-canvas"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <div class="card-header"><h3 class="card-title">Feature Usage</h3></div>
+                            <div class="card-body"><canvas id="radarChart" class="chart-canvas"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="chart-card">
+                            <div class="card-header"><h3 class="card-title">Occupancy Rate Trend</h3></div>
+                            <div class="card-body"><canvas id="occupancyChart" class="chart-canvas" style="height: 250px;"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="admin-right-panel" id="adminRightPanelContainer">
+                 <div class="activity-card">
+                    <div class="card-header border-0 bg-transparent px-0 pt-0 pb-2">
+                        <h3 class="card-title">Overall Ratings</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="text-center mb-2">
+                            <div class="text-center mb-2">
+    {% if average_rating %}
+        <span class="overall-rating-value">{{ average_rating }}</span>
+        <span class="d-block text-warning small">
+            {% if average_rating >= 4.5 %}
+                Excellent
+            {% elif average_rating >= 3.5 %}
+                Good
+            {% elif average_rating >= 2.5 %}
+                Average
+            {% else %}
+                Poor
+            {% endif %}
+        </span>
+        <span class="d-block text-muted" style="font-size:0.7rem;">
+            {{ rating_count }} verified reviews
+        </span>
+    {% else %}
+        <span class="overall-rating-value">-</span>
+        <span class="d-block text-muted" style="font-size:0.7rem;">
+            No ratings yet
+        </span>
+    {% endif %}
+</div>
+                        </div>
+                        <div class="ratings-summary">
+                            </div>
+                    </div>
+                </div>
+                  <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="quick-actions-card">
+                                <div class="quick-actions-header">
+                                    <i class="bi bi-lightning me-2"></i> Quick Actions
+                                </div>
+                                <div class="quick-actions-grid">
+                                    <div class="quick-action-item" onclick="location.href='{{ url_for('create_room') }}';">
+                                        <div class="action-icon blue">
+                                            <i class="bi bi-plus-circle"></i>
+                                        </div>
+                                        <div class="action-title">Add New Room</div>
+                                        <div class="action-desc">Create new accommodation</div>
+                                    </div>
+
+                                    <div class="quick-action-item" onclick="location.href='{{ url_for('staff_register') }}';">
+                                        <div class="action-icon green">
+                                            <i class="bi bi-person-plus"></i>
+                                        </div>
+                                        <div class="action-title">Add Staff Member</div>
+                                        <div class="action-desc">Register new employee</div>
+                                    </div>
+
+                                    <div class="quick-action-item" onclick="location.href='{{ url_for('generate_reg_token') }}'">
+                                        <div class="action-icon purple">
+                                            <i class="bi bi-key"></i>
+                                        </div>
+                                        <div class="action-title">Generate Token</div>
+                                        <div class="action-desc">Create registration token</div>
+                                    </div>
+
+                                    <div class="quick-action-item" onclick="location.href='{{ url_for('generate_report') }}'y">
+                                        <div class="action-icon teal">
+                                            <i class="bi bi-file-earmark-bar-graph"></i>
+                                        </div>
+                                        <div class="action-title">Generate Report</div>
+                                        <div class="action-desc">Create financial report</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                <div class="activity1">
+
+                <div class="activity-card mt-3">
+                    <div class="card-header border-0 bg-transparent px-0 pt-0 pb-2">
+                        <h3 class="card-title">Recent Activity</h3>
+                        <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('activity_logs') }}"> <i class="bi bi-gear"></i> <span>view activity</span></a>
+            </li>
+                    </div>
+                   <div class="card-header border-0 bg-transparent px-0 pt-0 pb-2 d-flex justify-content-between align-items-center">
+        
+        <a href="{{ url_for('activity_logs') }}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-list me-1"></i> View Activity
+        </a>
+    </div>
+    <div class="activity" style="margin-left: -1rem; width: 50px; display: flex;">
+    <div class="card-body p-0">
+        <ul class="list-group list-group-flush activity-list">
+            {% for activity in recent_activities[:3] %}
+            <li class="list-group-item">
+                <div class="d-flex align-">
+                    <div class="flex-shrink-0 activity-icon {{ activity.icon_bg_color }} {{ activity.icon_text_color }}">
+                        <i class="{{ activity.icon_class }}"></i>
+                    </div>
+                    <div class="flex-grow-1 " style="font-size: 0.7rem; display: flex; flex-direction: column; margin-left: -2.5rem; margin-top: 3rem;">
+                        <div class="fw-semibold">{{ activity.title }}</div>
+                        {% if activity.description %}
+                        <div class="text-muted small">{{ activity.description }}</div>
+                        {% endif %}
+                        <div class="activity-time text-muted small">{{ activity.timestamp.strftime('%b %d, %I:%M %p') }}</div>
+                    </div>
+                </div>
+            </li>
+            {% else %}
+            <li class="list-group-item text-muted">No recent activity.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</div></div>
+</div>
+            </aside>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0/dist/chartjs-adapter-luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const body = document.body;
+    const adminSidebar = document.getElementById('adminDashboardSidebar');
+    const adminMainContainer = document.getElementById('adminMainContainer');
+    const adminRightPanelContainer = document.getElementById('adminRightPanelContainer');
+    const adminContentWrapper = document.getElementById('adminContentWrapper');
+    const sidebarOverlay = document.getElementById('sidebarOverlay'); // Get the overlay element
+
+    const desktopSidebarToggler = document.getElementById('desktopAdminSidebarToggler');
+    const mobileSidebarToggler = document.getElementById('mobileAdminSidebarToggler');
+    const mobileRightPanelToggler = document.getElementById('mobileAdminRightPanelToggler');
+
+    function toggleSidebar(sidebarElement, togglerElement, openClass, iconClass, altIconClass) {
+        sidebarElement.classList.toggle(openClass);
+        if (togglerElement) { // desktop toggler changes icon
+            const icon = togglerElement.querySelector('i');
+            if (icon) {
+                if (sidebarElement.classList.contains('collapsed')) {
+                    icon.classList.remove(iconClass);
+                    icon.classList.add(altIconClass);
+                } else {
+                    icon.classList.remove(altIconClass);
+                    icon.classList.add(iconClass);
+                }
+            }
+        }
+        updateOverlay();
+    }
+
+    function updateOverlay() {
+        if (window.innerWidth < 992) { // Only show overlay on mobile
+            if (adminSidebar.classList.contains('open') || adminRightPanelContainer.classList.contains('open')) {
+                sidebarOverlay.classList.add('active');
+            } else {
+                sidebarOverlay.classList.remove('active');
+            }
+        } else {
+            sidebarOverlay.classList.remove('active'); // Ensure hidden on desktop
+        }
+    }
+
+    if (desktopSidebarToggler) {
+        desktopSidebarToggler.addEventListener('click', () => {
+            toggleSidebar(adminSidebar, desktopSidebarToggler, 'collapsed', 'bi-list', 'bi-arrows-angle-expand');
+            // When desktop sidebar collapses, ensure right panel doesn't try to occupy its space visually
+            // This is more for visual consistency than structural change.
+            if (adminSidebar.classList.contains('collapsed')) {
+                adminMainContainer.style.marginLeft = '80px';
+                adminMainContainer.style.width = 'calc(100% - 80px)';
+            } else {
+                adminMainContainer.style.marginLeft = '280px';
+                adminMainContainer.style.width = 'calc(100% - 280px)';
+            }
+        });
+    }
+
+    if (mobileSidebarToggler) {
+        mobileSidebarToggler.addEventListener('click', () => {
+            toggleSidebar(adminSidebar, null, 'open'); // No icon change for mobile toggler
+        });
+    }
+
+    if (mobileRightPanelToggler) {
+        mobileRightPanelToggler.addEventListener('click', () => {
+            toggleSidebar(adminRightPanelContainer, null, 'open'); // No icon change for mobile toggler
+        });
+    }
+
+    // Close sidebars and overlay on click outside
+    document.addEventListener('click', function(event) {
+        if (window.innerWidth < 992) {
+            if (adminSidebar.classList.contains('open') && !adminSidebar.contains(event.target) && mobileSidebarToggler && !mobileSidebarToggler.contains(event.target)) {
+                adminSidebar.classList.remove('open');
+                updateOverlay();
+            }
+            if (adminRightPanelContainer.classList.contains('open') && !adminRightPanelContainer.contains(event.target) && mobileRightPanelToggler && !mobileRightPanelToggler.contains(event.target)) {
+                adminRightPanelContainer.classList.remove('open');
+                updateOverlay();
+            }
+        }
+    });
+
+    // Close sidebars if overlay is clicked
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', () => {
+            adminSidebar.classList.remove('open');
+            adminRightPanelContainer.classList.remove('open');
+            updateOverlay();
+        });
+    }
+
+
+    function activateMobile3ColumnIfNeeded() {
+        if (window.innerWidth < 768) {
+            body.classList.add('mobile-3-column-active');
+            adminSidebar.classList.remove('open'); // Ensure off-canvas is closed
+            adminRightPanelContainer.classList.remove('open'); // Ensure off-canvas is closed
+            if(desktopSidebarToggler) desktopSidebarToggler.style.display = 'none';
+        } else {
+            body.classList.remove('mobile-3-column-active');
+            if(desktopSidebarToggler) desktopSidebarToggler.style.display = 'inline-block';
+        }
+        updateOverlay(); // Update overlay visibility on resize
+    }
+    activateMobile3ColumnIfNeeded();
+    window.addEventListener('resize', activateMobile3ColumnIfNeeded);
+
+    // Chart.js Configuration
+    Chart.defaults.font.family = getComputedStyle(document.documentElement).getPropertyValue('--font-family-sans-serif').trim();
+    Chart.defaults.font.size = 11;
+    Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim();
+    Chart.defaults.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim();
+
+    const chartColors = {
+        blue: getComputedStyle(document.documentElement).getPropertyValue('--accent-blue').trim(),
+        green: getComputedStyle(document.documentElement).getPropertyValue('--accent-green').trim(),
+        purple: getComputedStyle(document.documentElement).getPropertyValue('--accent-purple').trim(),
+        orange: getComputedStyle(document.documentElement).getPropertyValue('--accent-orange').trim(),
+        pink: getComputedStyle(document.documentElement).getPropertyValue('--accent-pink').trim(),
+        teal: getComputedStyle(document.documentElement).getPropertyValue('--accent-teal').trim(),
+    };
+
+    const commonChartOptions = (showLegend = false, legendPos = 'bottom') => ({
+        responsive: true, maintainAspectRatio: false,
+        plugins: { 
+            legend: { 
+                display: showLegend, 
+                position: legendPos, 
+                labels: { 
+                    boxWidth: 10, 
+                    padding: 10, 
+                    font: { size: 10 } 
+                } 
+            },
+            tooltip: {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                titleColor: '#000',
+                bodyColor: '#333',
+                borderColor: 'rgba(0, 0, 0, 0.1)',
+                borderWidth: 1,
+                padding: 10,
+                cornerRadius: 4,
+                displayColors: true
+            }
+        },
+        scales: { 
+            y: { 
+                beginAtZero: true, 
+                grid: { drawBorder: false }, 
+                ticks: { padding: 8, font: { size: 10 } } 
+            }, 
+            x: { 
+                grid: { display: false }, 
+                ticks: { padding: 8, font: { size: 10 } } 
+            } 
+        },
+        animation: { duration: 600, easing: 'easeOutQuad' }
+    });
+
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart')?.getContext('2d');
+    if (revenueCtx) {
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: {{ revenue_labels|default(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], true)|tojson|safe }},
+                datasets: [{
+                    label: 'Revenue',
+                    data: {{ revenue_data|default([1500, 1800, 2200, 2800, 2500, 2300], true)|tojson|safe }},
+                    borderColor: chartColors.blue, 
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    tension: 0.4, 
+                    fill: true, 
+                    pointRadius: 3, 
+                    pointHoverRadius: 5, 
+                    pointBackgroundColor: chartColors.blue
+                }]
+            },
+            options: commonChartOptions(false)
+        });
+    }
+
+    // Room Occupancy Chart
+    const roomOccupancyCtx = document.getElementById('roomOccupancyChart')?.getContext('2d');
+    if (roomOccupancyCtx) {
+        new Chart(roomOccupancyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Occupied', 'Available', 'Reserved', 'Maintenance'],
+                datasets: [{
+                    data: [
+                        {{ occupied_rooms|default(0)|int }},
+                        {{ available_rooms|default(0)|int }},
+                        {{ reserved_rooms|default(0)|int }},
+                        {{ maintenance_rooms|default(0)|int }}
+                    ],
+                    backgroundColor: [chartColors.blue, chartColors.green, chartColors.orange, chartColors.purple],
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim(),
+                    borderWidth: 2, 
+                    hoverOffset: 4
+                }]
+            },
+            options: { ...commonChartOptions(false), cutout: '70%' }
+        });
+    }
+
+    // Guests This Week Chart
+    const guestsCtx = document.getElementById('guestsChart')?.getContext('2d');
+    if (guestsCtx) {
+        new Chart(guestsCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ days|default(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], true)|tojson|safe }},
+                datasets: [{
+                    label: 'Guests',
+                    data: {{ guests_data|default([30, 45, 60, 88, 70, 55, 40], true)|tojson|safe }},
+                    backgroundColor: chartColors.blue,
+                    borderRadius: 4,
+                    barThickness: 12,
+                }]
+            },
+            options: commonChartOptions(false)
+        });
+    }
+
+    // Monthly Bookings Chart
+    const bookingsCtx = document.getElementById('bookingsChart')?.getContext('2d');
+    if (bookingsCtx) {
+        new Chart(bookingsCtx, {
+            type: 'line',
+            data: {
+                labels: {{ monthly_labels|default(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], true)|tojson|safe }},
+                datasets: [{
+                    label: 'Bookings',
+                    data: {{ monthly_bookings|default([65, 59, 80, 81, 56, 92], true)|tojson|safe }},
+                    borderColor: chartColors.teal,
+                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: commonChartOptions(false)
+        });
+    }
+
+    // Bookings by Platform Chart
+    const bookingsPlatformCtx = document.getElementById('bookingsPlatformChart')?.getContext('2d');
+    if (bookingsPlatformCtx) {
+        const sources = {{ booking_sources|tojson|safe }};
+        new Chart(bookingsPlatformCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(sources),
+                datasets: [{
+                    data: Object.values(sources),
+                    backgroundColor: [
+                        chartColors.blue, 
+                        chartColors.green, 
+                        chartColors.purple, 
+                        chartColors.orange,
+                        chartColors.pink
+                    ]
+                }]
+            },
+            options: { 
+                ...commonChartOptions(true, 'right'), 
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 10,
+                            padding: 10
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // User Engagement Bubble Chart
+    const bubbleCtx = document.getElementById('bubbleChart')?.getContext('2d');
+    if (bubbleCtx) {
+        const activity = {{ user_activity|tojson|safe }};
+        new Chart(bubbleCtx, {
+            type: 'bubble',
+            data: {
+                datasets: activity.map(item => ({
+                    label: item.label,
+                    data: [{ 
+                        x: item.x, 
+                        y: item.y, 
+                        r: item.r 
+                    }],
+                    backgroundColor: chartColors.blue.replace(')', ', 0.6)').replace('rgb', 'rgba')
+                }))
+            },
+            options: {
+                ...commonChartOptions(true),
+                scales: {
+                    y: { 
+                        title: { 
+                            display: true, 
+                            text: 'Engagement Level',
+                            font: { size: 12 }
+                        },
+                        min: 0,
+                        max: 10
+                    },
+                    x: { 
+                        title: { 
+                            display: true, 
+                            text: 'Activity Frequency',
+                            font: { size: 12 }
+                        },
+                        min: 0,
+                        max: 10
+                    }
+                }
+            }
+        });
+    }
+
+    // Feature Usage Radar Chart
+    const radarCtx = document.getElementById('radarChart')?.getContext('2d');
+    if (radarCtx) {
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: {{ feature_usage.labels|tojson|safe }},
+                datasets: [{
+                    label: 'Usage Score',
+                    data: {{ feature_usage.data|tojson|safe }},
+                    fill: true,
+                    backgroundColor: 'rgba(124, 58, 237, 0.2)',
+                    borderColor: chartColors.purple,
+                    pointBackgroundColor: chartColors.purple,
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: chartColors.purple
+                }]
+            },
+            options: {
+                ...commonChartOptions(true),
+                scales: {
+                    r: {
+                        min: 0,
+                        max: Math.max(...{{ feature_usage.data|tojson|safe }}, 10),
+                        ticks: {
+                            stepSize: 2,
+                            backdropColor: 'transparent'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        angleLines: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 10
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Occupancy Rate Trend Chart
+    const occupancyCtx = document.getElementById('occupancyChart')?.getContext('2d');
+    if (occupancyCtx) {
+        new Chart(occupancyCtx, {
+            type: 'line',
+            data: {
+                labels: {{ occupancy_labels|tojson|safe }},
+                datasets: [{
+                    label: 'Occupancy Rate',
+                    data: {{ occupancy_rates|tojson|safe }},
+                    borderColor: chartColors.blue,
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointBackgroundColor: chartColors.blue
+                }]
+            },
+            options: {
+                ...commonChartOptions(false),
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Search form handling
+    const searchForm = document.querySelector('.header-actions form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = this.querySelector('input').value.trim();
+            if (query) {
+                window.location.href = `/search?q=${encodeURIComponent(query)}`;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

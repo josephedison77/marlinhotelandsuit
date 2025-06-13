@@ -1,0 +1,229 @@
+<!-- add_payment.html -->
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if payment else 'Add' }} Payment{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+    }
+
+    .payment-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        background: #f8f9fa;
+    }
+
+    .payment-card {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .payment-header {
+        padding: 25px;
+        background: linear-gradient(135deg, var(--primary), var(--dark));
+        color: white;
+        text-align: center;
+    }
+
+    .payment-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .payment-header p {
+        margin: 8px 0 0;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .payment-form {
+        padding: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--primary);
+    }
+
+    .form-select, .form-control {
+        width: 100%;
+        padding: 14px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+    .form-select:focus, .form-control:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.2);
+        outline: none;
+    }
+
+    .input-group {
+        display: flex;
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-right: none;
+        border-radius: 8px 0 0 8px;
+        padding: 0 15px;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        color: var(--primary);
+    }
+
+    .input-group .form-control {
+        border-radius: 0 8px 8px 0;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, var(--primary), var(--dark));
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(2, 49, 71, 0.3);
+    }
+
+    .btn-cancel {
+        background: white;
+        color: var(--primary);
+        border: 1px solid #ddd;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-cancel:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="payment-container">
+    <div class="payment-card">
+        <div class="payment-header">
+            <h2><i class="fas fa-credit-card"></i> {{ 'Edit' if payment else 'Add' }} Payment</h2>
+            <p>{{ 'Update' if payment else 'Record' }} payment details for a booking</p>
+        </div>
+        
+        <form method="POST" class="payment-form">
+            <div class="form-group floating">
+                <label class="form-label">Booking</label>
+                <select class="form-select" name="booking_id" required>
+                    {% for booking in bookings %}
+                    <option value="{{ booking.id }}" {{ 'selected' if payment and payment.booking_id == booking.id }}>
+                        Booking #{{ booking.id }} - {{ booking.room.room_type }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group floating">
+                <label class="form-label">Amount</label>
+                <div class="input-group">
+                    <span class="input-group-text">₦</span>
+                    <input type="number" class="form-control" name="amount" 
+                           value="{{ payment.amount if payment }}" step="0.01" required>
+                </div>
+            </div>
+
+            <div class="form-group floating">
+                <label class="form-label">Payment Method</label>
+                <select class="form-select" name="payment_method" required>
+                    <option value="Cash" {{ 'selected' if payment and payment.payment_method == 'Cash' }}>Cash</option>
+                    <option value="Paystack" {{ 'selected' if payment and payment.payment_method == 'Paystack' }}>Paystack</option>
+                    <option value="Card" {{ 'selected' if payment and payment.payment_method == 'Card' }}>Credit Card</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <a href="{{ url_for('payments') }}" class="btn btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to form elements
+        document.querySelectorAll('.form-group').forEach((group, index) => {
+            group.style.opacity = '0';
+            group.style.transform = 'translateY(20px)';
+            group.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`;
+        });
+
+        // Add currency formatting
+        const amountInput = document.querySelector('input[name="amount"]');
+        if (amountInput) {
+            amountInput.addEventListener('blur', function() {
+                if (this.value) {
+                    const formattedValue = parseFloat(this.value).toFixed(2);
+                    this.value = formattedValue;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

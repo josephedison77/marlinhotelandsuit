@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --sidebar-bg: #052f41;
+            --sidebar-text: #e7e7e5;
+            --sidebar-text-hover: #ffffff;
+            --sidebar-active-bg: #1F6FEB;
+            --content-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --font-family-sans-serif: 'Inter', sans-serif;
+            --accent-blue: #2563eb;
+            --accent-green: #16a34a;
+            --accent-purple: #7c3aed;
+            --accent-orange: #ea580c;
+            --accent-pink: #db2777;
+            --accent-teal: #0d9488;
+        }
+
+        body {
+            font-family: var(--font-family-sans-serif);
+            background-color: var(--content-bg);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .dashboard-sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1050;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-sidebar.collapsed {
+            width: 70px;
+        }
+
+        .dashboard-sidebar.collapsed .sidebar-header .app-logo span,
+        .dashboard-sidebar.collapsed .sidebar-user-info,
+        .dashboard-sidebar.collapsed .nav-link span:not(.badge),
+        .dashboard-sidebar.collapsed .nav-link .badge,
+        .dashboard-sidebar.collapsed .dropdown-toggle::after,
+        .dashboard-sidebar.collapsed .nav-heading span {
+            display: none;
+        }
+
+        .dashboard-sidebar.collapsed .app-logo .bi { 
+            font-size: 1.5rem;
+            margin-right: 0;
+        }
+
+        .dashboard-sidebar.collapsed .sidebar-user { 
+            justify-content: center;
+            padding: 0.75rem;
+        }
+
+        .dashboard-sidebar.collapsed .sidebar-user img { 
+            margin-right: 0; 
+        }
+
+        .dashboard-sidebar.collapsed .nav-item { 
+            text-align: center; 
+        }
+
+        .dashboard-sidebar.collapsed .nav-link i { 
+            margin-right: 0; 
+            font-size: 1.1rem; 
+        }
+
+        .dashboard-sidebar.collapsed .collapse { 
+            display: none !important; 
+        }
+
+        .dashboard-sidebar .sidebar-header {
+            padding: 0.5rem 1.25rem 1rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(231, 231, 229, 0.1);
+            position: relative;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--sidebar-text);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .dashboard-sidebar .sidebar-header .app-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .dashboard-sidebar .sidebar-user {
+            padding: 1rem 1.45rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(231, 231, 229, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-sidebar .sidebar-user img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            object-fit: cover;
+            border: 2px solid var(--sidebar-text-hover);
+        }
+
+        .dashboard-sidebar .sidebar-user-info .user-name {
+            font-weight: 600;
+            color: var(--sidebar-text-hover);
+            font-size: 0.9rem;
+            margin-bottom: 0.1rem;
+        }
+
+        .dashboard-sidebar .sidebar-user-info .user-role {
+            font-size: 0.75rem;
+            color: var(--sidebar-text);
+            opacity: 0.8;
+        }
+
+        .dashboard-sidebar .sidebar-nav {
+            padding: 0 0.75rem;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-item {
+            margin-bottom: 0.15rem;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link {
+            color: var(--sidebar-text);
+            opacity: 0.85;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link i {
+            font-size: 1.1rem;
+            margin-right: 0.85rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--sidebar-text-hover);
+            opacity: 1;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link.active {
+            background-color: var(--sidebar-active-bg);
+            color: var(--sidebar-text-hover);
+            font-weight: 600;
+            opacity: 1;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-link .badge {
+            font-size: 0.55rem;
+            margin-left: auto;
+        }
+
+        .dashboard-sidebar .sidebar-nav .nav-heading {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--sidebar-text);
+            opacity: 0.6;
+            padding: 1rem 1rem 0.3rem 1rem;
+        }
+
+        /* Main Container */
+        .main-container {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        .sidebar-collapsed .main-container {
+            margin-left: 70px;
+            width: calc(100% - 70px);
+        }
+
+        /* Header Styles */
+        .dashboard-header {
+            background-color: var(--card-bg);
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .dashboard-header .page-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0;
+        }
+
+        .dashboard-header .header-actions .form-control {
+            font-size: 0.8rem;
+            max-width: 250px;
+        }
+
+        .dashboard-header .header-actions .btn-icon {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .dashboard-header .header-actions .btn-icon:hover {
+            color: var(--text-primary);
+        }
+
+        .dashboard-header .user-dropdown img {
+            width: 32px;
+            height: 32px;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 1.5rem;
+        }
+
+        /* Card Styles */
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            transform: translateY(-2px);
+        }
+
+        .dashboard-card .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-card .card-header .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom:0;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .stat-card .card-body { padding: 1rem; }
+        .stat-card .stat-title {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .stat-card .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        .stat-card .stat-meta { font-size: 0.75rem; }
+        .stat-card .stat-icon {
+            font-size: 1.5rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+        
+        .bg-light-blue { background-color: rgba(37, 99, 235, 0.1) !important; }
+        .text-blue { color: var(--accent-blue) !important; }
+        .bg-light-green { background-color: rgba(22, 163, 74, 0.1) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .bg-light-orange { background-color: rgba(234, 88, 12, 0.1) !important; }
+        .text-orange { color: var(--accent-orange) !important; }
+        .bg-light-purple { background-color: rgba(124, 58, 237, 0.1) !important; }
+        .text-purple { color: var(--accent-purple) !important; }
+
+        /* Table Styles */
+        .table-container {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table tbody td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr:first-child td {
+            border-top: none;
+        }
+
+        .table tbody tr:hover td {
+            background-color: #f8fafc;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-logo {
+            flex-grow: 1;
+        }
+
+        .sidebar-toggle {
+            position: static;
+            margin-left: 10px;
+        }
+
+        /* Badge Colors */
+        .badge-pending { background-color: #ffc107; color: #212529; }
+        .badge-in-progress { background-color: #0dcaf0; color: #212529; }
+        .badge-completed { background-color: #198754; }
+        .badge-open { background-color: #fd7e14; }
+        .badge-available { background-color: #198754; }
+        .badge-occupied { background-color: #0d6efd; }
+        .badge-maintenance { background-color: #6f42c1; }
+        .badge-dirty { background-color: #fd7e14; }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .dashboard-sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .dashboard-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-container {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .sidebar-collapsed .main-container {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+            }
+            
+            .dashboard-header .header-actions {
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+            
+            .dashboard-header .header-actions .form-control {
+                max-width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+            
+            .dashboard-card .card-body {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-content {
+                padding: 1rem;
+            }
+            
+            .stat-card .stat-value {
+                font-size: 1rem;
+            }
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 0.4em 0.65em;
+            border-radius: 0.5rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        @media (max-width: 992px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="{{ url_for('home') }}" class="app-logo">
+                <i class="bi bi-buildings"></i> <span>Marlin Hotel</span>
+            </a>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+        </div>
+        <div class="sidebar-user">
+            <img src="https://placehold.co/80x80/052f41/e7e7e5?text={{ staff.first_name[0]|upper }}{{ staff.last_name[0]|upper }}" alt="Staff Avatar" class="rounded-circle">
+            <div class="sidebar-user-info">
+                <div class="user-name">{{ staff.first_name }} {{ staff.last_name }}</div>
+                <div class="user-role">{{ staff.position }}</div>
+            </div>
+        </div>
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('staff_dashboard') }}">
+                    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('staff_profile') }}">
+                    <i class="bi bi-person"></i> <span>My Profile</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('staff_shifts') }}">
+                    <i class="bi bi-calendar-event"></i> <span>My Shifts</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('staff_assignments') }}">
+                    <i class="bi bi-list-task"></i> <span>My Assignments</span>
+                </a>
+            </li>
+
+             <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('staff_attendance') }}">
+                    <i class="bi bi-list-bi bi-clock-history"></i> <span>My attendance</span>
+                </a>
+            </li>
+
+           
+            {% if staff.position == 'Housekeeping' %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('cleaning_tasks') }}">
+                    <i class="bi bi-house"></i> <span>Cleaning Tasks</span>
+                </a>
+            </li>
+            {% endif %}
+            
+            {% if staff.position == 'Maintenance' %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('maintenance_tasks') }}">
+                    <i class="bi bi-tools"></i> <span>Maintenance Tasks</span>
+                </a>
+            </li>
+            {% endif %}
+            
+            <li class="nav-heading"><span>System</span></li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="bi bi-box-arrow-left"></i> <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-container" id="mainContainer">
+        <header class="dashboard-header">
+            <div class="d-flex align-items-center">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h1 class="page-title">Staff Dashboard</h1>
+            </div>
+            <div class="header-actions d-flex align-items-center">
+                <div class="dropdown user-dropdown me-3">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://placehold.co/80x80/052f41/e7e7e5?text={{ staff.first_name[0]|upper }}{{ staff.last_name[0]|upper }}" alt="Staff Avatar" class="rounded-circle">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url_for('staff_profile') }}"><i class="bi bi-person me-2"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <!-- Stats Cards -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex-shrink-0 stat-icon bg-light-blue text-blue p-3 me-3 rounded">
+                                <i class="bi bi-calendar-event"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="stat-title">Upcoming Shifts</div>
+                                <div class="stat-value">{{ upcoming_shifts|length }}</div>
+                                <div class="stat-meta">
+                                    Next 3 days
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex-shrink-0 stat-icon bg-light-green text-green p-3 me-3 rounded">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="stat-title">Completed Today</div>
+                                <div class="stat-value">{{ completed_today }}</div>
+                                <div class="stat-meta">
+                                    Cleaning Tasks
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex-shrink-0 stat-icon bg-light-orange text-orange p-3 me-3 rounded">
+                                <i class="bi bi-clipboard"></i>
+                            </div>
+                            <div class="flex-grow-1"> 
+                                <div class="stat-title">Open Assignments</div>
+                                <div class="stat-value">{{ pending_assignments|length + in_progress_assignments|length }}</div>
+                                <a class="nav" href="{{ url_for('staff_assignments') }}" style="text-decoration: none; background-color: #89a7d3; color: white; border-radius: 50px;  padding: 10px 10px; align-self: center;">
+                    view
+                </a>
+                                <div class="stat-meta">
+                                    Cleaning Tasks
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex-shrink-0 stat-icon bg-light-purple text-purple p-3 me-3 rounded">
+                                <i class="bi bi-tools"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="stat-title">Maintenance</div>
+                                <div class="stat-value">{{ maintenance_tasks|length }}</div>
+                                <div class="stat-meta">
+                                    Open Requests
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Row -->
+            <div class="row">
+                <!-- Upcoming Shifts -->
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Upcoming Shifts</h3>
+                        </div>
+                        <div class="card-body">
+                            {% if upcoming_shifts %}
+                            <div class="table-responsive table-container">
+                                <table class="table table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Shift</th>
+                                            <th>Start</th>
+                                            <th>End</th>
+                                            <th>Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for shift in upcoming_shifts %}
+                                        <tr>
+                                            <td>{{ shift.shift_date.strftime('%b %d') }}</td>
+                                            <td>{{ shift.shift_type }}</td>
+                                            <td>{{ shift.start_time.strftime('%I:%M %p') }}</td>
+                                            <td>{{ shift.end_time.strftime('%I:%M %p') }}</td>
+                                            <td>{{ shift.duration }} hours</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-info mb-0">
+                                No upcoming shifts scheduled
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Current Shift -->
+                    {% if current_shift %}
+                    <div class="dashboard-card mt-4">
+                        <div class="card-header bg-success text-white">
+                            <h3 class="card-title">Current Shift</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5>{{ current_shift.shift_type }} Shift</h5>
+                                    <p class="mb-0">
+                                        {{ current_shift.start_time.strftime('%I:%M %p') }} - 
+                                        {{ current_shift.end_time.strftime('%I:%M %p') }}
+                                    </p>
+                                </div>
+                                <span class="badge bg-success">{{ current_shift.duration }} hours</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Cleaning Assignments -->
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Cleaning Assignments</h3>
+                        </div>
+                        <div class="card-body">
+                            {% if pending_assignments or in_progress_assignments %}
+                            <div class="table-responsive table-container">
+                                <table class="table table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Room</th>
+                                            <th>Priority</th>
+                                            <th>Due</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><!-- In staff_dashboard.html - update the cleaning tasks section -->
+{% for assignment in pending_assignments %}
+<tr>
+    <td>{{ assignment.room.name }}</td>
+    <td>
+        {% if assignment.priority == 1 %}
+        <span class="badge bg-danger">High</span>
+        {% elif assignment.priority == 2 %}
+        <span class="badge bg-warning">Medium</span>
+        {% else %}
+        <span class="badge bg-success">Low</span>
+        {% endif %}
+    </td>
+    <td>
+        {% if assignment.due_by %}
+        {{ assignment.due_by.strftime('%b %d, %I:%M %p') }}
+        {% else %}
+        -
+        {% endif %}
+    </td>
+    <td><span class="badge badge-pending">Pending</span></td>
+    <td>
+        <!-- Fixed URL parameter -->
+        <a href="{{ url_for('start_cleaning', task_id=assignment.id) }}" class="btn btn-sm btn-primary">
+            Start
+        </a>
+    </td>
+</tr>
+{% endfor %}
+                                        
+                                        {% for assignment in in_progress_assignments %}
+                                        <tr>
+                                            <td>{{ assignment.room.name }}</td>
+                                            <td>
+                                                {% if assignment.priority == 1 %}
+                                                <span class="badge bg-danger">High</span>
+                                                {% elif assignment.priority == 2 %}
+                                                <span class="badge bg-warning">Medium</span>
+                                                {% else %}
+                                                <span class="badge bg-success">Low</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if assignment.due_by %}
+                                                {{ assignment.due_by.strftime('%b %d, %I:%M %p') }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </td>
+                                            <td><span class="badge badge-in-progress">In Progress</span></td>
+                                            <td>
+                                                <a href="{{ url_for('complete_cleaning', assignment_id=assignment.id) }}" class="btn btn-sm btn-success">
+                                                    Complete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-success mb-0">
+                                All cleaning assignments are completed!
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Tasks -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Maintenance Requests</h3>
+                        </div>
+                        <div class="card-body">
+                            {% if maintenance_tasks %}
+                            <div class="table-responsive table-container">
+                                <table class="table table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Room</th>
+                                            <th>Issue Type</th>
+                                            <th>Description</th>
+                                            <th>Priority</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for task in maintenance_tasks %}
+                                        <tr>
+                                            <td>
+                                                {% if task.room %}
+                                                {{ task.room.name }}
+                                                {% else %}
+                                                Common Area
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ task.issue_type }}</td>
+                                            <td>{{ task.description|truncate(50) }}</td>
+                                            <td>
+                                                {% if task.priority == 'High' %}
+                                                <span class="badge bg-danger">High</span>
+                                                {% elif task.priority == 'Medium' %}
+                                                <span class="badge bg-warning">Medium</span>
+                                                {% else %}
+                                                <span class="badge bg-success">Low</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if task.status == 'Open' %}
+                                                <span class="badge badge-open">Open</span>
+                                                {% else %}
+                                                <span class="badge badge-in-progress">In Progress</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-info mb-0">
+                                No maintenance tasks assigned to you
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Attendance -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Attendance</h3>
+                        </div>
+                        <div class="card-body">
+                            {% if recent_attendance %}
+                            <div class="table-responsive table-container">
+                                <table class="table table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Clock In</th>
+                                            <th>Clock Out</th>
+                                            <th>Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tbody>
+    {% for attendance in recent_attendance %}
+    <tr>
+        <td>{{ attendance.date.strftime('%b %d, %Y') }}</td>
+        <td>
+            {% if attendance.clock_in_time %}
+                {{ attendance.clock_in_time.strftime('%I:%M %p') }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td>
+            {% if attendance.clock_out_time %}
+                {{ attendance.clock_out_time.strftime('%I:%M %p') }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td>
+            {% if attendance.clock_in_time and attendance.clock_out_time %}
+                {{ (attendance.clock_out_time - attendance.clock_in_time).seconds // 3600 }}h
+                {{ ((attendance.clock_out_time - attendance.clock_in_time).seconds % 3600) // 60 }}m
+            {% else %}
+                -
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-info mb-0">
+                                No recent attendance records found
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- templates/staff_dashboard.html -->
+{% if show_id_card %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Your ID Card</h5>
+    </div>
+    <div class="card-body text-center">
+        <p>Access your official staff identification card</p>
+        <a href="{{ url_for('staff_id_card', staff_id=staff.id) }}" 
+           class="btn btn-primary" target="_blank">
+            View ID Card
+        </a>
+        <p class="mt-2 small text-muted">
+            You can print this page for physical ID card
+        </p>
+    </div>
+</div>
+{% endif %}
+
+
+<!-- templates/staff_dashboard.html -->
+{% if current_shift and current_shift.attendance_otp %}
+<div class="card mb-4">
+    <div class="card-header bg-warning">
+        <h5>Shift Attendance Verification</h5>
+    </div>
+    <div class="card-body">
+        <p>Your shift starts at {{ current_shift.start_time|datetimeformat('%H:%M') }}</p>
+        <p>the hr will verify your attendance</p>
+        
+        
+        
+        <p class="mt-3 text-muted">
+            <small>
+                OTP expires at {{ current_shift.otp_expiry|datetimeformat('%H:%M') }}
+                (20 minutes after shift start)
+            </small>
+        </p>
+    </div>
+</div>
+{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar
+            const sidebar = document.getElementById('sidebar');
+            const mainContainer = document.getElementById('mainContainer');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            
+            // Toggle sidebar on desktop
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    mainContainer.classList.toggle('sidebar-collapsed');
+                    
+                    // Update toggle icon
+                    const icon = sidebarToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.classList.remove('bi-chevron-left');
+                        icon.classList.add('bi-chevron-right');
+                    } else {
+                        icon.classList.remove('bi-chevron-right');
+                        icon.classList.add('bi-chevron-left');
+                    }
+                });
+            }
+            
+            // Toggle sidebar on mobile
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+            }
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth < 992) {
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickInsideMobileBtn = mobileMenuBtn.contains(event.target);
+                    
+                    if (!isClickInsideSidebar && !isClickInsideMobileBtn && sidebar.classList.contains('show')) {
+                        sidebar.classList.remove('show');
+                   
+                   
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!-- admin_register.html -->
+{% extends "base.html" %}
+
+{% block title %}Admin Registration | Marlin Hotel{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+    }
+
+    body {
+        background: var(--light);
+    }
+
+    .container.py-5 {
+        padding-top: 5rem !important;
+        padding-bottom: 5rem !important;
+    }
+
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        border: none;
+    }
+
+    .card-header {
+        background: var(--primary);
+        color: white;
+        padding: 25px 30px;
+        text-align: center;
+    }
+
+    h3.mb-0 {
+        font-weight: 600;
+        font-size: 1.8rem;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 35px;
+    }
+
+    .alert-info {
+        background: rgba(197, 168, 128, 0.1);
+        border-left: 4px solid var(--secondary);
+        color: var(--primary);
+        border-radius: 0 6px 6px 0;
+    }
+
+    .alert-heading {
+        color: var(--primary);
+    }
+
+    .form-label {
+        color: var(--primary);
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 14px;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.2);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        border: none;
+        padding: 16px;
+        width: 100%;
+        border-radius: 6px;
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #012435;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(2, 49, 71, 0.3);
+    }
+
+    .mt-4.text-center a {
+        color: var(--secondary);
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .mt-4.text-center a:hover {
+        text-decoration: underline;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+        font-size: 14px;
+    }
+</style>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg border-primary">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">
+            <i class="fas fa-user-shield me-2"></i>
+            Administrator Registration
+          </h3>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('admin_register', token=token) }}">
+            {{ form.hidden_tag() }}
+            
+            <div class="alert alert-info">
+              <h4 class="alert-heading">Security Requirements</h4>
+              <ul class="mb-0">
+                <li>Valid registration token required</li>
+                <li>Minimum password length: 12 characters</li>
+                <li>Password must contain special characters</li>
+              </ul>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Administration Token</label>
+              <input type="text" 
+                     class="form-control"
+                     value="{{ token }}"
+                     disabled>
+              <small class="form-text text-muted">
+                Provided by system administrator
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Official Email</label>
+              {{ form.email(class="form-control" + (' is-invalid' if form.email.errors else '')) }}
+              {% for error in form.email.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              {{ form.password(class="form-control" + (' is-invalid' if form.password.errors else '')) }}
+              {% for error in form.password.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Confirm Password</label>
+              {{ form.confirm_password(class="form-control" + (' is-invalid' if form.confirm_password.errors else '')) }}
+              {% for error in form.confirm_password.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-user-lock me-2"></i>
+                Register Admin Account
+              </button>
+            </div>
+
+            <div class="mt-4 text-center">
+              <a href="{{ url_for('admin_login') }}" 
+                 class="text-decoration-none">
+                Already have an admin account? Login here
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-content">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="dashboard-card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white text-center py-4">
+                    <h3 class="card-title mb-0">{{ title }}</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.name.label(class="form-label fw-semibold") }}
+                                    {{ form.name(class="form-control form-control-lg") }}
+                                    {% for error in form.name.errors %}
+                                        <div class="text-danger mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.category.label(class="form-label fw-semibold") }}
+                                    {{ form.category(class="form-control form-control-lg") }}
+                                    {% for error in form.category.errors %}
+                                        <div class="text-danger mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-group">
+                                {{ form.description.label(class="form-label fw-semibold") }}
+                                {{ form.description(class="form-control", rows=4) }}
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.unit.label(class="form-label fw-semibold") }}
+                                    {{ form.unit(class="form-control form-control-lg") }}
+                                    {% for error in form.unit.errors %}
+                                        <div class="text-danger mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.quantity.label(class="form-label fw-semibold") }}
+                                    {{ form.quantity(class="form-control form-control-lg") }}
+                                    {% for error in form.quantity.errors %}
+                                        <div class="text-danger mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.reorder_level.label(class="form-label fw-semibold") }}
+                                    {{ form.reorder_level(class="form-control form-control-lg") }}
+                                    {% for error in form.reorder_level.errors %}
+                                        <div class="text-danger mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.unit_cost.label(class="form-label fw-semibold") }}
+                                    {{ form.unit_cost(class="form-control form-control-lg") }}
+                                    {% for error in form.unit_cost.errors %}
+                                        <div class="text-danger mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.supplier.label(class="form-label fw-semibold") }}
+                                    {{ form.supplier(class="form-control form-control-lg") }}
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3 mt-3">
+                            <i class="bi bi-save me-2"></i> Save Item
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* General body and container styling */
+    body {
+        background-color: #f0f2f5; /* Light gray background */
+        font-family: 'Inter', sans-serif; /* Modern font */
+    }
+
+    .dashboard-content {
+        padding: 30px 0;
+    }
+
+    /* Card Styling */
+    .dashboard-card {
+        border-radius: 15px; /* More rounded corners */
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Stronger, softer shadow */
+        background-color: #ffffff; /* White card background */
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #0d47a1, #1976d2); /* Deeper blue gradient */
+        color: white;
+        padding: 1.5rem 2rem;
+        border-bottom: none; /* Remove default border */
+        position: relative;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    /* Form Control Styling */
+    .form-label {
+        font-weight: 600; /* Slightly bolder labels */
+        color: #344767; /* Darker text for labels */
+        margin-bottom: 8px; /* Space below label */
+        font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid #e0e0e0; /* Lighter border */
+        border-radius: 10px; /* Slightly more rounded */
+        padding: 0.9rem 1.2rem; /* More padding */
+        font-size: 1rem;
+        transition: all 0.3s ease; /* Smooth transitions */
+        background-color: #fdfdfd;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #42a5f5; /* Lighter blue focus */
+        box-shadow: 0 0 0 0.2rem rgba(66, 165, 245, 0.25); /* Lighter shadow on focus */
+        background-color: #ffffff;
+        outline: none; /* Remove default outline */
+    }
+    
+    textarea.form-control {
+        min-height: 120px; /* Ample height for description */
+        resize: vertical; /* Allow vertical resizing */
+    }
+
+    /* Button Styling */
+    .btn-primary {
+        background: linear-gradient(135deg, #1e88e5, #42a5f5); /* Vibrant blue gradient */
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        border-radius: 10px; /* Match form control radius */
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2); /* Soft shadow for button */
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px); /* Lift effect on hover */
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3); /* Enhanced shadow on hover */
+        background: linear-gradient(135deg, #1565c0, #2196f3); /* Slightly darker gradient on hover */
+    }
+
+    .btn-primary i {
+        font-size: 1.1rem; /* Larger icon */
+    }
+
+    /* Error Text */
+    .text-danger {
+        color: #ef5350 !important; /* Brighter red for errors */
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Spacing adjustments */
+    .form-group {
+        margin-bottom: 1.5rem; /* More space between form groups */
+    }
+    
+    .row.g-3 {
+        --bs-gutter-x: 1.5rem; /* Increase gutter for better spacing in rows */
+        --bs-gutter-y: 1.5rem;
+    }
+
+    /* Custom Gradient Classes (for consistency if needed elsewhere) */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #0d47a1, #1976d2);
+    }
+</style>
+{% endblock %}

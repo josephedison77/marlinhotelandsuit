@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block dashboard_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    body {
+        background-color: var(--light);
+        color: var(--text);
+    }
+    .card.shadow.mb-4 {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05) !important;
+        border: none;
+    }
+    .card-header.py-3 {
+        background-color: var(--light);
+        border-bottom: 1px solid var(--gold-light);
+        padding: 1rem 1.5rem;
+    }
+    .text-primary {
+        color: var(--primary) !important;
+    }
+    .table {
+        --bs-table-color: var(--text);
+        --bs-table-bg: var(--light);
+        --bs-table-border-color: var(--gold-light);
+        --bs-table-hover-color: var(--text);
+        --bs-table-hover-bg: rgba(0,0,0,0.03);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    .table thead th {
+        background-color: var(--primary);
+        color: var(--light);
+        border-color: var(--primary);
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+    }
+    .table tbody tr td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+    }
+    .badge {
+        padding: 0.5em 0.75em;
+        border-radius: 0.35rem;
+        font-weight: 600;
+    }
+    .badge.badge-danger {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+    .btn-outline-primary {
+        color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        border-radius: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+    .btn-outline-primary:hover {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+</style>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Status</th>
+                        <th>Last Cleaned</th>
+                        <th>Last Occupied</th>
+                        <th>Priority</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr>
+                        <td>{{ room.name }}</td>
+                        <td>
+                           
+                                {{ room.cleaning_status}}
+                          
+                        </td>
+                        <td>{{ room.last_cleaned|datetimeformat if room.last_cleaned else 'Never' }}</td>
+                        <td>{{ room.last_occupied|datetimeformat if room.last_occupied else 'Never' }}</td>
+                        <td>
+                            {% if room.cleaning_status == 'dirty' %}
+                                <span class="badge badge-danger" style="color: red;">High</span>
+                           
+                            {% endif %}
+                        </td>
+                       <td>
+    
+</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No rooms needing cleaning at this time</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+          <a href="{{ url_for('housekeeping_dashboard') }}" 
+                   class="btn btn-outline-primary"> Back to dashboard
+                 
+                </a>
+    </div>
+</div>
+{% endblock %}

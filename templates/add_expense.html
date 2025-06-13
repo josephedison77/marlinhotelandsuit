@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-content">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="dashboard-card animated-card">
+                <div class="card-header">
+                    <h3 class="card-title">Record New Expense</h3>
+                    <p class="card-subtitle">Track your hotel's financial outflows</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data" class="expense-form">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group floating">
+                                    {{ form.date.label(class="form-label") }}
+                                    {{ form.date(class="form-control") }}
+                                    {% for error in form.date.errors %}
+                                        <div class="error-message">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group floating">
+                                    {{ form.amount.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text">₦</span>
+                                        {{ form.amount(class="form-control") }}
+                                    </div>
+                                    {% for error in form.amount.errors %}
+                                        <div class="error-message">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group floating">
+                                    {{ form.category.label(class="form-label") }}
+                                    {{ form.category(class="form-select") }}
+                                    {% for error in form.category.errors %}
+                                        <div class="error-message">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group floating">
+                                    {{ form.payment_method.label(class="form-label") }}
+                                    {{ form.payment_method(class="form-select") }}
+                                    {% for error in form.payment_method.errors %}
+                                        <div class="error-message">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-group floating">
+                                {{ form.description.label(class="form-label") }}
+                                {{ form.description(class="form-control", rows=3) }}
+                                {% for error in form.description.errors %}
+                                    <div class="error-message">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-group floating">
+                                {{ form.vendor.label(class="form-label") }}
+                                {{ form.vendor(class="form-control") }}
+                                {% for error in form.vendor.errors %}
+                                    <div class="error-message">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-group">
+                                {{ form.document.label(class="form-label") }}
+                                <div class="file-upload-area">
+                                    {{ form.document(class="form-control file-upload-input") }}
+                                    <div class="file-upload-text">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>Drag & drop receipt or click to browse</p>
+                                        <small>PDF, JPG, PNG (Max 5MB)</small>
+                                    </div>
+                                </div>
+                                {% for error in form.document.errors %}
+                                    <div class="error-message">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end form-actions">
+                            <a href="{{ url_for('finance_dashboard') }}" class="btn btn-outline-secondary me-2">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Expense
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Root variables for the color scheme */
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        --success-color: #28a745; /* Standard green for success */
+        --danger-color: #dc3545; /* Standard red for danger */
+        --info-color: #17a2b8; /* Standard blue for info */
+        --warning-color: #ffc107; /* Standard yellow for warning */
+    }
+
+    body {
+        font-family: 'Inter', sans-serif; /* Using Inter for a modern look */
+        color: var(--text);
+        background-color: var(--light);
+    }
+
+    .dashboard-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-bottom: 30px;
+        background-color: #fff; /* Ensure card body is white */
+    }
+
+    .animated-card {
+        animation: slideInUp 0.6s ease-out forwards; /* Added forwards to keep the end state */
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+        color: var(--light);
+        padding: 25px 30px; /* Increased padding */
+        border-bottom: none;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .card-title {
+        font-size: 24px; /* Slightly larger */
+        font-weight: 700; /* Bolder */
+        margin-bottom: 8px;
+        color: var(--light);
+    }
+
+    .card-subtitle {
+        font-size: 15px;
+        opacity: 0.9;
+        margin: 0;
+        color: var(--gold-light); /* Highlight subtitle */
+    }
+
+    .card-body {
+        padding: 30px;
+        background-color: #fff;
+    }
+
+    .expense-form .form-group {
+        margin-bottom: 25px; /* Increased spacing */
+    }
+
+    .form-label {
+        font-weight: 600; /* Bolder label */
+        color: var(--dark); /* Darker label for contrast */
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-select {
+        height: 50px; /* Taller inputs */
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 12px 18px; /* Adjusted padding */
+        font-size: 16px;
+        transition: var(--transition);
+        background-color: var(--light);
+        color: var(--text);
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--accent); /* Focus color using accent */
+        box-shadow: 0 0 0 4px rgba(140, 109, 70, 0.2); /* Soft shadow for focus */
+        background-color: #fff; /* White background on focus */
+    }
+
+    textarea.form-control {
+        min-height: 120px; /* Taller textarea */
+        resize: vertical;
+        padding-top: 15px;
+    }
+
+    .input-group-text {
+        background-color: var(--gold-light); /* Use gold for input group text */
+        border: 1px solid var(--gold-light);
+        border-right: none;
+        color: var(--dark);
+        border-radius: 8px 0 0 8px;
+        font-weight: 600;
+        padding: 0 15px;
+    }
+
+    .input-group .form-control {
+        border-left: none; /* Remove left border for input group control */
+        border-radius: 0 8px 8px 0;
+    }
+
+    .file-upload-area {
+        border: 2px dashed var(--secondary); /* Dashed border with secondary color */
+        border-radius: 10px;
+        padding: 30px; /* More padding */
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+        background-color: var(--light);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .file-upload-area:hover {
+        border-color: var(--gold-dark); /* Darker gold on hover */
+        background-color: #f0f0f0; /* Slightly darker light background */
+    }
+
+    .file-upload-input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 10; /* Ensure it's clickable */
+    }
+
+    .file-upload-text {
+        pointer-events: none; /* Allow clicks to pass through to the input */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .file-upload-text i {
+        font-size: 48px; /* Larger icon */
+        color: var(--accent); /* Accent color for icon */
+        margin-bottom: 15px;
+    }
+
+    .file-upload-text p {
+        margin: 5px 0;
+        font-size: 17px;
+        color: var(--dark);
+        font-weight: 500;
+    }
+
+    .file-upload-text small {
+        font-size: 13px;
+        color: var(--text);
+        margin-top: 5px;
+    }
+
+    .form-actions {
+        margin-top: 40px; /* More space for buttons */
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--gold-dark) 0%, var(--accent) 100%);
+        border: none;
+        padding: 12px 30px; /* Larger buttons */
+        font-weight: 600;
+        border-radius: 8px;
+        color: white;
+        transition: var(--transition);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px); /* More pronounced lift */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--gold-dark) 100%); /* Subtle gradient shift */
+    }
+
+    .btn-outline-secondary {
+        border: 2px solid var(--secondary); /* Defined border */
+        color: var(--secondary);
+        padding: 12px 30px;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: var(--transition);
+        background-color: transparent;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: var(--secondary);
+        color: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .error-message {
+        color: var(--danger-color);
+        font-size: 14px;
+        margin-top: 5px;
+        font-weight: 500;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px); /* Larger initial displacement */
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+    // File upload preview
+    document.querySelector('.file-upload-input').addEventListener('change', function(e) {
+        const fileUploadArea = this.closest('.file-upload-area');
+        const fileText = fileUploadArea.querySelector('p');
+        
+        if (this.files && this.files[0]) {
+            const fileName = this.files[0].name;
+            fileText.textContent = fileName;
+            fileUploadArea.style.borderColor = 'var(--gold-dark)';
+            fileUploadArea.style.backgroundColor = '#fcf8e3'; /* Light gold-ish background */
+        } else {
+            fileText.textContent = 'Drag & drop receipt or click to browse';
+            fileUploadArea.style.borderColor = 'var(--secondary)';
+            fileUploadArea.style.backgroundColor = 'var(--light)';
+        }
+    });
+
+    // Drag and drop functionality
+    const fileUploadArea = document.querySelector('.file-upload-area');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileUploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        fileUploadArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        fileUploadArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+        fileUploadArea.classList.add('highlight');
+    }
+
+    function unhighlight() {
+        fileUploadArea.classList.remove('highlight');
+    }
+
+    fileUploadArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        const input = fileUploadArea.querySelector('.file-upload-input');
+        input.files = files;
+        
+        // Trigger change event
+        const event = new Event('change');
+        input.dispatchEvent(event);
+    }
+
+    // Add animation to form elements
+    document.querySelectorAll('.form-group').forEach((group, index) => {
+        group.style.animationDelay = `${index * 0.05}s`; /* Faster staggered animation */
+        group.style.animationFillMode = 'both'; /* Keep the style after animation */
+        group.style.animationName = 'slideInUp'; /* Apply the animation */
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "admin_base.html" %}
+
+{% block dashboard_title %}Reception Dashboard{% endblock %}
+
+{% block admin_content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Today's Check-ins</h5>
+                <h1 class="display-4">{{ today_checkins }}</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Today's Check-outs</h5>
+                <h1 class="display-4">{{ today_checkouts }}</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <h5 class="card-title">Pending Bookings</h5>
+                <h1 class="display-4">{{ pending_bookings }}</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Recent Bookings</div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Guest</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in recent_bookings %}
+                <tr>
+                    <td>{{ booking.room.room_number }}</td>
+                    <td>{{ booking.user.username }}</td>
+                    <td>{{ booking.check_in_date|dateformat }}</td>
+                    <td>{{ booking.check_out_date|dateformat }}</td>
+                    <td>
+                        <span class="badge bg-{{ 'success' if booking.status == 'Confirmed' else 'warning' }}">
+                            {{ booking.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

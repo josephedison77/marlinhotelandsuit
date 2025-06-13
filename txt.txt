@@ -1,0 +1,90 @@
+. Main Website Templates:
+
+- index.html
+- about.html
+- contact.html 
+- privacy.html
+- terms.html
+- cookies.html
+- rooms.html
+- room_detail.html
+- availability.html
+
+2. User Authentication Templates:
+
+- login.html
+- register.html
+- profile.html
+- edit_profile.html
+
+3. Booking Management Templates:
+
+- book_room.html
+- my_bookings.html
+- payment_confirmation.html
+
+4. Admin Management Templates:
+
+- admin_dashboard.html
+- admin_login.html
+- admin_register.html
+- staff_list.html
+- staff_register.html
+- shift_list.html
+- add_shift.html
+- staff_dashboard.html
+
+5. Facility Management Templates:
+
+- bar_items.html
+- add_bar_item.html
+- edit_bar_item.html
+- bar_sale.html
+- bar_sales_records.html
+
+6. Housekeeping Templates:
+
+- cleaning_logs.html
+- add_cleaning_log.html
+- edit_cleaning_log.html
+
+7. Payment & Maintenance Templates:
+
+- payments.html
+- add_payment.html
+- edit_payment.html
+- maintenance_requests.html
+- edit_maintenance_request.html
+
+8. Room Management Templates:
+
+- room_images.html
+- upload_images.html
+- admin_rooms
+_ admin_rooms_create.html
+_admin_rooms_edit.html
+
+9. HR & Staff Templates:
+
+- attendance_records.html
+- shift_schedule.html
+
+10. Advanced Features Templates:
+
+- notifications/list.html
+- notifications/create.html
+- automations/list.html
+- reports/list.html
+- reports/generate.html
+
+11. Error Pages:
+
+- 403.html
+- 404.html
+- 500.html
+
+12. Email Templates (optional):
+
+- emails/booking_confirmation.html
+- emails/password_reset.html
+- emails/welcome.html

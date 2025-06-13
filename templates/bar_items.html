@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Bar Management{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between mb-4">
+        <h2>Bar Inventory</h2>
+        <a href="{{ url_for('add_bar_item') }}" class="btn btn-success">+ Add Item</a>
+    </div>
+    
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in bar_items %}
+            <tr>
+                <td>
+                    {% if item.image %}
+                    <img src="{{ url_for('static', filename='bar_items/' + item.image) }}" 
+                         width="50" height="50" class="img-thumbnail">
+                    {% else %}
+                    <div class="bg-light border rounded" style="width:50px;height:50px"></div>
+                    {% endif %}
+                </td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.price|format_currency }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>
+                    <a href="{{ url_for('edit_bar_item', item_id=item.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <form method="POST" action="{{ url_for('delete_bar_item', item_id=item.id) }}" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <a class="btn btn-secondary" href="{{ url_for('bar_dashboard') }}">
+        <i class="bi bi-speedometer2 me-2"></i> Back to Dashboard
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,191 @@
+<!-- templates/staff_id_card.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff ID Card</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .id-card {
+            width: 220px;
+            height: 350px;
+            background-image: url(/static/uploads/MARLIN\ TEMP.png);
+            background-size: contain;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .id-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            margin: 5px 0 0;
+            color: rgb(255, 255, 255);
+            margin-top: 1.8rem;
+            margin-left: 3rem;
+            font-weight: bolder;
+            position: absolute;
+            font-size: 14px;
+        }
+        
+        .content {
+            display: flex;
+            position: relative;
+            margin-top: 13rem;
+            position: relative;
+           
+        }
+        
+        .photo {
+            width: 100px;
+            height: 120px;
+            background-color: #fff;
+            border: 3px solid white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: absolute;
+            margin-top: -8rem;
+            margin-left: 3rem;
+            border-radius: 50%;
+            width: 55%;
+        }
+        
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .details {
+            flex: 1;
+            padding: 0 15px;
+            color: black;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-left: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .detail-row {
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+        
+        .label {
+            font-weight: bold;
+            display: inline-block;
+            width: 80px;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 9px;
+            right: 20px;
+            font-size: 12px;
+            text-align: right;
+        }
+        
+        .logo {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            opacity: 0.2;
+            display: none;
+        }
+
+        .detail-row1{position: absolute;
+        margin-top: -2rem; font-size: 19px;
+    font-weight: bolder;}
+    </style>
+</head>
+<body>
+    <div class="id-card">
+        <div class="logo">HM</div>
+        
+        <div class="header">
+           
+            <p>Staff Identification Card</p>
+        </div>
+        
+        <div class="content">
+            <div class="photo">
+                {% if staff.profile_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + staff.profile_image) }}" alt="Staff Photo">
+                {% else %}
+                    <div style="display:flex;height:100%;align-items:center;justify-content:center;color:#666;">
+                        NO PHOTO
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="details">
+                <div class="detail-row1">
+                    <span class="label1">Name:</span>
+                    {{ staff.first_name }} {{ staff.last_name }}
+                </div>
+                
+                <div class="detail-row">
+                    <span class="label">ID:</span>
+                    {{ staff.staff_id }}
+                </div>
+                
+                <div class="detail-row">
+                    <span class="label">Position:</span>
+                    {{ staff.position }}
+                </div>
+                
+                <div class="detail-row">
+                    <span class="label">Email:</span>
+                    {{ staff.email }}
+                </div>
+                
+                <div class="detail-row">
+                    <span class="label">Phone:</span>
+                    {{ staff.phone_number }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Issued: {{ staff.created_at.strftime('%Y-%m-%d') }}
+        </div>
+    </div>
+</body>
+</html>

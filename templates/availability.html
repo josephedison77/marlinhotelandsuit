@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Availability Results{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">Available Rooms</h2>
+    
+    <div class="search-parameters bg-light p-4 mb-4">
+        <h5>Your Search Criteria:</h5>
+        <p>
+            {{ check_in.strftime('%b %d, %Y') }} - {{ check_out.strftime('%b %d, %Y') }} 
+            | {{ guests }} Guest{% if guests > 1 %}s{% endif %}
+        </p>
+    </div>
+
+    {% if rooms %}
+    <div class="row g-4">
+        {% for room in rooms %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                {% if room_images[room.id] %}
+                <img src="{{ room_images[room.id] }}" class="card-img-top" alt="{{ room.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ room.name }}</h5>
+                    <p class="card-text">{{ room.description }}</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Capacity: {{ room.capacity }} guests</li>
+                        <li class="list-group-item">Price: {{ room.price|format_currency }} / night</li>
+                        <li class="list-group-item">Total: {{ (room.price * days)|format_currency }}</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('book_room', room_id=room.id) }}?check_in={{ check_in }}&check_out={{ check_out }}" 
+                       class="btn btn-primary w-100">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        No rooms available for these dates. Please try different dates.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

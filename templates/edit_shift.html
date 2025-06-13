@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Edit Shift{% endblock %}
+
+{% block content %}
+<style>
+    .shift-edit-container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+    .card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+    .card-header {
+        background: linear-gradient(to right, #023147, #002738);
+        color: white;
+        padding: 1.2rem 1.5rem;
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #0a1429;
+    }
+    .form-control, .date-picker {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus, .date-picker:focus {
+        border-color: #c5a880;
+        box-shadow: 0 0 0 0.25rem rgba(197, 168, 128, 0.25);
+    }
+    .btn-primary {
+        background: linear-gradient(to right, #023147, #002738);
+        border: none;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(2, 49, 71, 0.3);
+    }
+    .d-grid {
+        gap: 0.75rem;
+    }
+</style>
+
+<div class="container shift-edit-container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Shift</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('edit_shift', shift_id=shift.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Staff Member</label>
+                            <input type="text" class="form-control" 
+                                   value="{{ shift.staff.first_name }} {{ shift.staff.last_name }}" 
+                                   readonly>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="shift_start" class="form-label">Start Time</label>
+                                <input type="datetime-local" class="form-control date-picker" 
+                                       id="shift_start" name="shift_start" 
+                                       value="{{ shift.shift_start.strftime('%Y-%m-%dT%H:%M') }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="shift_end" class="form-label">End Time</label>
+                                <input type="datetime-local" class="form-control date-picker" 
+                                       id="shift_end" name="shift_end" 
+                                       value="{% if shift.shift_end %}{{ shift.shift_end.strftime('%Y-%m-%dT%H:%M') }}{% endif %}">
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Save Changes
+                            </button>
+                            <a href="{{ url_for('shift_list') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Date time picker enhancement
+        const datePickers = document.querySelectorAll('.date-picker');
+        datePickers.forEach(picker => {
+            picker.addEventListener('focus', () => {
+                picker.style.borderColor = '#c5a880';
+                picker.style.boxShadow = '0 0 0 0.25rem rgba(197, 168, 128, 0.25)';
+            });
+            picker.addEventListener('blur', () => {
+                picker.style.borderColor = '#dee2e6';
+                picker.style.boxShadow = 'none';
+            });
+        });
+
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const start = document.getElementById('shift_start').value;
+            const end = document.getElementById('shift_end').value;
+            
+            if (end && new Date(end) <= new Date(start)) {
+                e.preventDefault();
+                alert('End time must be after start time');
+            }
+        });
+    });
+</script>
+{% endblock %}

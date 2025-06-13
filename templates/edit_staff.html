@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .staff-edit-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+    .staff-edit-container h2 {
+        color: #023147;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #c5a880;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        font-weight: 600;
+        color: #0a1429;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    .form-control {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #c5a880;
+        box-shadow: 0 0 0 0.25rem rgba(197, 168, 128, 0.25);
+    }
+    .btn-primary {
+        background: linear-gradient(to right, #023147, #002738);
+        border: none;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(2, 49, 71, 0.3);
+    }
+    .img-thumbnail {
+        border: 2px solid #e6c78a;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .img-thumbnail:hover {
+        transform: scale(1.05);
+    }
+    .alert-danger {
+        background-color: rgba(220, 53, 69, 0.1);
+        border-color: rgba(220, 53, 69, 0.3);
+        color: #dc3545;
+    }
+</style>
+
+<div class="staff-edit-container animate-fade">
+    <h2>Edit Staff Member</h2>
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        {% for field, errors in form.errors.items() %}
+            {% for error in errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.first_name.label }}
+            {{ form.first_name(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.last_name.label }}
+            {{ form.last_name(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.email.label }}
+            {{ form.email(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.phone_number.label }}
+            {{ form.phone_number(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.role.label }}
+            {{ form.role(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.position.label }}
+            {{ form.position(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.profile_image.label }}
+            {{ form.profile_image(class="form-control-file") }}
+            {% if staff.profile_image %}
+                <img src="{{ url_for('static', filename='uploads/' + staff.profile_image) }}" 
+                     class="img-thumbnail mt-2" style="max-width: 200px">
+                <p class="text-muted mt-1">Current profile image</p>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Update Staff</button>
+        <a href="{{ url_for('staff_list') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to form elements
+        const formGroups = document.querySelectorAll('.form-group');
+        formGroups.forEach((group, index) => {
+            group.style.opacity = '0';
+            group.style.transform = 'translateY(20px)';
+            group.style.animation = `fadeInUp 0.5s ease-out forwards ${index * 0.1}s`;
+        });
+
+        // Add hover effect to buttons
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                button.style.transform = 'translateY(-2px)';
+            });
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+{% endblock %}

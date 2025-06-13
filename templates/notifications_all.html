@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}All Notifications{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --primary: #023147; --secondary: #c5a880; --text: #333; --border-color: #e9ecef;
+    --border-radius: 0.8rem; --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+</style>
+<div class="container mt-5" style="max-width: 800px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 style="color: var(--primary); font-weight: 700;">Notification Archive</h1>
+        <a href="{{ url_for('notifications') }}" class="btn" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text); border-radius: 999px;" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text)';">&larr; Back</a>
+    </div>
+
+    <div class="card" style="border: 1px solid var(--border-color); border-radius: var(--border-radius);">
+        {% for notification in notification_all %}
+        <div style="border-bottom: 1px solid var(--border-color); padding: 1.5rem;">
+            <div class="d-flex justify-content-between">
+                <h5 style="font-weight: 600; color: var(--primary);">{{ notification.title }}</h5>
+                <small class="text-muted">{{ notification.created_at|datetimeformat }}</small>
+            </div>
+            <p class="card-text mt-2" style="color: var(--text); line-height: 1.6;">{{ notification.message }}</p>
+        </div>
+        {% else %}
+        <div class="card-body text-center" style="padding: 3rem;">
+            <p>No notifications found in the archive.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

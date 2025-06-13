@@ -1,0 +1,1320 @@
+{% extends "base.html" %}
+
+{% block title %}Marlin Hotel & Suites - Luxury Beachfront Experience{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(55deg, #031924 0%, var(--primary) 100%);
+        color: var(--light);
+        overflow-x: hidden;
+        line-height: 1.6;
+    }
+    
+    /* Updated Hero Section Styling */
+   .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 0 0 40px 40px;
+    background: linear-gradient(rgba(12, 26, 50, 0.3), rgba(12, 26, 50, 0.5)),
+                url('{{ url_for('static', filename='images/hero.jpg') }}') center/cover no-repeat;
+    background-attachment: fixed;
+    border-radius: 60px 11px 45px 21px;
+}
+    .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 6%, var(--primary) 90%);
+            z-index: 1;
+        }
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        max-width: 900px;
+        padding: 0 20px; /* Adjusted padding if needed */
+        color: var(--light);
+        animation: fadeInDown 1.2s ease-out;
+    }
+
+    .hero-logo {
+        max-width: 170px; /* Slightly smaller if needed */
+        margin-bottom: 1rem; /* Adjusted margin */
+        filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+    }
+    
+    .hero-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 4.5rem; /* Slightly adjusted if needed */
+        font-weight: 700; /* Kept original, user had 'lighter' inline, this is for base */
+        margin-bottom: 0.8rem; /* Reduced margin to bring content up */
+        color: var(--gold-light);
+        text-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 35px rgba(0,0,0,0.6);
+        letter-spacing: 2px;
+        animation: fadeInDown 1.2s ease-out;
+    }
+    
+    .hero-content p {
+        font-size: 1.4rem; /* Slightly adjusted if needed */
+        max-width: 700px;
+        margin: 0 auto 1.5rem; /* Reduced bottom margin to make space for button */
+        color: rgba(255,255,255,0.98);
+        text-shadow: 0 0 10px rgba(0,0,0,0.6);
+        animation: fadeIn 1.5s ease-out 0.3s forwards;
+        opacity: 0;
+    }
+
+    /* NEW: Hero "Book Now" Button Style */
+    .btn-hero-book-now {
+        background-color: var(--secondary); /* Golden color */
+        color: var(--primary); /* Dark text for contrast */
+        padding: 14px 35px;
+        border-radius: 50px; /* Pill shape */
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.15rem;
+        margin-top: 1rem; /* Space above the button */
+        display: inline-block;
+        transition: var(--transition);
+        border: 2px solid transparent;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-hero-book-now:hover {
+        background-color: var(--gold-light);
+        color: var(--dark);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        border-color: var(--dark);
+    }
+
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .section-title {
+        text-align: center;
+        margin-bottom: 4rem;
+        padding-top: 5rem;
+    }
+    
+    .section-title h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.2rem;
+        color: var(--gold-light);
+        margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .section-title h2::after {
+        content: "";
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--secondary);
+    }
+    
+    .section-title p {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.7);
+        max-width: 700px;
+        margin: 2rem auto 0;
+    }
+    
+    .booking-widget {
+        background: linear-gradient(45deg, var(--gold-dark) 0%, var(--gold-light) 100%);
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        margin-top: -80px; 
+        position: relative;
+        z-index: 10;
+        color: var(--dark); 
+    }
+
+    .booking-widget .form-label {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 8px;
+    }
+
+    .booking-widget .form-control,
+    .booking-widget .form-select {
+        border: 1px solid rgba(0,0,0,0.2);
+        border-radius: 8px;
+        padding: 10px 15px;
+        color: var(--dark);
+        background-color: rgba(255,255,255,0.9);
+    }
+
+    .booking-widget .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        font-weight: 600;
+        transition: var(--transition);
+        border-radius: 8px;
+    }
+
+    .booking-widget .btn-primary:hover {
+        background-color: var(--dark);
+        border-color: var(--dark);
+    }
+
+    .index-room-card {
+        background: rgba(10, 20, 41, 0.7);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        border: 1px solid rgba(197, 168, 128, 0.3);
+        color: var(--light);
+    }
+
+    .index-room-card:hover {
+        transform: translateY(-12px) scale(1.02); 
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .index-room-img {
+        height: 250px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.5s ease; 
+    }
+
+    .index-room-card:hover .index-room-img {
+        transform: scale(1.1); 
+    }
+
+    .index-room-body {
+        padding: 25px;
+        text-align: center;
+    }
+
+    .index-room-body h3 {
+        font-family: 'Playfair Display', serif;
+        color: var(--gold-light);
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+    }
+
+    .index-room-body p {
+        font-size: 1rem;
+        color: rgba(255,255,255,0.85);
+    }
+
+    .room-preview{background-color: antiquewhite; border-radius: 5%; height: auto; padding-bottom: 4rem;}
+    .room-listing {
+        padding: 40px 0;
+    }
+    
+    .room-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 30px; /* Reduced gap slightly */
+        margin-top: 40px;
+        /* height: 80%; REMOVED - let content define height */
+    }
+    
+    .room-card {
+        background: rgba(255, 255, 255, 0.014);
+        backdrop-filter: blur(10px); /* Corrected 'blur(10)' */
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        transition: var(--transition);
+        position: relative;
+        transform: translateY(0);
+        border: 1px solid #e6c091;
+        display: flex; /* Added for better control over footer */
+        flex-direction: column; /* Stack content vertically */
+    }
+    
+    .room-card:hover {
+        transform: translateY(-10px); /* Slightly reduced hover lift */
+        box-shadow: 0 18px 45px rgba(0,0,0,0.35); /* Adjusted shadow */
+        border-color: rgba(197, 168, 128, 0.3);
+    }
+    
+    .img-container {
+        position: relative;
+        overflow: hidden;
+        height: 200px; /* MODIFIED: Reduced image height */
+    }
+    
+    .room-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+    
+    .room-card:hover .room-img {
+        transform: scale(1.08);
+    }
+    
+    .room-badge {
+        position: absolute;
+        top: 15px; /* Adjusted */
+        right: 15px; /* Adjusted */
+        background: var(--secondary);
+        color: var(--primary);
+        padding: 6px 12px; /* Adjusted */
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 0.8rem; /* Adjusted */
+        z-index: 2;
+    }
+    
+    .room-content {
+        padding: 20px; /* MODIFIED: Reduced padding */
+        font-style: italic; /* This might be something to reconsider for readability */
+        flex-grow: 1; /* Allows content to take available space */
+    }
+    
+    .room-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem; /* MODIFIED: Slightly smaller title */
+        margin-bottom: 10px; /* MODIFIED: Reduced margin */
+        color: var(--gold-light);
+    }
+    
+    .room-meta {
+        display: flex;
+        gap: 20px; /* MODIFIED: Reduced gap */
+        margin-bottom: 15px; /* MODIFIED: Reduced margin */
+        padding-bottom: 15px; /* MODIFIED: Reduced padding */
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        flex-wrap: wrap; /* Allow items to wrap on smaller card widths */
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem; /* MODIFIED: Slightly smaller */
+        color: rgba(31, 24, 24, 0.8);
+    }
+    
+    .meta-icon {
+        color: var(--secondary);
+        font-size: 1.1rem; /* MODIFIED */
+        width: 25px; /* MODIFIED */
+        height: 25px; /* MODIFIED */
+        background: rgba(245, 193, 121, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .room-desc {
+        margin-bottom: 20px; /* MODIFIED: Reduced margin */
+        color: rgba(63, 40, 14, 0.75);
+        font-size: 0.9rem; /* MODIFIED: Slightly smaller */
+        line-height: 1.6; /* MODIFIED: Adjusted line height */
+        /* For fixed line clamping (CSS method): */
+        /* display: -webkit-box; */
+        /* -webkit-line-clamp: 3; */ /* Adjust number of lines */
+        /* -webkit-box-orient: vertical; */
+        /* overflow: hidden; */
+        /* text-overflow: ellipsis; */
+        /* min-height: calc(1.6em * 3); */ /* Fallback for height if needed */
+    }
+    
+    .room-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px 20px; /* MODIFIED: Consistent padding with room-content */
+        margin-top: auto; /* Pushes footer to the bottom if card heights vary */
+    }
+    
+    .room-price {
+        font-size: 1.4rem; /* MODIFIED: Slightly smaller price */
+        font-weight: 600;
+        color: var(--secondary)
+    }
+    
+    .room-price span {
+        font-size: 0.85rem; /* MODIFIED */
+        font-weight: normal;
+        color: rgba(255,255,255,0.6);
+    }
+    
+    .view-details {
+        background: var(--secondary);
+        color: var(--primary);
+        border: none;
+        padding: 10px 20px; /* MODIFIED: Adjusted padding */
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 0.9rem; /* MODIFIED */
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .view-details::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: var(--gold-light);
+        transition: var(--transition);
+        z-index: -1;
+    }
+    
+    .view-details:hover::before {
+        width: 100%;
+    }
+    
+    .view-details:hover {
+        color: var(--dark);
+    }
+    
+    .premium-features {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(10, 29, 41, 0.95);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 20px; /* MODIFIED */
+        opacity: 0;
+        pointer-events: none;
+        transition: var(--transition);
+        z-index: 5;
+    }
+    
+    .view-details:hover ~ .premium-features,
+    .premium-features:hover {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+
+    .order{display: flex; width: 14rem;
+    text-align: center;
+     background-color: var(--gold-light); 
+     color: #031924;
+    padding: 20px;
+border-radius: 0px 20px;
+border: 2px solid  var(--gold-dark);
+font-weight: bolder;
+font-size: large;}
+    
+    .premium-title {
+        color: var(--secondary);
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3rem; /* MODIFIED */
+        margin-bottom: 15px; /* MODIFIED */
+        text-align: center;
+        position: relative;
+        padding-bottom: 10px; /* MODIFIED */
+    }
+    
+    .premium-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px; /* MODIFIED */
+        height: 2px;
+        background: var(--secondary);
+    }
+    
+    .features-list {
+        list-style: none;
+    }
+    
+    .features-list li {
+        padding: 8px 0; /* MODIFIED */
+        display: flex;
+        align-items: center;
+        color: rgba(255,255,255,0.9);
+        font-size: 0.9rem; /* MODIFIED */
+    }
+    
+    .features-list li i {
+        color: var(--secondary);
+        margin-right: 8px; /* MODIFIED */
+        font-size: 1rem; /* MODIFIED */
+        width: 20px; /* MODIFIED */
+        text-align: center;
+    }
+    
+    .rating {
+        display: flex;
+        gap: 3px;
+        margin-top: 10px; /* MODIFIED */
+        justify-content: center;
+    }
+    
+    .rating i {
+        color: var(--gold-light);
+        font-size: 1rem; /* MODIFIED */
+    }
+
+    /* ... (rest of your existing CSS, ensure no conflicts with the above) ... */
+
+    /* Gallery Section Styles */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 40px;
+    }
+
+    .author-img{width: 40%; border: 1px solid var(--gold-dark) ; border-radius: 30px;}
+    .gallery-item {
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-item:hover {
+        transform: scale(1.03);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Specific styles for Bar, Restaurant, and other info sections */
+    .info-section {
+        padding: 5rem 0;
+        background: rgba(255, 255, 255, 0.03);
+        margin-top: 4rem;
+        border-radius: 20px;
+    }
+
+    .info-section .row {
+        align-items: center;
+    }
+
+    .info-section img {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .info-section h3 {
+        font-family: 'Playfair Display', serif;
+        color: var(--gold-light);
+        margin-bottom: 1.5rem;
+        font-size: 2.5rem;
+    }
+
+    .info-section p {
+        color: rgba(255,255,255,0.9);
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+
+    .info-section ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 1.5rem;
+    }
+
+    .info-section ul li {
+        margin-bottom: 10px;
+        color: rgba(255,255,255,0.85);
+        font-size: 1rem;
+    }
+
+    .info-section ul li i {
+        color: var(--secondary);
+        margin-right: 10px;
+    }
+
+    /* Map Section Styles */
+    .map-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        height: 450px; 
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+
+    .map-container iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-20px); }
+        60% { transform: translateY(-10px); }
+    }
+    
+    .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    
+    .animate-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .hero-title {
+            font-size: 3.5rem;
+        }
+        .hero-content p {
+            font-size: 1.2rem;
+        }
+        .section-title h2 {
+            font-size: 2.8rem;
+        }
+        .info-section h3 {
+            font-size: 2rem;
+        }
+        .btn-hero-book-now { /* Adjust button for smaller screens */
+            padding: 12px 30px;
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 3.5rem; /* Further adjust hero title */
+            font-weight: bolder;
+        }
+        .hero-content p {
+            font-size: 1.8rem; /* Further adjust hero paragraph */
+            margin-bottom: 1.2rem; /* Adjust margin for button spacing */
+        }
+         .hero-content{margin-top: -5rem;}
+         .btn-hero-book-now {
+            padding: 10px 25px;
+            font-size: 1rem;
+        }
+        .section-title h2 {
+            font-size: 2.2rem;
+        }
+        .room-grid, .gallery-grid {
+            grid-template-columns: 1fr; /* Single column for rooms and gallery */
+        }
+        .info-section .row {
+            flex-direction: column;
+        }
+        .info-section .col-md-6 {
+            margin-bottom: 2rem;
+        }
+        .room-meta {
+            flex-direction: row; /* Keep meta items in a row but allow wrapping */
+            /* align-items: flex-start; Removed, let them align by default or center if needed */
+            gap: 15px; /* Adjust gap for mobile */
+        }
+        .meta-item {
+            font-size: 0.85rem; /* Adjust meta item font size */
+        }
+        .col{display: none;}
+
+        .btn-hero-book-now{margin-top: 0.1rem; padding: 0.6rem;}
+    }
+
+    .col{width: 100%;
+     background-color: #c5a88000;
+       z-index: 300;
+       position: absolute;
+    text-align: center;}
+
+      .social-links{padding: 0 12px; position: relative; margin-top: -2rem; margin-left: -9rem;}
+        .social-links a{padding: 0 30px;}
+    .social-links i{color: var(--gold-light); text-align: center; }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+ <div class="col">
+                  
+                    <div class="social-links">
+                        <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-linkedin"></i></a>
+                    </div> </div>
+<section class="hero">
+    
+    <div class="hero-content">
+        <img src="/static/uploads/ftt.png" alt="Marlin Hotel Logo" class="hero-logo">
+      
+        <h1 class="hero-title" style="font-weight: lighter;">We are Driven by your Desire</h1> <p>Experience unparalleled comfort and exquisite Nigerian hospitality.</p>
+        <a href="#availability" class="btn btn-hero-book-now animate-on-scroll">Book Now</a>
+         <a href="{{ url_for('create_order') }}" class="btn btn-hero-book-now animate-on-scroll" style="margin-left: 1rem;">Place Order</a>
+    </div>
+</section>
+
+
+<section id="availability" class="booking-widget animate-on-scroll">
+    <div class="container">
+        <form id="availabilityForm" action="{{ url_for('check_availability') }}" method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Check-in</label>
+                <input type="date" class="form-control" name="check_in" id="checkInDate" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Check-out</label>
+                <input type="date" class="form-control" name="check_out" id="checkOutDate" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Guests</label>
+                <select class="form-select" name="guests" required>
+                    <option value="1">1 Guest</option>
+                    <option value="2">2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-primary h-100 mt-4">Check Availability</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="usp-section py-5 animate-on-scroll">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4 text-center animate-on-scroll">
+                <div class="usp-item">
+                    <i class="bi bi-star-fill usp-icon display-4 text-secondary mb-3"></i>
+                    <h3>Luxury Accommodations</h3>
+                    <p>40+ elegantly appointed rooms and suites</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center animate-on-scroll">
+                <div class="usp-item">
+                    <i class="bi bi-geo-fill usp-icon display-4 text-secondary mb-3"></i>
+                    <h3>prime Location</h3>
+                    <p>Direct access to pristine prime location</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center animate-on-scroll">
+                <div class="usp-item">
+                    <i class="bi bi-award-fill usp-icon display-4 text-secondary mb-3"></i>
+                    <h3>world classs standard pool,spa,gym</h3>
+                    <p>world standard</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="room-preview " >
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2 class="text-dark">Our Signature Rooms & Suites</h2>
+            <p class="text-secondary">Indulge in comfort and luxury tailored to your desires.</p>
+        </div>
+       
+        <div class="room-grid">
+            {% for room in signature_rooms %}  <div class="room-card animate-on-scroll">
+                <div class="img-container">
+                    <img src="{{ room_images[room.id] }}" alt="{{ room.name }}" class="room-img"> {% if loop.index <= 2 %} <div class="room-badge">Most Popular</div>
+                    {% endif %}
+                </div>
+                
+                <div class="room-content">
+                    <h3 class="room-title">{{ room.name }}</h3>
+                    
+                    <div class="room-meta">
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <i class="fas fa-user-friends"></i>
+                            </div>
+                            <span>{{ room.capacity }} Guests</span> </div>
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <i class="fas fa-ruler-combined"></i>
+                            </div>
+                            <span>{{ room.size }} sq.ft</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                            <span>{{ room.bedsize }} Bed</span> </div>
+                    </div>
+                    
+                    <p class="room-desc"></p> <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i> </div>
+                </div>
+                
+                <div class="room-footer">
+                    <div class="room-price">{{ room.price|format_currency }} <span>/ night</span></div> <a href="{{ url_for('room_detail', room_id=room.id) }}" 
+                       class="view-details">
+                        View Details </a>
+                </div>
+                
+                <div class="premium-features">
+                    <h4 class="premium-title">Premium Features</h4>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> Private balcony</li>
+                        <li><i class="fas fa-check"></i> Premium bedding</li>
+                        <li><i class="fas fa-check"></i> Smart room controls</li>
+                        <li><i class="fas fa-check"></i> Nespresso machine</li>
+                        <li><i class="fas fa-check"></i> Luxury bath amenities</li>
+                        <li><i class="fas fa-check"></i> 24/7 concierge</li>
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+<section class="gallery-section py-5">
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>Our Photo Gallery</h2>
+            <p>A visual journey through the exquisite spaces and vibrant experiences at Marlin Hotel.</p>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item animate-on-scroll">
+                <img src="https://images.unsplash.com/photo-1542314881-30ba26f21226?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hotel Pool" loading="lazy">
+            </div>
+            <div class="gallery-item animate-on-scroll">
+                <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hotel Lobby" loading="lazy">
+            </div>
+            <div class="gallery-item animate-on-scroll">
+                <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Luxury Dining" loading="lazy">
+            </div>
+            <div class="gallery-item animate-on-scroll">
+                <img src="https://images.unsplash.com/photo-1590447192732-c51d622f98f6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hotel Exterior Night" loading="lazy">
+            </div>
+            <div class="gallery-item animate-on-scroll">
+                <img src="https://images.unsplash.com/photo-1568494002621-2e6b230263f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Spa Room" loading="lazy">
+            </div>
+            <div class="gallery-item animate-on-scroll">
+                <img src="https://images.unsplash.com/photo-1596706935639-af55f9a1f28b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Fitness Center" loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="info-section py-5 bg-dark">
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>The Azure Bar</h2>
+            <p>Unwind and indulge in crafted cocktails and exquisite spirits.</p>
+        </div>
+        <div class="row g-5 align-items-center">
+            <div class="col-md-6 order-md-2 animate-on-scroll">
+                <img src="/static/images/pixbar.jpg" class="img-fluid" alt="Hotel Bar" loading="lazy" style="border:1px solid #8c6d46;">
+            </div>
+            <div class="col-md-6 order-md-1 animate-on-scroll">
+                <h3>Sip & Savor</h3>
+                <p>The Azure Bar offers a sophisticated ambiance perfect for evening relaxation or casual meetings. Our expert mixologists craft a wide array of classic and signature cocktails, alongside a premium selection of wines, beers, and spirits.</p>
+                <ul>
+                    <li><i class="bi bi-dot"></i> Live music on select evenings</li>
+                    <li><i class="bi bi-dot"></i> Extensive wine list</li>
+                    <li><i class="bi bi-dot"></i> Artisanal snacks and small bites</li>
+                    <li><i class="bi bi-dot"></i> Cozy and intimate setting</li>
+                     <span>are you around no need to wait for waiter just place order now</span>
+                </ul>
+            </div>
+          
+        </div>
+    </div> 
+      <div class="order"><a class="dropdown-item" href="{{ url_for('create_order') }}" style="background-color: rgba(175, 146, 132, 0.1);">
+                                        <i ></i>Place Order
+                                    </a>
+                              </div>
+</section>
+
+
+
+
+<section class="info-section py-5">
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>Culinary Delights</h2>
+            <p>A gastronomic journey with flavors from Nigeria and around the world.</p>
+        </div>
+        <div class="row g-5 align-items-center">
+            <div class="col-md-6 animate-on-scroll">
+                <img src="/static/images/rees.jpg" class="img-fluid" alt="Restaurant Interior" loading="lazy" style="border:1px solid #8c6d46;">
+            </div>
+            <div class="col-md-6 animate-on-scroll">
+                <h3>Exquisite Dining Experiences</h3>
+                <p>Marlin Hotel boasts two distinct restaurants, each offering a unique culinary adventure. From authentic Nigerian delicacies to international gourmet cuisine, our chefs use the freshest ingredients to create memorable dishes.</p>
+                <ul>
+                    <li><i class="bi bi-dot"></i> <strong>The great View:</strong> Fine dining with stunning view.</li>
+                    <li><i class="bi bi-dot"></i> <strong>Spice Route:</strong> Casual bistro with a fusion of African and Asian flavors.</li>
+                    <li><i class="bi bi-dot"></i> Room service available 24/7.</li>
+                    <li><i class="bi bi-dot"></i> Private dining options for special occasions.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="info-section py-5 bg-dark"> <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>Our Serene Pool</h2>
+            <p>Dive into relaxation or enjoy a refreshing swim.</p>
+        </div>
+        <div class="row g-5 align-items-center">
+            <div class="col-md-6 order-md-2 animate-on-scroll"> <img src="/static/images/pool.jpg" class="img-fluid" alt="Hotel Swimming Pool" loading="lazy" style="border:1px solid #8c6d46;">
+                </div>
+            <div class="col-md-6 order-md-1 animate-on-scroll"> <h3>Relax and Recharge</h3>
+                <p>Our stunning swimming pool offers a tranquil escape. Whether you're looking for an invigorating morning swim, a leisurely afternoon dip, or a relaxing evening by the water, our pool area is the perfect spot.</p>
+                <ul>
+                    <li><i class="bi bi-droplet-fill"></i> Expansive outdoor pool</li>
+                    <li><i class="bi bi-brightness-high-fill"></i> Sun loungers and cabanas</li>
+                    <li><i class="bi bi-cup-straw"></i> Poolside bar and snacks</li>
+                    <li><i class="bi bi-life-preserver"></i> Lifeguard on duty during operational hours</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="info-section py-5">
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>State-of-the-Art Gym</h2>
+            <p>Stay active and energized during your stay.</p>
+        </div>
+        <div class="row g-5 align-items-center">
+            <div class="col-md-6 animate-on-scroll">
+                <img src="/static/images/gym.jpg" class="img-fluid" alt="Hotel Gym" loading="lazy" style="border:1px solid #8c6d46;">
+                </div>
+            <div class="col-md-6 animate-on-scroll">
+                <h3>Fitness and Wellness</h3>
+                <p>Our fully equipped fitness center features modern cardio machines, strength training equipment, and a dedicated area for stretching and yoga. Maintain your workout routine or start a new one with us.</p>
+                <ul>
+                    <li><i class="bi bi-heart-pulse-fill"></i> Latest Technogym equipment</li>
+                    <li><i class="bi bi-person-arms-up"></i> Personal trainers available on request</li>
+                    <li><i class="bi bi-water"></i> Complimentary towels and water</li>
+                    <li><i class="bi bi-speaker"></i> Integrated sound system</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="info-section py-5 bg-dark"> <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>The Marlin Club</h2>
+            <p>Experience exclusive nightlife and entertainment.</p>
+        </div>
+        <div class="row g-5 align-items-center">
+            <div class="col-md-6 order-md-2 animate-on-scroll"> <img src="/static/images/club.jpg" class="img-fluid" alt="Hotel Night Club" loading="lazy"style="border:1px solid #8c6d46;">
+                </div>
+            <div class="col-md-6 order-md-1 animate-on-scroll"> <h3>Vibrant Nightlife</h3>
+                <p>The Marlin Club is the place to be for an electrifying night out. Featuring top DJs, a premium bar, and a chic atmosphere, it's the perfect destination for dancing, socializing, and enjoying unforgettable evenings.</p>
+                <ul>
+                    <li><i class="bi bi-music-note-beamed"></i> Resident and guest DJs</li>
+                    <li><i class="bi bi-stars"></i> VIP sections and bottle service</li>
+                    <li><i class="bi bi-lightning-charge-fill"></i> State-of-the-art sound and lighting</li>
+                    <li><i class="bi bi-calendar-event"></i> Themed nights and special events</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="info-section py-5">
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>Versatile Event Center</h2>
+            <p>Host your memorable events with us.</p>
+        </div>
+        <div class="row g-5 align-items-center">
+            <div class="col-md-6 animate-on-scroll">
+                <img src="/static/images/event_center.jpg" class="img-fluid" alt="Hotel Event Center" loading="lazy"style="border:1px solid #8c6d46;">
+                </div>
+            <div class="col-md-6 animate-on-scroll">
+                <h3>Meetings & Celebrations</h3>
+                <p>Our flexible event spaces are perfect for conferences, weddings, banquets, and private parties. With customizable setups, modern AV technology, and dedicated event planning services, we ensure your event is a success.</p>
+                <ul>
+                    <li><i class="bi bi-grid-1x2-fill"></i> Multiple configurable event halls</li>
+                    <li><i class="bi bi-mic-fill"></i> Advanced audio-visual equipment</li>
+                    <li><i class="bi bi-people-fill"></i> Capacity for small meetings to large gatherings</li>
+                    <li><i class="bi bi-clipboard-check-fill"></i> Professional event planning and catering services</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="amenities py-5">
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>Hotel Amenities</h2>
+            <p>Everything you need for a comfortable and luxurious stay.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3 text-center animate-on-scroll">
+                <div class="amenity-item">
+                    <i class="bi bi-water amenity-icon display-4 text-secondary mb-3"></i>
+                    <h4>Infinity Pool</h4>
+                </div>
+            </div>
+            <div class="col-md-3 text-center animate-on-scroll">
+                <div class="amenity-item">
+                    <i class="bi bi-wifi amenity-icon display-4 text-secondary mb-3"></i>
+                    <h4>Complimentary Wi-Fi</h4>
+                </div>
+            </div>
+            <div class="col-md-3 text-center animate-on-scroll">
+                <div class="amenity-item">
+                    <i class="bi bi-car-fill amenity-icon display-4 text-secondary mb-3"></i>
+                    <h4>Valet Parking</h4>
+                </div>
+            </div>
+            <div class="col-md-3 text-center animate-on-scroll">
+                <div class="amenity-item">
+                    <i class="bi bi-person-bounding-box amenity-icon display-4 text-secondary mb-3"></i>
+                    <h4>24/7 Concierge</h4>
+                </div>
+            </div>
+             <div class="col-md-3 text-center animate-on-scroll">
+                <div class="amenity-item">
+                    <i class="bi bi-building amenity-icon display-4 text-secondary mb-3"></i>
+                    <h4>Conference Facilities</h4>
+                </div>
+            </div>
+            <div class="col-md-3 text-center animate-on-scroll">
+                <div class="amenity-item">
+                    <i class="bi bi-cup-hot amenity-icon display-4 text-secondary mb-3"></i>
+                    <h4>Coffee Shop</h4>
+                </div>
+            </div>
+            <div class="col-md-3 text-center animate-on-scroll">
+                <div class="amenity-item">
+                    <i class="bi bi-bag-fill amenity-icon display-4 text-secondary mb-3"></i>
+                    <h4>Boutique Shops</h4>
+                </div>
+            </div>
+            <div class="col-md-3 text-center animate-on-scroll">
+                <div class="amenity-item">
+                    <i class="bi bi-activity amenity-icon display-4 text-secondary mb-3"></i>
+                    <h4>Fitness Center</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials py-5">
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>What Our Guests Say</h2>
+            <p>Hear from those who have experienced the Marlin Hotel difference.</p>
+        </div>
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active testimonial-card animate-on-scroll">
+                            <p class="testimonial-text">"Absolutely amazing stay! The staff went above and beyond to make us feel welcome. The rooms are luxurious, and the food is exquisite. Highly recommend Marlin Hotel!"</p>
+                            <div class="testimonial-author">
+                                <img src="/static/images/jpeg" class="author-img" alt="Guest 1" loading="lazy">
+                                <div class="author-info">
+                                    <h4>Dr. Ngozi Okoro</h4>
+                                    <p>Business Traveler</p>
+                                    <div class="testimonial-rating">
+                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item testimonial-card animate-on-scroll">
+                            <p class="testimonial-text">"The beachfront location is stunning, and the infinity pool is breathtaking. A true oasis of calm and luxury in Lagos. We can't wait to come back!"</p>
+                            <div class="testimonial-author">
+                                <img src="/static/images/jpeg" class="author-img" alt="Guest 2" loading="lazy">
+                                <div class="author-info">
+                                    <h4>Mr. & Mrs. Davies</h4>
+                                    <p>Leisure Guests</p>
+                                    <div class="testimonial-rating">
+                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item testimonial-card animate-on-scroll">
+                            <p class="testimonial-text">"From the moment we arrived, we were treated like royalty. The attention to detail is impeccable, and the culinary offerings are world-class. A truly memorable experience."</p>
+                            <div class="testimonial-author">
+                                <img src="/static/images/jpeg" class="author-img" alt="Guest 3" loading="lazy">
+                                <div class="author-info">
+                                    <h4>Chief Biodun Adewale</h4>
+                                    <p>VIP Client</p>
+                                    <div class="testimonial-rating">
+                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="newsletter bg-primary text-white py-5 animate-on-scroll" style="border-radius: 30px;">
+    <div class="container text-center">
+        <h2 class="section-title">Stay Connected</h2>
+        <p class="mb-4">Subscribe for exclusive offers and updates</p>
+        <form class="newsletter-form">
+            <div class="input-group mb-3 mx-auto" style="max-width: 500px;">
+                <input type="email" class="form-control" placeholder="Enter your email">
+                <button class="btn btn-light" type="button"><a href="{{url_for('register')}}" style="text-decoration: none;">register</a></button>
+            </div>
+            <small>Get 10% off your first stay when you subscribe</small>
+        </form>
+    </div>
+</section>
+
+<section class="location-section py-5">
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2>Find Us</h2>
+            <p>Strategically located for your convenience and access to Lagos' best.</p>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-md-6 animate-on-scroll">
+                <div class="map-container">
+                   <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3370.823265437143!2d3.2632307000000003!3d6.4632667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b89aba7583013%3A0x36a49d54059baf96!2smarlin%20hotel%20and%20suit!5e1!3m2!1sen!2sng!4v1749623046469!5m2!1sen!2sng" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+            <div class="col-md-6 animate-on-scroll">
+                <div class="location-info">
+                    <h3>Getting Here</h3>
+                    <p><strong>Address:</strong>2145/2146. 91 Road Festac Phase 2 Extension. Abuleado, Lagos.</p>
+                    <h4 class="mt-4">Nearby Attractions</h4>
+                    <ul class="attraction-list">
+                        <li><i class="bi bi-geo-alt-fill text-secondary me-2"></i> trade fair lagos nigeria</li>
+                        <li><i class="bi bi-geo-alt-fill text-secondary me-2"></i> festac town</li>
+                        <li><i class="bi bi-geo-alt-fill text-secondary me-2"></i> satalite town</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="offers-section py-5 bg-light" style="border-radius: 10px;">
+    <div class="container">
+        <div class="section-title animate-on-scroll">
+            <h2 class="text-dark">Special Offers & Packages</h2>
+            <p class="text-secondary">Unlock exclusive deals for an unforgettable stay.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 animate-on-scroll">
+                <div class="offer-card room-card h-100"> 
+                    <div class="img-container">
+                         <div class="offer-badge">SAVE 20%</div>
+                        <img src="/static/images/rees.jpg" class="room-img" alt="Summer Special" loading="lazy">
+                    </div>
+                    <div class="room-content">
+                        <h3 class="room-title">Summer Escape Package</h3>
+                        <p class="room-desc">Enjoy 10% off all suites, complimentary breakfast, and a spa credit for stays between June and August.</p>
+                 
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 animate-on-scroll">
+                <div class="offer-card room-card h-100">
+                     <div class="img-container">
+                         <div class="offer-badge">FAMILY DEAL</div>
+                        <img src="/static/images/gym.jpg" class="room-img" alt="Family Fun" loading="lazy">
+                     </div>
+                    <div class="room-content">
+                        <h3 class="room-title">Family Getaway</h3>
+                        <p class="room-desc">Book two connecting rooms and get 10% off the second room, plus complimentary kids' club access.</p>
+                      
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 animate-on-scroll">
+                <div class="offer-card room-card h-100">
+                    <div class="img-container">
+                         <div class="offer-badge">BUSINESS READY</div>
+                        <img src="/static/images/pool.jpg" class="room-img" alt="Business Stay" loading="lazy">
+                    </div>
+                    <div class="room-content">
+                        <h3 class="room-title">Executive Business Package</h3>
+                        <p class="room-desc">Complimentary airport transfers, high-speed internet, and access to our executive lounge.</p>
+               
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('availabilityForm');
+        
+        if (form) { // Check if form exists to prevent errors on other pages
+            form.addEventListener('submit', function(e) {
+                const checkInInput = document.getElementById('checkInDate');
+                const checkOutInput = document.getElementById('checkOutDate');
+                
+                // Ensure elements exist before accessing their values
+                if (!checkInInput || !checkOutInput) return;
+
+                const checkIn = new Date(checkInInput.value);
+                const checkOut = new Date(checkOutInput.value);
+                const today = new Date();
+                
+                const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const checkInDateOnly = new Date(checkIn.getFullYear(), checkIn.getMonth(), checkIn.getDate());
+                
+                if (checkInDateOnly < todayDateOnly) {
+                    alert("Check-in date cannot be in the past.");
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (checkOut <= checkIn) {
+                    alert("Check-out date must be after check-in date.");
+                    e.preventDefault();
+                    return;
+                }
+            });
+        }
+        
+        // Initialize date pickers
+        const checkInDateElem = document.getElementById('checkInDate');
+        const checkOutDateElem = document.getElementById('checkOutDate');
+
+        if (checkInDateElem && checkOutDateElem) { // Ensure elements exist
+            const today = new Date().toISOString().split('T')[0];
+            checkInDateElem.min = today;
+            checkOutDateElem.min = today; // Initial min for checkout
+            
+            // Set default dates: today to 2 days from now
+            const defaultCheckInDate = new Date();
+            const defaultCheckOutDate = new Date();
+            defaultCheckOutDate.setDate(defaultCheckInDate.getDate() + 2);
+            
+            const defaultCheckInStr = defaultCheckInDate.toISOString().split('T')[0];
+            const defaultCheckOutStr = defaultCheckOutDate.toISOString().split('T')[0];
+            
+            checkInDateElem.value = defaultCheckInStr;
+            checkOutDateElem.value = defaultCheckOutStr;
+            checkOutDateElem.min = defaultCheckInStr; // Update min for checkout based on check-in
+
+            // Update checkOutDate min if checkInDate changes
+            checkInDateElem.addEventListener('change', function() {
+                let selectedCheckIn = new Date(this.value);
+                selectedCheckIn.setDate(selectedCheckIn.getDate() + 1); // Check-out must be at least one day after check-in
+                checkOutDateElem.min = selectedCheckIn.toISOString().split('T')[0];
+                // If current checkout is before new min checkout, update checkout
+                if (new Date(checkOutDateElem.value) < selectedCheckIn) {
+                    checkOutDateElem.value = checkOutDateElem.min;
+                }
+            });
+        }
+
+        // Scroll animations
+        const animatedItems = document.querySelectorAll('.animate-on-scroll');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                } else {
+                    // Optional: remove 'visible' class when out of view
+                    // entry.target.classList.remove('visible'); 
+                }
+            });
+        }, { threshold: 0.1 }); // Trigger when 10% of the item is visible
+        
+        animatedItems.forEach(item => {
+            observer.observe(item);
+        });
+    });
+</script>
+{% endblock %}

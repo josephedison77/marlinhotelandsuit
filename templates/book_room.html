@@ -1,0 +1,291 @@
+<!-- templates/book_room.html -->
+{% extends "base.html" %}
+{% block title %}Book Room - {{ room.name }}{% endblock %}
+{% block content %}
+
+<style>
+  :root {
+      --primary: #023147;
+      --secondary: #c5a880;
+      --accent: #8c6d46;
+      --light: #f8f9fa;
+      --dark: #0a1429;
+      --text: #333;
+      --gold-light: #e6c78a;
+      --gold-dark: #b08d57;
+      --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+  
+  body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(55deg, #031924 0%, var(--primary) 100%);
+      color: var(--light);
+      overflow-x: hidden;
+      line-height: 1.6;
+  }
+
+  .about-hero {
+      position: relative;
+      height: 70vh;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 30px 4px 4px 90px;
+      background: linear-gradient(rgba(12, 26, 50, 0.07), rgba(12, 26, 50, 0.04)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+  }
+  
+  .about-hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, transparent 10%, var(--primary) 90%);
+      z-index: 1;
+  }
+  
+  .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center; /* Centered text */
+      max-width: 900px;
+      padding: 0 20px;
+  }
+  
+  .about-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--gold-light);
+      text-shadow: 0 0 15px rgba(0,0,0,0.7), 0 0 25px rgba(0,0,0,0.5); /* More visible text shadow */
+      letter-spacing: 1px;
+      animation: fadeInDown 1.2s ease-out;
+  }
+  
+  .about-hero p {
+      font-size: 1.4rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      color: rgba(255,255,255,0.95); /* Slightly brighter text */
+      text-shadow: 0 0 8px rgba(0,0,0,0.5); /* Text shadow for readability */
+      animation: fadeIn 1.5s ease-out 0.3s forwards;
+      opacity: 0;
+  }
+
+  .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+  }
+  
+  .section-title {
+      text-align: center;
+      margin-bottom: 4rem;
+      padding-top: 5rem;
+  }
+  
+  .section-title h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.2rem;
+      color: var(--gold-light);
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+  }
+  
+  .section-title h2::after {
+      content: "";
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--secondary);
+  }
+  
+  .section-title p {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.7);
+      max-width: 700px;
+      margin: 2rem auto 0;
+  }
+
+  .card {
+      background: rgba(255, 255, 255, 0.014);
+      backdrop-filter: blur(10);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      transition: var(--transition);
+      position: relative;
+      transform: translateY(0);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(197, 168, 128, 0.15);
+      color: var(--light); /* Ensure text within cards is light */
+  }
+  
+  .card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      border-color: rgba(197, 168, 128, 0.3);
+  }
+
+  .card-body h3 {
+      color: var(--gold-light);
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 1.5rem;
+  }
+
+  .card-body ul {
+      list-style: none;
+      padding: 0;
+  }
+
+  .card-body ul li {
+      margin-bottom: 0.8rem;
+      color: rgba(255,255,255,0.9);
+  }
+
+  .card-body p {
+      color: rgba(255,255,255,0.9);
+  }
+
+  .management-team .card-img-top {
+      border-bottom: 2px solid rgba(197, 168, 128, 0.15);
+  }
+
+  .management-team .card-title {
+      color: var(--gold-light);
+      font-family: 'Playfair Display', serif;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+  }
+
+  .management-team .card-text {
+      color: rgba(255,255,255,0.8);
+  }
+
+  .mb-3{background-color: var(--gold-light);
+padding: 1rem;
+border-radius: 20px;
+
+font-size: larger;
+text-align: center;
+border: 2px solid var(--gold-dark);
+}
+
+.form-control{padding: 0.2rem;
+border-radius: 10px;
+width: 60%;
+text-align: center;
+
+margin: 0 7.9rem;
+margin-top: 0.1rem;
+color: var(--gold-dark);
+}
+
+.card{padding: 1rem;}
+
+
+
+  /* Animations */
+  @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+      40% { transform: translateY(-20px) translateX(-50%); }
+      60% { transform: translateY(-10px) translateX(-50%); }
+  }
+  
+  .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  
+  .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+      .about-hero h1 {
+          font-size: 3rem;
+      }
+      
+      .about-hero p {
+          font-size: 1.1rem;
+      }
+      
+      .section-title h2 {
+          font-size: 2.5rem;
+      }
+
+      .form-control{margin-left: 3rem;}
+      
+  }
+</style>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Book {{ room.name }}</h2>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.csrf_token }}
+
+                        <div class="mb-3 " style="background-color: rgba(248, 248, 255, 0); border: none;">
+                             <input type="hidden" name="room_id" value="{{ room.id }}">
+                            <input type="hidden" name="user_id" value="{{ current_user.id }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Check-in Date</label>
+                            <input type="date" class="form-control" name="check_in_date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Check-out Date</label>
+                            <input type="date" class="form-control" name="check_out_date" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary"  style="width: 100%; border-radius: 10px;">Confirm Booking</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Room Details</h5>
+                    <p class="card-text" style="color: var(--gold-light);">{{ room.description }}</p>
+                    <ul class="list-group list-group-flush" style="border-radius: 30px;">
+                        <li class="list-group-item" style="color: var(--gold-dark);">Price: {{ room.price|format_currency }}</li>
+                        <li class="list-group-item" style="color: var(--gold-dark);">Capacity: {{ room.capacity }} guests</li>
+                         <li class="list-group-item" style="color: var(--gold-dark);">Capacity: {{ room.size }} size</li>
+                          <li class="list-group-item" style="color: var(--gold-dark);">Capacity: {{ room.bedsize }} bed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

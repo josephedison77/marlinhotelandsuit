@@ -1,0 +1,248 @@
+<!-- admin_rooms.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+    }
+
+    .container {
+     background-color: #01243507;
+     
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+
+    h2 {
+        color: var(--primary);
+        border-bottom: 2px solid var(--secondary);
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary:hover {
+        background: #012435;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(2, 49, 71, 0.25);
+    }
+
+    .row1 {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 20px;
+    }
+
+    .luxury-card {
+        border: 1px solid rgba(2, 49, 71, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .luxury-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .no-image {
+        height: 200px;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+    }
+
+    .card-body {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-title {
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .text-muted {
+        color: #6c757d;
+        margin-bottom: 15px;
+    }
+
+    .d-flex {
+        display: flex;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .btn-sm {
+        padding: 8px 15px;
+        font-size: 14px;
+        border-radius: 6px;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+
+    .alert-info {
+        background: rgba(2, 49, 71, 0.1);
+        border-left: 4px solid var(--primary);
+        color: var(--primary);
+    }
+
+    .alert-warning {
+        background: rgba(255, 193, 7, 0.1);
+        border-left: 4px solid #ffc107;
+        color: #856404;
+    }
+
+    .brt {
+        margin-top: 25px;
+        text-align: right;
+    }
+
+    .btn-secondary {
+        background: var(--secondary);
+        color: var(--dark);
+        border: none;
+        font-weight: 500;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(197, 168, 128, 0.3);
+        color: white;
+    }
+</style>
+
+<div class="container">
+    <h2>
+        Room Management
+        <a href="{{ url_for('create_room') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New Room
+        </a>
+    </h2>
+    
+    <div class="row">
+        {% for room in rooms %}
+        <div class="col-md-4 mb-4">
+            <div class="card luxury-card">
+                {% if room.images %}
+                    {% set primary_image = room.images|selectattr('is_primary')|list|first %}
+                    {% if primary_image %}
+                        <img src="{{ url_for('static', filename='uploads/' + primary_image.filename) }}" 
+                             class="card-img-top" 
+                             alt="{{ room.name }}">
+                    {% else %}
+                        <div class="card-img-top no-image">
+                            <i class="fas fa-image fa-2x"></i>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="card-img-top no-image">
+                        <i class="fas fa-image fa-2x"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ room.name }}</h5>
+                    <p class="text-muted">₦{{ room.price|number_format }} / night</p>
+                    <div class="d-flex">
+                        <a href="{{ url_for('edit_room', room_id=room.id) }}" 
+                           class="btn btn-sm btn-primary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <form method="POST" action="{{ url_for('delete_room', room_id=room.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Delete this room and all its images?')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if current_user.has_role('super_admin') or current_user.has_role('housekeeping_supervisor') %}
+        <div class="alert alert-info">
+            <strong>Note:</strong> Only super admins and housekeeping supervisors can create or delete rooms.
+        </div>
+    {% endif %}
+    
+    {% if not rooms %}
+        <div class="alert alert-warning">
+            No rooms available. Please create a new room.
+        </div>
+    {% endif %}
+    
+    {% if rooms|length > 0 %}
+        <div class="alert alert-info">
+            Total Rooms: {{ rooms|length }}
+        </div>
+    {% endif %}
+    
+    {% if current_user.has_role('housekeeping_supervisor') %}
+        <div class="brt"><a href="{{ url_for('housekeeping_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a></div>
+    {% else %}
+        <div class="brt"><a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a></div>
+    {% endif %}
+</div>
+{% endblock %}

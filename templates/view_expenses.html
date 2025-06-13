@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-content">
+    <div class="dashboard-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="card-title">Expense Records</h3>
+            <div class="d-flex">
+                <a href="{{ url_for('add_expense') }}" class="btn btn-sm btn-primary me-2">
+                    <i class="bi bi-plus"></i> Add Expense
+                </a>
+                <a href="{{ url_for('financial_reports') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-graph-up"></i> Reports
+                </a>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <form class="row g-2">
+                        <div class="col-md-4">
+                            <select class="form-select" name="category">
+                                <option value="all">All Categories</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>
+                                        {{ cat|capitalize }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="month" class="form-control" name="date" value="{{ date_filter }}">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search expenses...">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expense in expenses.items %}
+                        <tr>
+                            <td>{{ expense.date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ expense.description|truncate(40) }}</td>
+                            <td><span class="badge bg-info">{{ expense.category|capitalize }}</span></td>
+                            <td>{{ expense.vendor|default('-', true) }}</td>
+                            <td>{{ expense.amount|format_currency }}</td>
+                            <td>{{ expense.payment_method|capitalize }}</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">No expenses found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if expenses.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('view_expenses', page=expenses.prev_num, category=selected_category, date=date_filter) }}">
+                            &laquo;
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for page_num in expenses.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
+                        {% if page_num %}
+                            <li class="page-item {% if page_num == expenses.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('view_expenses', page=page_num, category=selected_category, date=date_filter) }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if expenses.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('view_expenses', page=expenses.next_num, category=selected_category, date=date_filter) }}">
+                            &raquo;
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

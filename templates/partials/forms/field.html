@@ -1,0 +1,12 @@
+<!-- templates/partials/forms/field.html -->
+<div class="mb-3">
+    <label class="form-label">{{ field.label }}</label>
+    {{ field(class="form-control" + (" is-invalid" if field.errors else "")) }}
+    {% if field.errors %}
+        <div class="invalid-feedback">
+            {% for error in field.errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

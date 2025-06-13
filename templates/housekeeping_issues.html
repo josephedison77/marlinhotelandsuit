@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block dashboard_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    body {
+        background-color: var(--light);
+        color: var(--text);
+    }
+    .card.shadow.mb-4 {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05) !important;
+        border: none;
+    }
+    .card-header.py-3 {
+        background-color: var(--light);
+        border-bottom: 1px solid var(--gold-light);
+        padding: 1rem 1.5rem;
+    }
+    .text-primary {
+        color: var(--primary) !important;
+    }
+    .table {
+        --bs-table-color: var(--text);
+        --bs-table-bg: var(--light);
+        --bs-table-border-color: var(--gold-light);
+        --bs-table-hover-color: var(--text);
+        --bs-table-hover-bg: rgba(0,0,0,0.03);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    .table thead th {
+        background-color: var(--primary);
+        color: var(--light);
+        border-color: var(--primary);
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+    }
+    .table tbody tr td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+    }
+    .badge {
+        padding: 0.5em 0.75em;
+        border-radius: 0.35rem;
+        font-weight: 600;
+    }
+    .badge.badge-danger {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+    .badge.badge-warning {
+        background-color: var(--secondary) !important;
+        color: var(--dark) !important;
+    }
+    .btn-info {
+        background-color: var(--accent) !important;
+        border-color: var(--accent) !important;
+        color: var(--light) !important;
+        border-radius: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.875rem;
+        transition: var(--transition);
+    }
+    .btn-info:hover {
+        background-color: var(--gold-dark) !important;
+        border-color: var(--gold-dark) !important;
+    }
+    .btn-primary {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: var(--light) !important;
+        border-radius: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.875rem;
+        transition: var(--transition);
+    }
+    .btn-primary:hover {
+        background-color: var(--dark) !important;
+        border-color: var(--dark) !important;
+    }
+</style>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Issue</th>
+                        <th>Last Cleaned</th>
+                        <th>Last Occupied</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr>
+                        <td>{{ room.name }}</td>
+                        <td>
+                            {% if room.cleaning_status == 'needs_attention' %}
+                            Requires special attention
+                            {% else %}
+                            Not cleaned for {{ (date.today() - room.last_cleaned).days }} days
+                            {% endif %}
+                        </td>
+                        <td>{{ room.last_cleaned|datetimeformat if room.last_cleaned else 'Never' }}</td>
+                        <td>{{ room.last_occupied|datetimeformat if room.last_occupied else 'Never' }}</td>
+                        <td>
+                            <span class="badge badge-{{ 
+                                'danger' if room.cleaning_status == 'needs_attention' else 
+                                'warning' 
+                            }}">
+                                {{ room.cleaning_status|replace('_', ' ')|title }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('room_detail', room_id=room.id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-info-circle"></i> Details
+                            </a>
+                            <a href="{{ url_for('assign_cleaning', room_id=room.id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-tasks"></i> Assign
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No rooms needing special attention</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

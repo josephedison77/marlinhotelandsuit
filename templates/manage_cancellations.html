@@ -1,0 +1,33 @@
+<style>
+  :root {
+    --primary: #023147; --accent: #8c6d46; --success: #198754; --danger: #a4161a;
+    --border-color: #e9ecef; --border-radius: 999px; --transition: all 0.3s ease;
+  }
+</style>
+<table class="table table-hover">
+    <thead style="border-bottom: 2px solid var(--border-color);">
+        <tr style="color: #6c757d; font-weight: 500; text-transform: uppercase; font-size: 0.8rem;">
+            <th style="padding: 1rem;">Booking ID</th>
+            <th>Guest</th>
+            <th>Reason</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in requests %}
+        <tr style="vertical-align: middle;">
+            <td style="padding: 1rem; font-weight: 600; color: var(--primary);">{{ booking.id }}</td>
+            <td>{{ booking.user.username }}</td>
+            <td>{{ booking.cancellation_reason }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('handle_cancellation', booking_id=booking.id, action='approve') }}" class="d-inline-block">
+                    <button type="submit" class="btn btn-sm" style="background-color: var(--success); color: white; border: none; padding: 8px 15px; border-radius: var(--border-radius); transition: var(--transition);" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">&#10003; Approve</button>
+                </form>
+                <form method="POST" action="{{ url_for('handle_cancellation', booking_id=booking.id, action='deny') }}" class="d-inline-block">
+                    <button type="submit" class="btn btn-sm" style="background-color: var(--danger); color: white; border: none; padding: 8px 15px; border-radius: var(--border-radius); transition: var(--transition);" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">&#10005; Deny</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

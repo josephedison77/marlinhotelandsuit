@@ -1,0 +1,94 @@
+<!-- templates/automations/list.html -->
+{% extends "admin_base.html" %}
+
+{% block admin_content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <h5>Workflow Automation Rules</h5>
+        <a href="{{ url_for('automations') }}" class="btn btn-sm btn-primary">
+            New Rule
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.name.label }}
+                        {{ form.name(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.trigger_type.label }}
+                        {{ form.trigger_type(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.action_type.label }}
+                        {{ form.action_type(class="form-select") }}
+                    </div>
+                    <div class="mb-3 form-check">
+                        {{ form.is_active(class="form-check-input") }}
+                        {{ form.is_active.label(class="form-check-label") }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        Save Automation Rule
+                    </button>
+                </form>
+            </div>
+
+            <div class="col-md-8">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Trigger</th>
+                            <th>Action</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rule in rules %}
+                        <tr>
+                            <td>{{ rule.name }}</td>
+                            <td>{{ rule.trigger_type|title }}</td>
+                            <td>{{ rule.action_type|title }}</td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input toggle-switch" 
+                                           type="checkbox" 
+                                           data-rule-id="{{ rule.id }}"
+                                           {{ 'checked' if rule.is_active }}>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.querySelectorAll('.toggle-switch').forEach(toggleSwitch => {
+    toggleSwitch.addEventListener('change', function() {
+        const ruleId = this.dataset.ruleId;
+        fetch(`/automations/${ruleId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        })
+    });
+});
+</script>
+{% endblock %}

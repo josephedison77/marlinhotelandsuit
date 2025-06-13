@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  :root {
+    --primary: #023147;
+    --secondary: #c5a880;
+    --light: #f8f9fa;
+    --dark: #0a1429;
+    --accent: #8c6d46;
+    --gold-light: #e6c78a;
+    --gold-dark: #b08d57;
+  }
+  
+  .checkout-container {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+  }
+  
+  .checkout-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    border: none;
+  }
+  
+  .checkout-header {
+    background: linear-gradient(135deg, var(--primary), var(--dark));
+    color: white;
+    padding: 1.5rem;
+    border-bottom: 3px solid var(--secondary);
+  }
+  
+  .checkout-body {
+    padding: 2rem;
+    background: white;
+  }
+  
+  .time-alert {
+    background: rgba(197, 168, 128, 0.1);
+    border-left: 4px solid var(--secondary);
+    padding: 1.25rem;
+    border-radius: 8px;
+  }
+  
+  .time-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: center;
+    margin: 0.5rem 0;
+  }
+  
+  .verification-section {
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+  }
+  
+  .receptionist-section {
+    background: rgba(40, 167, 69, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border: 1px solid rgba(40, 167, 69, 0.2);
+  }
+  
+  .form-control {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.9rem 1.25rem;
+    border-radius: 10px;
+    transition: all 0.3s;
+  }
+  
+  .form-control:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 0.25rem rgba(197, 168, 128, 0.25);
+  }
+  
+  .btn-submit {
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    border: none;
+    padding: 0.9rem 2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s;
+  }
+  
+  .btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(197, 168, 128, 0.3);
+  }
+</style>
+
+<div class="checkout-container">
+  <div class="checkout-card">
+    <div class="checkout-header">
+      <h2 class="mb-0">Checkout - Room {{ booking.room.name }}</h2>
+    </div>
+    <div class="checkout-body">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5 class="mb-3" style="color: var(--primary);">Booking Details</h5>
+          <div class="detail-list">
+            <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+              <span class="fw-medium">Guest:</span>
+              <span>{{ booking.user.username }}</span>
+            </div>
+            <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+              <span class="fw-medium">Check-in:</span>
+              <span>{{ booking.check_in_date|datetimeformat }}</span>
+            </div>
+            <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+              <span class="fw-medium">Check-out:</span>
+              <span>{{ booking.check_out_date|datetimeformat }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="fw-medium">Total:</span>
+              <span class="fw-bold">{{ booking.total_amount|format_currency }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="time-alert">
+            <h5>Time until checkout:</h5>
+            <div class="time-value">{{ mins_until_checkout }} minutes</div>
+          </div>
+        </div>
+      </div>
+      
+      {% if not receptionist_mode %}
+      <div class="verification-section">
+        <h5 style="color: var(--accent);">Checkout OTP Verification</h5>
+        <p class="mb-3">Please enter the OTP sent to your email to complete checkout.</p>
+        
+        <form method="POST">
+          <div class="mb-3">
+            <label for="otp" class="form-label fw-medium">OTP Code</label>
+            <input type="text" class="form-control" id="otp" name="otp" required>
+          </div>
+          <button type="submit" class="btn btn-submit">Complete Checkout</button>
+        </form>
+      </div>
+      {% else %}
+      <div class="receptionist-section">
+        <h5 style="color: #28a745;">Receptionist Checkout</h5>
+        <p class="mb-3">You're checking out this guest as a receptionist.</p>
+        <form method="POST">
+          <button type="submit" class="btn btn-success btn-submit">Confirm Checkout</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

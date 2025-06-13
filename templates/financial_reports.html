@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .dashboard-content {
+        padding: 2rem;
+    }
+    .dashboard-card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        background: white;
+    }
+    .card-header {
+        background: linear-gradient(to right, #023147, #002738);
+        color: white;
+        padding: 1.2rem 1.5rem;
+        border-bottom: 2px solid #c5a880;
+    }
+    .card-title {
+        margin: 0;
+        font-weight: 600;
+    }
+    .card-body {
+        padding: 1.5rem;
+    }
+    .nav-tabs {
+        border-bottom: 2px solid #dee2e6;
+    }
+    .nav-tabs .nav-link {
+        color: #023147;
+        font-weight: 500;
+        border: none;
+        padding: 1rem 1.5rem;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    .nav-tabs .nav-link.active {
+        color: #023147;
+        font-weight: 600;
+        background: transparent;
+    }
+    .nav-tabs .nav-link.active:after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: #c5a880;
+    }
+    .nav-tabs .nav-link:hover {
+        color: #023147;
+    }
+    .table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+    }
+    .table thead th {
+        background: #f8f9fa;
+        color: #023147;
+        padding: 1rem;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .table tbody tr {
+        transition: all 0.3s ease;
+    }
+    .table tbody tr:hover {
+        background-color: rgba(197, 168, 128, 0.05);
+    }
+    .text-success {
+        color: #28a745 !important;
+    }
+    .text-danger {
+        color: #dc3545 !important;
+    }
+    .table-light {
+        background-color: #f8f9fa;
+    }
+</style>
+
+<div class="dashboard-content">
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title">Financial Reports</h3>
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-tabs mb-4" id="reportTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="profit-tab" data-bs-toggle="tab" 
+                            data-bs-target="#profit" type="button" role="tab">
+                        Profit & Loss
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="expense-tab" data-bs-toggle="tab" 
+                            data-bs-target="#expense" type="button" role="tab">
+                        Expense Analysis
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="vendor-tab" data-bs-toggle="tab" 
+                            data-bs-target="#vendor" type="button" role="tab">
+                        Vendor Spending
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="reportTabsContent">
+                <!-- Profit & Loss Tab -->
+                <div class="tab-pane fade show active" id="profit" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <canvas id="profitLossChart" height="300"></canvas>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Month</th>
+                                            <th>Revenue</th>
+                                            <th>Expenses</th>
+                                            <th>Profit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in range(12) %}
+                                        <tr>
+                                            <td>{{ month_labels[i] }}</td>
+                                            <td>{{ monthly_revenue[i]|format_currency }}</td>
+                                            <td>{{ monthly_expenses[i]|format_currency }}</td>
+                                            <td class="{{ 'text-success' if monthly_profit[i] >= 0 else 'text-danger' }}">
+                                                {{ monthly_profit[i]|format_currency }}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot class="table-light">
+                                        <tr>
+                                            <th>Total</th>
+                                            <th>{{ monthly_revenue|sum|format_currency }}</th>
+                                            <th>{{ monthly_expenses|sum|format_currency }}</th>
+                                            <th class="{{ 'text-success' if (monthly_revenue|sum - monthly_expenses|sum) >= 0 else 'text-danger' }}">
+                                                {{ (monthly_revenue|sum - monthly_expenses|sum)|format_currency }}
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Expense Analysis Tab -->
+                <div class="tab-pane fade" id="expense" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <canvas id="expenseCategoryChart" height="300"></canvas>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Amount</th>
+                                            <th>Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for expense in expense_breakdown %}
+                                        <tr>
+                                            <td>{{ expense.category|capitalize }}</td>
+                                            <td>{{ expense.total|format_currency }}</td>
+                                            <td>{{ ((expense.total / (expense_breakdown|sum(attribute='total') or 1)) * 100)|round(1) }}%</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vendor Spending Tab -->
+                <div class="tab-pane fade" id="vendor" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <canvas id="vendorSpendingChart" height="300"></canvas>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Vendor</th>
+                                            <th>Amount</th>
+                                            <th>Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for vendor in vendor_spending %}
+                                        <tr>
+                                            <td>{{ vendor.vendor or 'Unknown' }}</td>
+                                            <td>{{ vendor.total|format_currency }}</td>
+                                            <td>{{ ((vendor.total / (vendor_spending|sum(attribute='total') or 1)) * 100)|round(1) }}%</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Profit & Loss Chart
+        const plCtx = document.getElementById('profitLossChart');
+        new Chart(plCtx, {
+            type: 'line',
+            data: {
+                labels: {{ month_labels|safe }},
+                datasets: [
+                    {
+                        label: 'Revenue',
+                        data: {{ monthly_revenue|safe }},
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Expenses',
+                        data: {{ monthly_expenses|safe }},
+                        borderColor: '#dc3545',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Profit',
+                        data: {{ monthly_profit|safe }},
+                        borderColor: '#023147',
+                        backgroundColor: 'rgba(2, 49, 71, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₦' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ₦' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Expense Category Chart
+        const expCatCtx = document.getElementById('expenseCategoryChart');
+        new Chart(expCatCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ expense_breakdown|map(attribute='category')|safe }},
+                datasets: [{
+                    data: {{ expense_breakdown|map(attribute='total')|safe }},
+                    backgroundColor: [
+                        '#023147', '#c5a880', '#8c6d46', '#28a745', 
+                        '#dc3545', '#6c757d', '#17a2b8', '#ffc107'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.chart.getDatasetMeta(0).total;
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ₦${value.toLocaleString()} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Vendor Spending Chart
+        const vendorCtx = document.getElementById('vendorSpendingChart');
+        new Chart(vendorCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ vendor_spending|map(attribute='vendor')|safe }},
+                datasets: [{
+                    label: 'Spending',
+                    data: {{ vendor_spending|map(attribute='total')|safe }},
+                    backgroundColor: '#023147'
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₦' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '₦' + context.parsed.x.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Tab switching animation
+        const tabLinks = document.querySelectorAll('.nav-tabs .nav-link');
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                tabLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tabPanes = document.querySelectorAll('.tab-pane');
+                tabPanes.forEach(pane => {
+                    pane.classList.remove('show', 'active');
+                    if (pane.id === this.getAttribute('data-bs-target').substring(1)) {
+                        pane.classList.add('show', 'active');
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

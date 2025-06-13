@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Printing Queue{% endblock %}
+
+{% block content %}
+<style>
+  .print-queue-container {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+  }
+  
+  .queue-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: var(--primary);
+  }
+  
+  .queue-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  .queue-table th {
+    background: linear-gradient(135deg, var(--primary), var(--dark));
+    color: white;
+    padding: 1.2rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  
+  .queue-table td {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    color: var(--dark);
+  }
+  
+  .queue-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .queue-table tr:hover {
+    background-color: rgba(248, 249, 250, 0.7);
+  }
+  
+  .print-btn {
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    border: none;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .print-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(197, 168, 128, 0.3);
+  }
+</style>
+
+<div class="print-queue-container">
+  <h2 class="queue-header">Bar Print Queue</h2>
+  
+  <table class="queue-table">
+    <thead>
+      <tr>
+        <th>Order #</th>
+        <th>Date</th>
+        <th>Table</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ order.table_number }}</td>
+        <td>
+          <a href="{{ url_for('order_receipt_html', order_id=order.id, auto_print=1) }}" 
+             target="_blank" 
+             class="print-btn">
+            <i class="bi bi-printer"></i> Print
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

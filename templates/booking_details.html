@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}Booking Details #{{ booking.id }}{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+    --primary: #023147;
+    --secondary: #c5a880;
+    --light: #f8f9fa;
+    --dark: #0a1429;
+    --accent: #8c6d46;
+    --gold-light: #e6c78a;
+    --gold-dark: #b08d57;
+  }
+  
+  .booking-container {
+    padding: 2rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .booking-card {
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: none;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  
+  .booking-header {
+    background: var(--primary);
+    color: white;
+    padding: 1.5rem;
+    border-bottom: 3px solid var(--secondary);
+  }
+  
+  .booking-body {
+    padding: 2rem;
+    background: white;
+  }
+  
+  .detail-row {
+    display: flex;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .detail-label {
+    flex: 0 0 30%;
+    font-weight: 600;
+    color: var(--primary);
+  }
+  
+  .detail-value {
+    flex: 1;
+    color: var(--dark);
+  }
+  
+  .badge-status {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+  }
+  
+  .badge-paid {
+    background: rgba(40, 167, 69, 0.15);
+    color: #28a745;
+  }
+  
+  .badge-unpaid {
+    background: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+  }
+  
+  .cancellation-card {
+    border-left: 4px solid var(--secondary);
+  }
+  
+  .policy-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .policy-list li {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .policy-list li:before {
+    content: "•";
+    color: var(--secondary);
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+  }
+  
+  .btn-cancel {
+    background: linear-gradient(135deg, var(--secondary), var(--gold-dark));
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .btn-cancel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(197, 168, 128, 0.4);
+  }
+  
+  .debug-section {
+    background: rgba(2, 49, 71, 0.03);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .late-checkout-card {
+    border-top: 3px solid var(--secondary);
+    margin-top: 2rem;
+  }
+</style>
+
+<div class="booking-container">
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="booking-card">
+        <div class="booking-header">
+          <h3 class="mb-0">Booking #{{ booking.id }}</h3>
+        </div>
+        <div class="booking-body">
+          <div class="detail-row">
+            <div class="detail-label">Room:</div>
+            <div class="detail-value">{{ booking.room.name }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">Check-in Date:</div>
+            <div class="detail-value">{{ booking.check_in_date|datetimeformat('%b %d, %Y %H:%M') }} UTC</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">Check-out Date:</div>
+            <div class="detail-value">{{ booking.check_out_date|datetimeformat('%b %d, %Y %H:%M') }} UTC</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">Total Amount:</div>
+            <div class="detail-value">{{ booking.total_amount|format_currency }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">Payment Status:</div>
+            <div class="detail-value">
+              <span class="badge-status {{ 'badge-paid' if booking.payment_status|lower == 'paid' else 'badge-unpaid' }}">
+                {{ booking.payment_status|title }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">Check-in OTP:</div>
+            <div class="detail-value">
+              {% if booking.otp %}
+                <span class="fw-bold">{{ booking.otp }}</span>
+                {% if booking.otp_expiry %}
+                  <span class="text-muted small">(expires {{ booking.otp_expiry|datetimeformat('%b %d, %Y %H:%M') }} UTC)</span>
+                {% endif %}
+              {% else %}
+                <span class="text-muted">No OTP generated</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="booking-card cancellation-card">
+        <div class="booking-header">
+          <h5 class="mb-0">Cancellation Information</h5>
+        </div>
+        <div class="booking-body">
+          <div class="alert bg-light border border-light">
+            <h6>Cancellation Policy</h6>
+            <ul class="policy-list mb-0">
+              <li>Free cancellation until {{ cancellation_cutoff|datetimeformat('%b %d, %Y') }}</li>
+              <li>70% refund until {{ booking.check_in_date|datetimeformat('%b %d, %Y') }}</li>
+              <li>No refund after check-in</li>
+            </ul>
+          </div>
+          {% if booking.payment_status|lower == 'paid'
+                and booking.cancellation_status not in ['requested', 'approved', 'denied']
+                and current_utc < cancellation_cutoff %}
+            <div class="text-center mt-3">
+              <a href="{{ url_for('request_cancellation', booking_id=booking.id) }}" 
+                 class="btn btn-cancel w-100 mb-2">
+                Request Cancellation
+              </a>
+              <p class="text-muted small mb-0">
+                Available until {{ cancellation_cutoff|datetimeformat('%b %d, %Y %H:%M') }} UTC
+              </p>
+            </div>
+          {% elif booking.cancellation_status == 'requested' %}
+            <div class="alert alert-warning text-center mb-0">
+              Cancellation request pending approval
+            </div>
+          {% elif booking.cancellation_status == 'approved' %}
+            <div class="alert alert-success text-center mb-0">
+              Booking cancelled and refund processed
+            </div>
+          {% elif current_utc >= cancellation_cutoff %}
+            <div class="alert alert-warning text-center mb-0">
+              Free cancellation period has ended
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="booking-card late-checkout-card">
+    <div class="booking-body">
+      <h5 class="card-title">Checkout Information</h5>
+      <div class="detail-row">
+        <div class="detail-label">Standard Checkout:</div>
+        <div class="detail-value">12:00 PM</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Late Checkout (until 6 PM):</div>
+        <div class="detail-value">{{ (booking.room.price * 0.5|to_decimal)|format_currency }}</div>
+      </div>
+      
+   
+<a href="{{ url_for('booking_receipt', booking_id=booking.id) }}" target="_blank" class="btn btn-primary">
+    Print Receipt
+</a>
+
+  <div class="debug-section">
+    <h6 class="text-muted mb-3">System Information</h6>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="detail-label">Payment Status:</div>
+        <div class="detail-value">{{ booking.payment_status }}</div>
+      </div>
+      <div class="col-md-3">
+        <div class="detail-label">Cancellation Status:</div>
+        <div class="detail-value">{{ booking.cancellation_status }}</div>
+      </div>
+      <div class="col-md-3">
+        <div class="detail-label">Current UTC:</div>
+        <div class="detail-value">{{ current_utc }}</div>
+      </div>
+      <div class="col-md-3">
+        <div class="detail-label">Cancellation Cutoff:</div>
+        <div class="detail-value">{{ cancellation_cutoff }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

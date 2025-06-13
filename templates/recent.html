@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elysian Retreat | Luxury Hotel Experience</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#72BEEE',secondary:'#D4AF37'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+html {
+scroll-behavior: smooth;
+}
+body {
+font-family: 'Poppins', sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+font-family: 'Playfair Display', serif;
+}
+.gold-text {
+color: #D4AF37;
+}
+.gold-border {
+border-color: #D4AF37;
+}
+.gold-bg {
+background-color: #D4AF37;
+}
+.parallax {
+background-attachment: fixed;
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;
+}
+.fade-in {
+opacity: 0;
+transform: translateY(30px);
+transition: all 0.8s ease-out;
+}
+.fade-in.visible {
+opacity: 1;
+transform: translateY(0);
+}
+.animate-on-scroll {
+opacity: 0;
+transform: translateY(30px);
+transition: all 0.8s ease-out;
+}
+.animate-on-scroll.animate-fade-up {
+opacity: 1;
+transform: translateY(0);
+}
+.animate-on-scroll.animate-fade-left {
+transform: translateX(-30px);
+}
+.animate-on-scroll.animate-fade-right {
+transform: translateX(30px);
+}
+.animate-on-scroll.animate-fade-left.animate-fade-up,
+.animate-on-scroll.animate-fade-right.animate-fade-up {
+transform: translate(0, 0);
+}
+.animate-scale {
+transition: transform 0.4s ease;
+}
+.animate-scale:hover {
+transform: scale(1.05);
+}
+.stagger-animation > * {
+opacity: 0;
+transform: translateY(20px);
+transition: all 0.5s ease;
+}
+.stagger-animation > *.animate-fade-up {
+opacity: 1;
+transform: translateY(0);
+}
+.zoom-hover {
+transition: transform 0.5s ease;
+}
+.zoom-hover:hover {
+transform: scale(1.05);
+}
+.gold-shine {
+position: relative;
+overflow: hidden;
+}
+.gold-shine::after {
+content: '';
+position: absolute;
+top: -50%;
+left: -50%;
+width: 200%;
+height: 200%;
+background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+transform: rotate(30deg);
+transition: transform 0.7s;
+opacity: 0;
+}
+.gold-shine:hover::after {
+transform: rotate(30deg) translate(100%, -100%);
+opacity: 1;
+}
+.gold-divider {
+height: 1px;
+background: linear-gradient(to right, rgba(212, 175, 55, 0), rgba(212, 175, 55, 0.7), rgba(212, 175, 55, 0));
+}
+.header-transparent {
+background-color: rgba(255, 255, 255, 0);
+transition: background-color 0.3s ease;
+}
+.header-solid {
+background-color: rgba(255, 255, 255, 0.95);
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+input:focus, select:focus, textarea:focus {
+outline: none;
+border-color: #D4AF37;
+}
+input[type="range"] {
+
+width: 100%;
+height: 2px;
+background: #e5e7eb;
+border-radius: 5px;
+outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #D4AF37;
+cursor: pointer;
+border: 2px solid white;
+box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+.custom-checkbox {
+position: relative;
+padding-left: 30px;
+cursor: pointer;
+}
+.custom-checkbox input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+}
+.checkmark {
+position: absolute;
+top: 0;
+left: 0;
+height: 20px;
+width: 20px;
+border: 1px solid #D4AF37;
+border-radius: 4px;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+content: "";
+position: absolute;
+display: block;
+left: 7px;
+top: 3px;
+width: 5px;
+height: 10px;
+border: solid #D4AF37;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.switch {
+position: relative;
+display: inline-block;
+width: 50px;
+height: 24px;
+}
+.switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #e5e7eb;
+transition: .4s;
+border-radius: 24px;
+}
+.slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .slider {
+background-color: #D4AF37;
+}
+input:checked + .slider:before {
+transform: translateX(26px);
+}
+.room-card {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.room-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.room-overlay {
+background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.room-card:hover .room-overlay {
+opacity: 1;
+}
+.amenity-icon {
+transition: transform 0.3s ease, color 0.3s ease;
+}
+.amenity-card:hover .amenity-icon {
+transform: translateY(-5px);
+color: #D4AF37;
+}
+.booking-input {
+border-bottom: 1px solid #e5e7eb;
+transition: border-color 0.3s ease;
+}
+.booking-input:focus {
+border-bottom: 1px solid #D4AF37;
+}
+.social-icon {
+transition: transform 0.3s ease, color 0.3s ease;
+}
+.social-icon:hover {
+transform: translateY(-3px);
+color: #D4AF37;
+}
+.date-picker {
+border: none;
+border-bottom: 1px solid #e5e7eb;
+background-color: transparent;
+}
+.date-picker::-webkit-calendar-picker-indicator {
+filter: invert(0.7);
+}
+.tab-button {
+position: relative;
+transition: color 0.3s ease;
+}
+.tab-button::after {
+content: '';
+position: absolute;
+width: 0;
+height: 2px;
+bottom: -2px;
+left: 0;
+background-color: #D4AF37;
+transition: width 0.3s ease;
+}
+.tab-button.active {
+color: #D4AF37;
+}
+.tab-button.active::after {
+width: 100%;
+}
+.tab-button:hover::after {
+width: 100%;
+}
+::-webkit-scrollbar {
+width: 8px;
+height: 8px;
+}
+::-webkit-scrollbar-track {
+background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+background: #D4AF37;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #c49c2f;
+}
+@keyframes shimmer {
+0% {
+background-position: -100% 0;
+}
+100% {
+background-position: 100% 0;
+}
+}
+.shimmer-button {
+background: linear-gradient(to right, #D4AF37 0%, #f5e7b8 20%, #D4AF37 40%, #D4AF37 100%);
+background-size: 200% auto;
+animation: shimmer 2s linear infinite;
+background-clip: text;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+</style>
+</head>
+<body class="bg-white">
+<!-- Header -->
+<header id="header" class="bg-gray-900 fixed top-0 left-0 w-full z-50 transition-all duration-300">
+<div class="container mx-auto px-6 py-4 flex justify-between items-center">
+<a href="#" class="text-3xl font-['Pacifico'] text-white transition-colors duration-300" id="logo">Elysian</a>
+<nav class="hidden lg:flex items-center space-x-8">
+<a href="#home" class="text-white hover:text-secondary/90 transition-colors duration-300 text-sm uppercase tracking-wider">Home</a>
+<a href="#rooms" class="text-white hover:text-secondary/90 transition-colors duration-300 text-sm uppercase tracking-wider">Rooms</a>
+<a href="#amenities" class="text-white hover:text-secondary/90 transition-colors duration-300 text-sm uppercase tracking-wider">Amenities</a>
+<a href="#dining" class="text-white hover:text-secondary/90 transition-colors duration-300 text-sm uppercase tracking-wider">Dining</a>
+<a href="#spa" class="text-white hover:text-secondary/90 transition-colors duration-300 text-sm uppercase tracking-wider">Spa</a>
+<a href="#contact" class="text-white hover:text-secondary/90 transition-colors duration-300 text-sm uppercase tracking-wider">Contact</a>
+<a href="#booking" class="ml-4 px-6 py-2 bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white hover:text-primary transition-all duration-300 text-sm uppercase tracking-wider !rounded-button whitespace-nowrap">Book Now</a>
+</nav>
+<button id="menu-toggle" class="lg:hidden w-10 h-10 flex items-center justify-center text-white">
+<i class="ri-menu-line ri-lg"></i>
+</button>
+</div>
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="hidden lg:hidden bg-white absolute w-full left-0 top-full shadow-lg">
+<div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
+<a href="#home" class="text-gray-800 hover:text-secondary transition-colors duration-300 text-sm uppercase tracking-wider">Home</a>
+<a href="#rooms" class="text-gray-800 hover:text-secondary transition-colors duration-300 text-sm uppercase tracking-wider">Rooms</a>
+<a href="#amenities" class="text-gray-800 hover:text-secondary transition-colors duration-300 text-sm uppercase tracking-wider">Amenities</a>
+<a href="#dining" class="text-gray-800 hover:text-secondary transition-colors duration-300 text-sm uppercase tracking-wider">Dining</a>
+<a href="#spa" class="text-gray-800 hover:text-secondary transition-colors duration-300 text-sm uppercase tracking-wider">Spa</a>
+<a href="#contact" class="text-gray-800 hover:text-secondary transition-colors duration-300 text-sm uppercase tracking-wider">Contact</a>
+<a href="#booking" class="px-6 py-2 bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-white transition-all duration-300 text-sm uppercase tracking-wider gold-shine text-center !rounded-button whitespace-nowrap">Book Now</a>
+</div>
+</div>
+</header>
+<!-- Hero Section -->
+<section id="home" class="relative h-screen w-full overflow-hidden">
+<div class="absolute inset-0">
+<img src="https://readdy.ai/api/search-image?query=luxury%20resort%20infinity%20pool%20overlooking%20ocean%20at%20sunset%2C%20stunning%20architecture%2C%20palm%20trees%2C%20elegant%20loungers%2C%20ultra%20high-end%20hotel%20exterior%2C%20dramatic%20lighting%2C%20cinematic%20composition%2C%20no%20people&width=1920&height=1080&seq=10&orientation=landscape" alt="Luxury Pool Front Hotel" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" id="hero-image">
+<div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/30"></div>
+</div>
+<div class="container mx-auto px-6 h-full flex flex-col justify-center items-center text-center relative z-10">
+<span class="text-primary font-semibold text-sm md:text-base uppercase tracking-widest mb-4 opacity-0 transition-all duration-1000 transform translate-y-10" id="hero-tag">Welcome to Luxury</span>
+<h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 opacity-0 transition-all duration-1000 transform translate-y-10" id="hero-title">Experience <span class="text-primary">Unparalleled</span> Luxury</h1>
+<p class="text-lg md:text-xl text-white/90 max-w-2xl mb-8 opacity-0 transition-all duration-1000 delay-300 transform translate-y-10" id="hero-subtitle">Where timeless elegance meets modern sophistication in the heart of paradise</p>
+<div class="bg-white/10 backdrop-blur-md p-6 rounded-lg mb-8 max-w-4xl w-full opacity-0 transform translate-y-10" id="hero-form">
+<form id="hero-availability-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="relative">
+<label for="hero-check-in" class="block text-sm font-medium text-white mb-2">Check-in</label>
+<input type="date" id="hero-check-in" class="w-full px-4 py-2 bg-white/20 text-white border-none rounded focus:ring-2 focus:ring-primary placeholder-white/60" required>
+</div>
+<div class="relative">
+<label for="hero-check-out" class="block text-sm font-medium text-white mb-2">Check-out</label>
+<input type="date" id="hero-check-out" class="w-full px-4 py-2 bg-white/20 text-white border-none rounded focus:ring-2 focus:ring-primary placeholder-white/60" required>
+</div>
+<div class="relative">
+<label for="hero-guests" class="block text-sm font-medium text-white mb-2">Guests</label>
+<div class="relative">
+<select id="hero-guests" class="w-full px-4 py-2 bg-white/20 text-white border-none rounded focus:ring-2 focus:ring-primary appearance-none">
+<option value="1">1 Guest</option>
+<option value="2" selected>2 Guests</option>
+<option value="3">3 Guests</option>
+<option value="4">4 Guests</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-white">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+<button type="submit" class="bg-primary text-white px-6 py-2 rounded hover:bg-primary/90 transition-all duration-300 flex items-center justify-center gap-2 !rounded-button whitespace-nowrap">
+<i class="ri-search-line"></i>
+Check Availability
+</button>
+</form>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 sm:gap-6 opacity-0 transform translate-y-10" id="hero-cta">
+<a href="#rooms" class="px-8 py-3 bg-transparent border-2 border-white text-white text-sm uppercase tracking-wider transition-all duration-300 hover:bg-white hover:text-gray-900 !rounded-button whitespace-nowrap">Explore Rooms</a>
+</div>
+</div>
+<div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10">
+<a href="#about" class="w-10 h-10 flex items-center justify-center text-primary animate-bounce">
+<i class="ri-arrow-down-line ri-lg"></i>
+</a>
+</div>
+</section>
+<!-- About Section -->
+<section id="about" class="py-20 bg-white">
+<div class="container mx-auto px-6">
+<div class="max-w-4xl mx-auto text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold mb-6 fade-in">Welcome to Elysian Retreat</h2>
+<div class="gold-divider mx-auto w-24 mb-8 fade-in"></div>
+<p class="text-gray-600 mb-8 fade-in">Nestled between pristine beaches and lush mountains, Elysian Retreat offers an exclusive sanctuary where luxury meets nature. Our award-winning resort combines timeless elegance with contemporary design to create an unforgettable experience for the discerning traveler.</p>
+<p class="text-gray-600 fade-in">Since 2010, we have been redefining luxury hospitality with our commitment to personalized service, sustainable practices, and attention to the finest details.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-white p-8 shadow-sm border border-gray-100 rounded fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-star-line ri-2x gold-text"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Exceptional Service</h3>
+<p class="text-gray-600 text-center">Our dedicated staff ensures every moment of your stay exceeds expectations with personalized attention to detail.</p>
+</div>
+<div class="bg-white p-8 shadow-sm border border-gray-100 rounded fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-hotel-line ri-2x gold-text"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Luxurious Accommodations</h3>
+<p class="text-gray-600 text-center">Each of our 75 rooms and suites is meticulously designed to provide the ultimate comfort and sophisticated elegance.</p>
+</div>
+<div class="bg-white p-8 shadow-sm border border-gray-100 rounded fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-leaf-line ri-2x gold-text"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Sustainable Luxury</h3>
+<p class="text-gray-600 text-center">We are committed to preserving our natural surroundings while providing a luxurious experience that respects the environment.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Parallax Section -->
+<section class="parallax h-96" style="background-image: url('https://readdy.ai/api/search-image?query=luxury%20hotel%20infinity%20pool%20overlooking%20ocean%20at%20sunset%2C%20panoramic%20view%2C%20crystal%20clear%20water%2C%20elegant%20loungers%2C%20soft%20golden%20light%2C%20no%20people%2C%20ultra%20high-end%20resort%20atmosphere%2C%20serene%20and%20peaceful&width=1920&height=1080&seq=1&orientation=landscape');">
+<div class="h-full w-full flex items-center justify-center bg-black/30">
+<div class="text-center text-white px-6">
+<h2 class="text-3xl md:text-4xl font-bold mb-6">A Sanctuary of Refined Elegance</h2>
+<div class="gold-divider mx-auto w-24 mb-8"></div>
+<p class="text-xl max-w-2xl mx-auto">Where every moment becomes a treasured memory</p>
+</div>
+</div>
+</section>
+<!-- Rooms Section -->
+<section id="rooms" class="py-20 bg-white">
+<div class="container mx-auto px-6">
+<div class="max-w-4xl mx-auto text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold mb-6 fade-in">Luxurious Accommodations</h2>
+<div class="gold-divider mx-auto w-24 mb-8 fade-in"></div>
+<p class="text-gray-600 fade-in">Discover our collection of exquisitely appointed rooms and suites, each offering a perfect blend of comfort, sophistication, and modern amenities.</p>
+</div>
+<div class="flex mb-10 justify-center space-x-4 fade-in">
+<button class="tab-button active px-4 py-2 text-gray-800 text-sm uppercase tracking-wider">All Rooms</button>
+<button class="tab-button px-4 py-2 text-gray-800 text-sm uppercase tracking-wider">Suites</button>
+<button class="tab-button px-4 py-2 text-gray-800 text-sm uppercase tracking-wider">Villas</button>
+<button class="tab-button px-4 py-2 text-gray-800 text-sm uppercase tracking-wider">Penthouses</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="room-card rounded overflow-hidden shadow-sm animate-on-scroll animate-fade-left">
+<div class="relative h-64 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=luxury%20hotel%20deluxe%20room%20with%20king%20bed%2C%20white%20linens%2C%20elegant%20furnishings%2C%20panoramic%20ocean%20view%2C%20morning%20light%2C%20high-end%20interior%20design%2C%20spacious%20and%20bright%2C%20no%20people&width=800&height=600&seq=2&orientation=landscape" alt="Deluxe Room" class="w-full h-full object-cover object-top zoom-hover">
+<div class="room-overlay absolute inset-0 flex items-end p-6">
+<div>
+<span class="bg-secondary text-white px-3 py-1 text-xs uppercase tracking-wider">From $450 / night</span>
+<h3 class="text-white text-xl font-semibold mt-2">Deluxe Ocean View</h3>
+</div>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-center mb-4">
+<div class="flex space-x-2">
+<span class="text-xs text-gray-600">45m²</span>
+<span class="text-xs text-gray-600">•</span>
+<span class="text-xs text-gray-600">King Bed</span>
+<span class="text-xs text-gray-600">•</span>
+<span class="text-xs text-gray-600">Ocean View</span>
+</div>
+</div>
+<p class="text-gray-600 text-sm mb-6">Immerse yourself in luxury with our spacious Deluxe Room featuring panoramic ocean views, premium amenities, and elegant furnishings.</p>
+<a href="#booking" class="text-secondary hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider flex items-center">
+Book Now
+<i class="ri-arrow-right-line ri-sm ml-2"></i>
+</a>
+</div>
+</div>
+<div class="room-card rounded overflow-hidden shadow-sm fade-in">
+<div class="relative h-64 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=luxury%20hotel%20executive%20suite%20with%20separate%20living%20area%2C%20elegant%20furniture%2C%20floor-to-ceiling%20windows%2C%20mountain%20view%2C%20sophisticated%20neutral%20color%20palette%2C%20high-end%20finishes%2C%20no%20people&width=800&height=600&seq=3&orientation=landscape" alt="Executive Suite" class="w-full h-full object-cover object-top zoom-hover">
+<div class="room-overlay absolute inset-0 flex items-end p-6">
+<div>
+<span class="bg-secondary text-white px-3 py-1 text-xs uppercase tracking-wider">From $750 / night</span>
+<h3 class="text-white text-xl font-semibold mt-2">Executive Suite</h3>
+</div>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-center mb-4">
+<div class="flex space-x-2">
+<span class="text-xs text-gray-600">75m²</span>
+<span class="text-xs text-gray-600">•</span>
+<span class="text-xs text-gray-600">King Bed</span>
+<span class="text-xs text-gray-600">•</span>
+<span class="text-xs text-gray-600">Mountain View</span>
+</div>
+</div>
+<p class="text-gray-600 text-sm mb-6">Elevate your stay in our Executive Suite featuring a separate living area, premium furnishings, and breathtaking mountain views.</p>
+<a href="#booking" class="text-secondary hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider flex items-center">
+Book Now
+<i class="ri-arrow-right-line ri-sm ml-2"></i>
+</a>
+</div>
+</div>
+<div class="room-card rounded overflow-hidden shadow-sm fade-in">
+<div class="relative h-64 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=luxury%20hotel%20presidential%20villa%20with%20private%20pool%2C%20expansive%20terrace%2C%20elegant%20outdoor%20furniture%2C%20palm%20trees%2C%20ocean%20view%2C%20high-end%20architecture%2C%20sophisticated%20design%2C%20no%20people&width=800&height=600&seq=4&orientation=landscape" alt="Presidential Villa" class="w-full h-full object-cover object-top zoom-hover">
+<div class="room-overlay absolute inset-0 flex items-end p-6">
+<div>
+<span class="bg-secondary text-white px-3 py-1 text-xs uppercase tracking-wider">From $1,950 / night</span>
+<h3 class="text-white text-xl font-semibold mt-2">Presidential Villa</h3>
+</div>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-center mb-4">
+<div class="flex space-x-2">
+<span class="text-xs text-gray-600">200m²</span>
+<span class="text-xs text-gray-600">•</span>
+<span class="text-xs text-gray-600">2 Bedrooms</span>
+<span class="text-xs text-gray-600">•</span>
+<span class="text-xs text-gray-600">Private Pool</span>
+</div>
+</div>
+<p class="text-gray-600 text-sm mb-6">Experience unparalleled luxury in our Presidential Villa with a private pool, expansive terrace, and personalized butler service.</p>
+<a href="#booking" class="text-secondary hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider flex items-center">
+Book Now
+<i class="ri-arrow-right-line ri-sm ml-2"></i>
+</a>
+</div>
+</div>
+</div>
+<div class="text-center mt-12">
+<a href="#" class="px-8 py-3 border border-secondary text-secondary hover:bg-secondary hover:text-white transition-all duration-300 text-sm uppercase tracking-wider gold-shine !rounded-button whitespace-nowrap">View All Accommodations</a>
+</div>
+</div>
+</section>
+<!-- Amenities Section -->
+<section id="amenities" class="py-20 bg-gray-50">
+<div class="container mx-auto px-6">
+<div class="max-w-4xl mx-auto text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold mb-6 fade-in">Exceptional Amenities</h2>
+<div class="gold-divider mx-auto w-24 mb-8 fade-in"></div>
+<p class="text-gray-600 fade-in">Indulge in our world-class facilities designed to provide the ultimate luxury experience during your stay.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="amenity-card bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-water-flash-line ri-2x amenity-icon text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Infinity Pools</h3>
+<p class="text-gray-600 text-center text-sm">Three stunning infinity pools overlooking the ocean, including an adults-only pool with swim-up bar.</p>
+</div>
+<div class="amenity-card bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-restaurant-line ri-2x amenity-icon text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Fine Dining</h3>
+<p class="text-gray-600 text-center text-sm">Four distinctive restaurants offering international cuisine prepared by award-winning chefs.</p>
+</div>
+<div class="amenity-card bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-spa-line ri-2x amenity-icon text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Luxury Spa</h3>
+<p class="text-gray-600 text-center text-sm">Rejuvenate your body and mind with our holistic spa treatments in private treatment pavilions.</p>
+</div>
+<div class="amenity-card bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-fitness-line ri-2x amenity-icon text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Fitness Center</h3>
+<p class="text-gray-600 text-center text-sm">State-of-the-art fitness center with personal trainers and daily wellness activities.</p>
+</div>
+<div class="amenity-card bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-sailboat-line ri-2x amenity-icon text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Water Sports</h3>
+<p class="text-gray-600 text-center text-sm">Complimentary non-motorized water sports including kayaking, paddleboarding, and snorkeling.</p>
+</div>
+<div class="amenity-card bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-goblet-line ri-2x amenity-icon text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Wine Cellar</h3>
+<p class="text-gray-600 text-center text-sm">Extensive collection of fine wines from around the world with private tasting experiences.</p>
+</div>
+<div class="amenity-card bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-service-line ri-2x amenity-icon text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Butler Service</h3>
+<p class="text-gray-600 text-center text-sm">Personalized butler service available 24/7 to cater to your every need during your stay.</p>
+</div>
+<div class="amenity-card bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-car-line ri-2x amenity-icon text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Luxury Transport</h3>
+<p class="text-gray-600 text-center text-sm">Complimentary airport transfers and luxury car service for exploring the surrounding area.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Dining Section -->
+<section id="dining" class="py-20 bg-white">
+<div class="container mx-auto px-6">
+<div class="max-w-4xl mx-auto text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold mb-6 fade-in">Exquisite Dining</h2>
+<div class="gold-divider mx-auto w-24 mb-8 fade-in"></div>
+<p class="text-gray-600 fade-in">Embark on a culinary journey with our exceptional dining venues, each offering a unique gastronomic experience.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<div class="flex flex-col md:flex-row gap-8 fade-in">
+<div class="md:w-1/2">
+<img src="https://readdy.ai/api/search-image?query=luxury%20hotel%20fine%20dining%20restaurant%2C%20elegant%20table%20settings%2C%20soft%20lighting%2C%20ocean%20view%2C%20white%20tablecloths%2C%20sophisticated%20atmosphere%2C%20empty%20tables%2C%20high-end%20interior%20design&width=600&height=400&seq=5&orientation=landscape" alt="Azure Restaurant" class="w-full h-64 object-cover object-top rounded">
+</div>
+<div class="md:w-1/2">
+<h3 class="text-2xl font-semibold mb-4">Azure</h3>
+<p class="text-gray-600 mb-4">Our signature fine dining restaurant offering contemporary Mediterranean cuisine with panoramic ocean views. Executive Chef Isabella Moretti creates seasonal menus using the finest local and imported ingredients.</p>
+<div class="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+<i class="ri-time-line"></i>
+<span>Dinner: 6:00 PM - 10:30 PM</span>
+</div>
+<a href="#" class="text-secondary hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider flex items-center">
+View Menu
+<i class="ri-arrow-right-line ri-sm ml-2"></i>
+</a>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-8 fade-in">
+<div class="md:w-1/2">
+<img src="https://readdy.ai/api/search-image?query=luxury%20hotel%20beachfront%20restaurant%2C%20open-air%20dining%2C%20wooden%20deck%2C%20ocean%20view%2C%20elegant%20casual%20setting%2C%20palm%20trees%2C%20sunset%20lighting%2C%20no%20people&width=600&height=400&seq=6&orientation=landscape" alt="Oceana Restaurant" class="w-full h-64 object-cover object-top rounded">
+</div>
+<div class="md:w-1/2">
+<h3 class="text-2xl font-semibold mb-4">Oceana</h3>
+<p class="text-gray-600 mb-4">Beachfront casual dining featuring fresh seafood and international favorites. Enjoy alfresco dining with your feet in the sand and the sound of waves as your backdrop.</p>
+<div class="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+<i class="ri-time-line"></i>
+<span>Lunch: 12:00 PM - 3:00 PM | Dinner: 6:30 PM - 10:00 PM</span>
+</div>
+<a href="#" class="text-secondary hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider flex items-center">
+View Menu
+<i class="ri-arrow-right-line ri-sm ml-2"></i>
+</a>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-8 fade-in">
+<div class="md:w-1/2">
+<img src="https://readdy.ai/api/search-image?query=luxury%20hotel%20asian%20fusion%20restaurant%2C%20elegant%20minimalist%20design%2C%20soft%20lighting%2C%20zen%20atmosphere%2C%20black%20and%20gold%20accents%2C%20sophisticated%20interior%2C%20no%20people&width=600&height=400&seq=7&orientation=landscape" alt="Silk Restaurant" class="w-full h-64 object-cover object-top rounded">
+</div>
+<div class="md:w-1/2">
+<h3 class="text-2xl font-semibold mb-4">Silk</h3>
+<p class="text-gray-600 mb-4">Experience the flavors of Asia with our contemporary Asian fusion cuisine. Chef Takashi Yamamoto blends traditional techniques with modern presentation for a truly unique dining experience.</p>
+<div class="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+<i class="ri-time-line"></i>
+<span>Dinner: 6:30 PM - 10:30 PM (Closed Mondays)</span>
+</div>
+<a href="#" class="text-secondary hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider flex items-center">
+View Menu
+<i class="ri-arrow-right-line ri-sm ml-2"></i>
+</a>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-8 fade-in">
+<div class="md:w-1/2">
+<img src="https://readdy.ai/api/search-image?query=luxury%20hotel%20rooftop%20bar%2C%20elegant%20lounge%20seating%2C%20city%20lights%20view%2C%20sophisticated%20atmosphere%2C%20cocktail%20glasses%2C%20ambient%20lighting%2C%20high-end%20design%2C%20no%20people&width=600&height=400&seq=8&orientation=landscape" alt="Horizon Bar" class="w-full h-64 object-cover object-top rounded">
+</div>
+<div class="md:w-1/2">
+<h3 class="text-2xl font-semibold mb-4">Horizon Bar</h3>
+<p class="text-gray-600 mb-4">Our stylish rooftop bar offering craft cocktails, premium spirits, and light bites with spectacular sunset views. Resident mixologists create signature drinks inspired by local flavors.</p>
+<div class="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+<i class="ri-time-line"></i>
+<span>4:00 PM - 12:00 AM</span>
+</div>
+<a href="#" class="text-secondary hover:text-primary transition-colors duration-300 text-sm uppercase tracking-wider flex items-center">
+View Menu
+<i class="ri-arrow-right-line ri-sm ml-2"></i>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Spa Section -->
+<section id="spa" class="py-20 bg-gray-50">
+<div class="container mx-auto px-6">
+<div class="max-w-4xl mx-auto text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold mb-6 fade-in">Elysian Spa Sanctuary</h2>
+<div class="gold-divider mx-auto w-24 mb-8 fade-in"></div>
+<p class="text-gray-600 fade-in">Immerse yourself in a world of tranquility and rejuvenation at our award-winning spa, where ancient healing traditions meet modern luxury.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="order-2 lg:order-1 fade-in">
+<h3 class="text-2xl font-semibold mb-6">A Holistic Approach to Wellness</h3>
+<p class="text-gray-600 mb-6">Our spa philosophy embraces a holistic approach to wellness, addressing the mind, body, and spirit. Each treatment is customized to your individual needs, ensuring a truly personalized experience.</p>
+<div class="mb-8">
+<h4 class="text-xl font-semibold mb-4">Signature Treatments</h4>
+<ul class="space-y-4">
+<li class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center mr-4 mt-1">
+<i class="ri-checkbox-circle-line ri-lg gold-text"></i>
+</div>
+<div>
+<h5 class="font-semibold">Elysian Gold Ritual</h5>
+<p class="text-sm text-gray-600">A luxurious full-body treatment featuring 24k gold-infused oils and a rose quartz facial massage. (120 minutes)</p>
+</div>
+</li>
+<li class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center mr-4 mt-1">
+<i class="ri-checkbox-circle-line ri-lg gold-text"></i>
+</div>
+<div>
+<h5 class="font-semibold">Ocean Essence Massage</h5>
+<p class="text-sm text-gray-600">A therapeutic massage using warmed seashells and marine-based oils to release tension and restore balance. (90 minutes)</p>
+</div>
+</li>
+<li class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center mr-4 mt-1">
+<i class="ri-checkbox-circle-line ri-lg gold-text"></i>
+</div>
+<div>
+<h5 class="font-semibold">Diamond Radiance Facial</h5>
+<p class="text-sm text-gray-600">An advanced anti-aging facial featuring diamond dust exfoliation and peptide-rich serums. (60 minutes)</p>
+</div>
+</li>
+</ul>
+</div>
+<a href="#" class="px-8 py-3 bg-secondary text-white text-sm uppercase tracking-wider transition-all duration-300 gold-shine !rounded-button whitespace-nowrap">Book a Treatment</a>
+</div>
+<div class="order-1 lg:order-2 fade-in">
+<img src="https://readdy.ai/api/search-image?query=luxury%20hotel%20spa%20treatment%20room%2C%20elegant%20minimalist%20design%2C%20candles%2C%20white%20orchids%2C%20natural%20materials%2C%20serene%20atmosphere%2C%20soft%20lighting%2C%20massage%20table%20with%20white%20linens%2C%20no%20people&width=800&height=600&seq=9&orientation=landscape" alt="Spa Treatment Room" class="w-full h-auto rounded shadow-md">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+<div class="bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-drop-line ri-2x gold-text"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Hydrotherapy</h3>
+<p class="text-gray-600 text-center text-sm">Experience our hydrotherapy circuit featuring vitality pools, aromatherapy steam rooms, and a Finnish sauna.</p>
+</div>
+<div class="bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-heart-pulse-line ri-2x gold-text"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Wellness Programs</h3>
+<p class="text-gray-600 text-center text-sm">Customized multi-day wellness programs combining spa treatments, fitness activities, and nutritional guidance.</p>
+</div>
+<div class="bg-white p-8 rounded shadow-sm fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-yoga-line ri-2x gold-text"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Mindfulness</h3>
+<p class="text-gray-600 text-center text-sm">Daily yoga, meditation, and mindfulness sessions in our oceanfront pavilion or private garden settings.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials Section -->
+<section class="py-20 bg-white">
+<div class="container mx-auto px-6">
+<div class="max-w-4xl mx-auto text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold mb-6 fade-in">Guest Experiences</h2>
+<div class="gold-divider mx-auto w-24 mb-8 fade-in"></div>
+<p class="text-gray-600 fade-in">Discover what our distinguished guests have to say about their stay at Elysian Retreat.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-white p-8 rounded shadow-sm border border-gray-100 fade-in">
+<div class="flex justify-center mb-6">
+<div class="flex text-secondary">
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+</div>
+</div>
+<p class="text-gray-600 mb-6 text-center italic">"An extraordinary experience from start to finish. The attention to detail and personalized service exceeded all expectations. The Presidential Villa was absolutely stunning with breathtaking views."</p>
+<div class="text-center">
+<h4 class="font-semibold">Jonathan Harrington</h4>
+<p class="text-sm text-gray-500">London, United Kingdom</p>
+</div>
+</div>
+<div class="bg-white p-8 rounded shadow-sm border border-gray-100 fade-in">
+<div class="flex justify-center mb-6">
+<div class="flex text-secondary">
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+</div>
+</div>
+<p class="text-gray-600 mb-6 text-center italic">"The spa treatments were absolutely divine. I've visited luxury spas around the world, and Elysian's offerings are truly in a class of their own. The Ocean Essence Massage was transformative."</p>
+<div class="text-center">
+<h4 class="font-semibold">Sophia Chen</h4>
+<p class="text-sm text-gray-500">Singapore</p>
+</div>
+</div>
+<div class="bg-white p-8 rounded shadow-sm border border-gray-100 fade-in">
+<div class="flex justify-center mb-6">
+<div class="flex text-secondary">
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+<i class="ri-star-fill ri-lg"></i>
+</div>
+</div>
+<p class="text-gray-600 mb-6 text-center italic">"The culinary experience at Azure was unforgettable. Chef Isabella's tasting menu with wine pairings was one of the finest dining experiences we've ever had. We'll definitely return."</p>
+<div class="text-center">
+<h4 class="font-semibold">Alexandre Dubois</h4>
+<p class="text-sm text-gray-500">Paris, France</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Booking Section -->
+<section id="booking" class="py-20 bg-gray-50">
+<div class="container mx-auto px-6">
+<div class="max-w-4xl mx-auto text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold mb-6 fade-in">Reserve Your Stay</h2>
+<div class="gold-divider mx-auto w-24 mb-8 fade-in"></div>
+<p class="text-gray-600 fade-in">Begin your journey to unparalleled luxury by reserving your stay at Elysian Retreat.</p>
+</div>
+<div class="bg-white rounded shadow-sm p-8 md:p-12 max-w-4xl mx-auto fade-in">
+<form id="booking-form">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+<div>
+<label for="check-in" class="block text-sm font-medium text-gray-700 mb-2">Check-in Date</label>
+<input type="date" id="check-in" class="w-full px-4 py-2 date-picker border-none focus:ring-2 focus:ring-secondary/20" required>
+</div>
+<div>
+<label for="check-out" class="block text-sm font-medium text-gray-700 mb-2">Check-out Date</label>
+<input type="date" id="check-out" class="w-full px-4 py-2 date-picker border-none focus:ring-2 focus:ring-secondary/20" required>
+</div>
+<div>
+<label for="adults" class="block text-sm font-medium text-gray-700 mb-2">Adults</label>
+<div class="relative">
+<select id="adults" class="w-full px-4 py-2 pr-8 appearance-none border-none border-b border-gray-200 focus:border-secondary focus:ring-2 focus:ring-secondary/20 bg-transparent">
+<option value="1">1 Adult</option>
+<option value="2" selected>2 Adults</option>
+<option value="3">3 Adults</option>
+<option value="4">4 Adults</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+<div>
+<label for="children" class="block text-sm font-medium text-gray-700 mb-2">Children</label>
+<div class="relative">
+<select id="children" class="w-full px-4 py-2 pr-8 appearance-none border-none border-b border-gray-200 focus:border-secondary focus:ring-2 focus:ring-secondary/20 bg-transparent">
+<option value="0" selected>0 Children</option>
+<option value="1">1 Child</option>
+<option value="2">2 Children</option>
+<option value="3">3 Children</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+<div>
+<label for="room-type" class="block text-sm font-medium text-gray-700 mb-2">Room Type</label>
+<div class="relative">
+<select id="room-type" class="w-full px-4 py-2 pr-8 appearance-none border-none border-b border-gray-200 focus:border-secondary focus:ring-2 focus:ring-secondary/20 bg-transparent">
+<option value="">Select Room Type</option>
+<option value="deluxe">Deluxe Ocean View</option>
+<option value="executive">Executive Suite</option>
+<option value="presidential">Presidential Villa</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+<div>
+<label for="special-requests" class="block text-sm font-medium text-gray-700 mb-2">Special Requests</label>
+<div class="relative">
+<select id="special-requests" class="w-full px-4 py-2 pr-8 appearance-none border-none border-b border-gray-200 focus:border-secondary focus:ring-2 focus:ring-secondary/20 bg-transparent">
+<option value="">Select Request (Optional)</option>
+<option value="early-check-in">Early Check-in</option>
+<option value="late-check-out">Late Check-out</option>
+<option value="airport-transfer">Airport Transfer</option>
+<option value="champagne">Champagne Welcome</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+<div>
+<label for="first-name" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+<input type="text" id="first-name" class="w-full px-4 py-2 booking-input border-none focus:ring-2 focus:ring-secondary/20" required>
+</div>
+<div>
+<label for="last-name" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+<input type="text" id="last-name" class="w-full px-4 py-2 booking-input border-none focus:ring-2 focus:ring-secondary/20" required>
+</div>
+<div>
+<label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+<input type="email" id="email" class="w-full px-4 py-2 booking-input border-none focus:ring-2 focus:ring-secondary/20" required>
+</div>
+<div>
+<label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+<input type="tel" id="phone" class="w-full px-4 py-2 booking-input border-none focus:ring-2 focus:ring-secondary/20" required>
+</div>
+</div>
+<div class="mb-8">
+<label class="custom-checkbox flex items-start mb-4">
+<input type="checkbox" checked>
+<span class="checkmark"></span>
+<span class="text-sm text-gray-600 ml-2">I would like to receive exclusive offers and updates from Elysian Retreat</span>
+</label>
+<label class="custom-checkbox flex items-start">
+<input type="checkbox" required>
+<span class="checkmark"></span>
+<span class="text-sm text-gray-600 ml-2">I agree to the <a href="#" class="text-secondary hover:underline">terms and conditions</a> and <a href="#" class="text-secondary hover:underline">privacy policy</a></span>
+</label>
+</div>
+<div class="text-center">
+<button type="submit" class="px-8 py-3 bg-secondary text-white text-sm uppercase tracking-wider transition-all duration-300 gold-shine !rounded-button whitespace-nowrap">Confirm Reservation</button>
+</div>
+</form>
+</div>
+</div>
+</section>
+<!-- Contact Section -->
+<section id="contact" class="py-20 bg-white">
+<div class="container mx-auto px-6">
+<div class="max-w-4xl mx-auto text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold mb-6 fade-in">Contact Us</h2>
+<div class="gold-divider mx-auto w-24 mb-8 fade-in"></div>
+<p class="text-gray-600 fade-in">Our dedicated concierge team is available 24/7 to assist with any inquiries or special requests.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 stagger-animation">
+<div class="bg-white p-8 rounded shadow-sm border border-gray-100 animate-scale">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-map-pin-line ri-2x gold-text"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Location</h3>
+<p class="text-gray-600 text-center">Elysian Retreat<br>Peninsula Bay, Coral Coast<br>Fiji Islands</p>
+</div>
+<div class="bg-white p-8 rounded shadow-sm border border-gray-100 fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-phone-line ri-2x gold-text"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Reservations</h3>
+<p class="text-gray-600 text-center">+1 800 123 4567<br>reservations@elysianretreat.com<br>24/7 Concierge Service</p>
+</div>
+<div class="bg-white p-8 rounded shadow-sm border border-gray-100 fade-in">
+<div class="w-16 h-16 flex items-center justify-center mb-6 mx-auto">
+<i class="ri-time-line ri-2x gold-text"></i>
+</div>
+<h3 class="text-xl font-semibold mb-4 text-center">Connect</h3>
+<div class="flex justify-center space-x-4">
+<a href="#" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-secondary transition-colors duration-300 social-icon">
+<i class="ri-instagram-line ri-lg"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-secondary transition-colors duration-300 social-icon">
+<i class="ri-facebook-line ri-lg"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-secondary transition-colors duration-300 social-icon">
+<i class="ri-twitter-x-line ri-lg"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-secondary transition-colors duration-300 social-icon">
+<i class="ri-pinterest-line ri-lg"></i>
+</a>
+</div>
+</div>
+</div>
+<div class="mt-16 bg-white p-8 rounded shadow-sm border border-gray-100 max-w-4xl mx-auto fade-in">
+<h3 class="text-2xl font-semibold mb-6 text-center">Send Us a Message</h3>
+<form id="contact-form">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+<div>
+<label for="contact-name" class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+<input type="text" id="contact-name" class="w-full px-4 py-2 booking-input border-none focus:ring-2 focus:ring-secondary/20" required>
+</div>
+<div>
+<label for="contact-email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+<input type="email" id="contact-email" class="w-full px-4 py-2 booking-input border-none focus:ring-2 focus:ring-secondary/20" required>
+</div>
+</div>
+<div class="mb-8">
+<label for="contact-subject" class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+<div class="relative">
+<select id="contact-subject" class="w-full px-4 py-2 pr-8 appearance-none border-none border-b border-gray-200 focus:border-secondary focus:ring-2 focus:ring-secondary/20 bg-transparent">
+<option value="">Select Subject</option>
+<option value="reservation">Reservation Inquiry</option>
+<option value="special-event">Special Event Planning</option>
+<option value="spa">Spa Appointment</option>
+<option value="dining">Dining Reservation</option>
+<option value="other">Other</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+<div class="mb-8">
+<label for="contact-message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+<textarea id="contact-message" rows="5" class="w-full px-4 py-2 booking-input border-none focus:ring-2 focus:ring-secondary/20 resize-none" required></textarea>
+</div>
+<div class="text-center">
+<button type="submit" class="px-8 py-3 bg-secondary text-white text-sm uppercase tracking-wider transition-all duration-300 gold-shine !rounded-button whitespace-nowrap">Send Message</button>
+</div>
+</form>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-16">
+<div class="container mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+<div>
+<a href="#" class="text-3xl font-['Pacifico'] text-white mb-6 block">Elysian</a>
+<p class="text-gray-400 mb-6">Experience unparalleled luxury in a breathtaking setting where exceptional service and attention to detail create memories that last a lifetime.</p>
+<div class="flex space-x-4">
+<a href="#" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors duration-300 social-icon">
+<i class="ri-instagram-line ri-lg"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors duration-300 social-icon">
+<i class="ri-facebook-line ri-lg"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors duration-300 social-icon">
+<i class="ri-twitter-x-line ri-lg"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors duration-300 social-icon">
+<i class="ri-pinterest-line ri-lg"></i>
+</a>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-semibold mb-6 relative inline-block">
+Quick Links
+<span class="absolute bottom-0 left-0 w-1/2 h-0.5 bg-secondary"></span>
+</h3>
+<ul class="space-y-3">
+<li><a href="#rooms" class="text-gray-400 hover:text-secondary transition-colors duration-300">Accommodations</a></li>
+<li><a href="#dining" class="text-gray-400 hover:text-secondary transition-colors duration-300">Dining</a></li>
+<li><a href="#spa" class="text-gray-400 hover:text-secondary transition-colors duration-300">Spa & Wellness</a></li>
+<li><a href="#" class="text-gray-400 hover:text-secondary transition-colors duration-300">Experiences</a></li>
+<li><a href="#" class="text-gray-400 hover:text-secondary transition-colors duration-300">Special Offers</a></li>
+<li><a href="#" class="text-gray-400 hover:text-secondary transition-colors duration-300">Gift Cards</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-semibold mb-6 relative inline-block">
+About
+<span class="absolute bottom-0 left-0 w-1/2 h-0.5 bg-secondary"></span>
+</h3>
+<ul class="space-y-3">
+<li><a href="#" class="text-gray-400 hover:text-secondary transition-colors duration-300">Our Story</a></li>
+<li><a href="#" class="text-gray-400 hover:text-secondary transition-colors duration-300">Press</a></li>
+<li><a href="#" class="text-gray-400 hover:text-secondary transition-colors duration-300">Awards</a></li>
+<li><a href="#" class="text-gray-400 hover:text-secondary transition-colors duration-300">Sustainability</a></li>
+<li><a href="#" class="text-gray-400 hover:text-secondary transition-colors duration-300">Careers</a></li>
+<li><a href="#contact" class="text-gray-400 hover:text-secondary transition-colors duration-300">Contact</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-semibold mb-6 relative inline-block">
+Newsletter
+<span class="absolute bottom-0 left-0 w-1/2 h-0.5 bg-secondary"></span>
+</h3>
+<p class="text-gray-400 mb-6">Subscribe to receive exclusive offers and updates from Elysian Retreat.</p>
+<form id="newsletter-form" class="mb-6">
+<div class="flex">
+<input type="email" placeholder="Your email address" class="w-full px-4 py-2 bg-gray-800 border-none text-white placeholder-gray-500 focus:ring-2 focus:ring-secondary/20">
+<button type="submit" class="bg-secondary text-white px-4 flex items-center justify-center gold-shine !rounded-button whitespace-nowrap">
+<i class="ri-send-plane-line"></i>
+</button>
+</div>
+</form>
+<div class="flex space-x-4">
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-visa-fill ri-lg text-gray-400"></i>
+</div>
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-mastercard-fill ri-lg text-gray-400"></i>
+</div>
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-paypal-fill ri-lg text-gray-400"></i>
+</div>
+<div class="w-8 h-8 flex items-center justify-center">
+<i class="ri-american-express-fill ri-lg text-gray-400"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-gray-800 text-center">
+<p class="text-gray-500 text-sm">&copy; 2025 Elysian Retreat. All rights reserved.</p>
+<div class="flex justify-center space-x-6 mt-4">
+<a href="#" class="text-gray-500 hover:text-secondary transition-colors duration-300 text-xs">Privacy Policy</a>
+<a href="#" class="text-gray-500 hover:text-secondary transition-colors duration-300 text-xs">Terms of Service</a>
+<a href="#" class="text-gray-500 hover:text-secondary transition-colors duration-300 text-xs">Cookie Policy</a>
+</div>
+</div>
+</div>
+</footer>
+<script id="header-scroll">
+document.addEventListener('DOMContentLoaded', function() {
+const header = document.getElementById('header');
+const logo = document.getElementById('logo');
+function updateHeader() {
+if (window.scrollY > 50) {
+header.classList.remove('header-transparent');
+header.classList.add('bg-gray-900');
+logo.classList.add('text-white');
+// Update nav links
+const navLinks = header.querySelectorAll('nav a:not(.gold-shine)');
+navLinks.forEach(link => {
+link.classList.add('text-white');
+});
+} else {
+header.classList.add('header-transparent');
+header.classList.remove('bg-gray-900');
+logo.classList.add('text-white');
+// Update nav links
+const navLinks = header.querySelectorAll('nav a:not(.gold-shine)');
+navLinks.forEach(link => {
+link.classList.add('text-white');
+});
+}
+}
+window.addEventListener('scroll', updateHeader);
+updateHeader(); // Initial call
+});
+</script>
+<script id="mobile-menu-toggle">
+document.addEventListener('DOMContentLoaded', function() {
+const menuToggle = document.getElementById('menu-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+menuToggle.addEventListener('click', function() {
+mobileMenu.classList.toggle('hidden');
+// Toggle icon
+const icon = menuToggle.querySelector('i');
+if (mobileMenu.classList.contains('hidden')) {
+icon.classList.remove('ri-close-line');
+icon.classList.add('ri-menu-line');
+} else {
+icon.classList.remove('ri-menu-line');
+icon.classList.add('ri-close-line');
+}
+});
+// Close mobile menu when clicking on a link
+const mobileLinks = mobileMenu.querySelectorAll('a');
+mobileLinks.forEach(link => {
+link.addEventListener('click', function() {
+mobileMenu.classList.add('hidden');
+const icon = menuToggle.querySelector('i');
+icon.classList.remove('ri-close-line');
+icon.classList.add('ri-menu-line');
+});
+});
+});
+</script>
+<script id="scroll-animations">
+document.addEventListener('DOMContentLoaded', function() {
+const fadeElements = document.querySelectorAll('.fade-in');
+const animateElements = document.querySelectorAll('.animate-on-scroll');
+const staggerContainers = document.querySelectorAll('.stagger-animation');
+function checkAnimation() {
+fadeElements.forEach(element => {
+const elementTop = element.getBoundingClientRect().top;
+const elementBottom = element.getBoundingClientRect().bottom;
+if (elementTop < window.innerHeight - 100 && elementBottom > 0) {
+element.classList.add('visible');
+}
+});
+animateElements.forEach(element => {
+const elementTop = element.getBoundingClientRect().top;
+const elementBottom = element.getBoundingClientRect().bottom;
+if (elementTop < window.innerHeight - 100 && elementBottom > 0) {
+element.classList.add('animate-fade-up');
+}
+});
+staggerContainers.forEach(container => {
+const containerTop = container.getBoundingClientRect().top;
+if (containerTop < window.innerHeight - 100) {
+Array.from(container.children).forEach((child, index) => {
+setTimeout(() => {
+child.classList.add('animate-fade-up');
+}, index * 200);
+});
+}
+});
+}
+window.addEventListener('scroll', checkAnimation);
+checkAnimation(); // Initial check
+// Set minimum dates for check-in and check-out
+const today = new Date().toISOString().split('T')[0];
+const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
+document.getElementById('hero-check-in').min = today;
+document.getElementById('hero-check-out').min = tomorrow;
+// Hero animations
+setTimeout(() => {
+document.getElementById('hero-image').style.opacity = '1';
+setTimeout(() => {
+document.getElementById('hero-tag').classList.add('opacity-100');
+document.getElementById('hero-tag').classList.remove('translate-y-10');
+setTimeout(() => {
+document.getElementById('hero-title').classList.add('opacity-100');
+document.getElementById('hero-title').classList.remove('translate-y-10');
+setTimeout(() => {
+document.getElementById('hero-subtitle').classList.add('opacity-100');
+document.getElementById('hero-subtitle').classList.remove('translate-y-10');
+setTimeout(() => {
+document.getElementById('hero-form').classList.add('opacity-100');
+document.getElementById('hero-form').classList.remove('translate-y-10');
+setTimeout(() => {
+document.getElementById('hero-cta').classList.add('opacity-100');
+document.getElementById('hero-cta').classList.remove('translate-y-10');
+}, 300);
+}, 300);
+}, 300);
+}, 300);
+}, 500);
+}, 500);
+// Handle check-in/check-out date changes
+const heroCheckIn = document.getElementById('hero-check-in');
+const heroCheckOut = document.getElementById('hero-check-out');
+heroCheckIn.addEventListener('change', function() {
+const checkInDate = new Date(this.value);
+const nextDay = new Date(checkInDate);
+nextDay.setDate(nextDay.getDate() + 1);
+heroCheckOut.min = nextDay.toISOString().split('T')[0];
+if (heroCheckOut.value && new Date(heroCheckOut.value) <= checkInDate) {
+heroCheckOut.value = nextDay.toISOString().split('T')[0];
+}
+});
+// Handle availability form submission
+const heroAvailabilityForm = document.getElementById('hero-availability-form');
+heroAvailabilityForm.addEventListener('submit', function(e) {
+e.preventDefault();
+const checkIn = heroCheckIn.value;
+const checkOut = heroCheckOut.value;
+const guests = document.getElementById('hero-guests').value;
+// Scroll to booking section and fill in the values
+const bookingSection = document.getElementById('booking');
+bookingSection.scrollIntoView({ behavior: 'smooth' });
+// Fill booking form with selected dates and guests
+setTimeout(() => {
+document.getElementById('check-in').value = checkIn;
+document.getElementById('check-out').value = checkOut;
+document.getElementById('adults').value = guests;
+}, 1000);
+});
+});
+</script>
+<script id="tab-switcher">
+document.addEventListener('DOMContentLoaded', function() {
+const tabButtons = document.querySelectorAll('.tab-button');
+tabButtons.forEach(button => {
+button.addEventListener('click', function() {
+// Remove active class from all buttons
+tabButtons.forEach(btn => {
+btn.classList.remove('active');
+});
+// Add active class to clicked button
+this.classList.add('active');
+});
+});
+});
+</script>
+<script id="form-handlers">
+document.addEventListener('DOMContentLoaded', function() {
+// Booking form
+const bookingForm = document.getElementById('booking-form');
+if (bookingForm) {
+bookingForm.addEventListener('submit', function(e) {
+e.preventDefault();
+alert('Thank you for your reservation request. Our team will contact you shortly to confirm your booking.');
+bookingForm.reset();
+});
+}
+// Contact form
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+contactForm.addEventListener('submit', function(e) {
+e.preventDefault();
+alert('Thank you for your message. Our team will get back to you as soon as possible.');
+contactForm.reset();
+});
+}
+// Newsletter form
+const newsletterForm = document.getElementById('newsletter-form');
+if (newsletterForm) {
+newsletterForm.addEventListener('submit', function(e) {
+e.preventDefault();
+alert('Thank you for subscribing to our newsletter.');
+newsletterForm.reset();
+});
+}
+});
+</script>
+</body>
+</html>

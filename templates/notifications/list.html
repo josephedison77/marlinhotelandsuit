@@ -1,0 +1,60 @@
+<!-- templates/notifications/list.html -->
+{% extends "admin_base.html" %}
+
+{% block admin_content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <h5>Notifications</h5>
+        <a href="{{ url_for('create_notification') }}" class="btn btn-sm btn-primary">
+            Create New
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="list-group">
+            <!-- Change notifications.items to notifications -->
+            {% for notification in notifications %}
+            <a href="{{ notification.action_url or '#' }}" 
+               class="list-group-item list-group-item-action {{ 'unread' if not notification.is_read }}">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ notification.title }}</h6>
+                    <small>{{ notification.created_at|datetimeformat }}</small>
+                </div>
+                <p class="mb-1">{{ notification.message }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">{{ notification.category|title }}</small>
+                    {% if not notification.is_read %}
+                    <a href="{{ url_for('mark_as_read', notification_id=notification.id) }}" 
+                       class="btn btn-sm btn-success">
+                        Mark Read
+                    </a>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        
+        <!-- Add pagination controls -->
+        <nav class="mt-4">
+            <ul class="pagination">
+                {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('notifications', page=pagination.prev_num) }}">Previous</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in pagination.iter_pages() %}
+                <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('notifications', page=page_num) }}">{{ page_num }}</a>
+                </li>
+                {% endfor %}
+                
+                {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('notifications', page=pagination.next_num) }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}

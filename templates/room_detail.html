@@ -1,0 +1,894 @@
+{% extends "base.html" %}
+
+{% block title %}{{ room.name }} | Marlin Hotel{% endblock %}
+
+{% block content %}
+    <style>
+        :root {
+            --primary: #023147;
+            --secondary: #c5a880;
+            --accent: #8c6d46;
+            --light: #f8f9fa;
+            --dark: #0a1429;
+            --text: #333;
+            --gold-light: #e6c78a;
+            --gold-dark: #b08d57;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(55deg, #031924 0%, var(--primary) 100%);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .room-header {
+            padding: 80px 0 40px;
+            text-align: center;
+        }
+        
+        .room-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            color: var(--gold-light);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .room-header h1::after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--secondary);
+        }
+        
+        .room-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.7);
+            max-width: 700px;
+            margin: 30px auto 0;
+        }
+        
+        .room-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+        
+        /* Modern Gallery Styles */
+        .gallery-container {
+            position: relative;
+            margin-bottom: 30px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .main-gallery {
+            position: relative;
+            height: 500px;
+            background: var(--dark);
+            overflow: hidden;
+        }
+        
+        .gallery-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            z-index: 1;
+        }
+        
+        .gallery-slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+        
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        
+        .gallery-slide.active img {
+            transform: scale(1.02);
+        }
+        
+        .gallery-controls {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 10;
+            transform: translateY(-50%);
+        }
+        
+        .gallery-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold-light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.4rem;
+        }
+        
+        .gallery-btn:hover {
+            background: var(--secondary);
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        .gallery-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            color: var(--gold-light);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 1rem;
+            z-index: 10;
+        }
+        
+        .gallery-thumbnails {
+            display: flex;
+            gap: 12px;
+            padding: 15px 0;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--secondary) var(--dark);
+        }
+        
+        .gallery-thumbnails::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .gallery-thumbnails::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+        
+        .gallery-thumbnails::-webkit-scrollbar-thumb {
+            background-color: var(--secondary);
+            border-radius: 10px;
+        }
+        
+        .thumbnail-item {
+            width: 100px;
+            height: 75px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: var(--transition);
+            flex-shrink: 0;
+            border: 2px solid transparent;
+        }
+        
+        .thumbnail-item:hover, .thumbnail-item.active {
+            opacity: 1;
+            border-color: var(--gold-light);
+            transform: scale(1.05);
+        }
+        
+        .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Room Details Section */
+        .room-details {
+            background: rgba(10, 20, 41, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(228, 162, 71, 0.3);
+        }
+        
+        .detail-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .detail-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .detail-section h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold-light);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .detail-section h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--secondary);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .feature-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(197, 168, 128, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary);
+            font-size: 1.6rem;
+        }
+        
+        .feature-content h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--gold-light);
+        }
+        
+        .feature-content p {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+        }
+        
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .amenity-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+        }
+        
+        .amenity-item i {
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        /* Booking Widget */
+        .booking-widget {
+            background: rgba(10, 20, 41, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(228, 162, 71, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 30px;
+        }
+        
+        .booking-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .booking-header h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold-light);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .price-display {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .price-display span {
+            font-size: 1rem;
+            font-weight: normal;
+            color: rgba(255,255,255,0.7);
+            display: block;
+        }
+        
+        .booking-form {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gold-light);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(228, 162, 71, 0.3);
+            border-radius: 12px;
+            color: var(--gold-light);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.2);
+        }
+        
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23c5a880' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px 12px;
+        }
+        
+        .price-summary {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .price-row:last-child {
+            margin-bottom: 0;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-weight: 600;
+        }
+        
+        .price-label {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .price-value {
+            color: var(--gold-light);
+        }
+        
+        .total-price .price-value {
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        .btn-book {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: var(--secondary);
+            color: var(--primary);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .btn-book:hover {
+            background: var(--gold-light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        /* Room Description */
+        .room-description {
+            background: rgba(10, 20, 41, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(228, 162, 71, 0.3);
+            margin-bottom: 40px;
+        }
+        
+        .room-description p {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+        
+        .room-description p:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .room-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-gallery {
+                height: 400px;
+            }
+            
+            .booking-widget {
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .room-header h1 {
+                font-size: 2.8rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .amenities-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-gallery {
+                height: 350px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .room-header h1 {
+                font-size: 2.3rem;
+            }
+            
+            .main-gallery {
+                height: 300px;
+            }
+            
+            .gallery-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .price-display {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+        
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Room Header -->
+        <div class="room-header animate">
+            <h1>{{ room.name }}</h1>
+            <p class="room-subtitle">{{ room.description }}</p>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="room-content">
+            <!-- Left Column: Gallery & Details -->
+            <div class="room-details-column">
+                <!-- Modern Gallery -->
+                <div class="gallery-container animate delay-1">
+                    <div class="main-gallery">
+                        {% for image in all_images %}
+                        <div class="gallery-slide {% if loop.first %}active{% endif %}">
+                            <img src="{{ image.data }}" alt="{{ room.name }}">
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="gallery-controls">
+                            <div class="gallery-btn prev-btn">
+                                <i class="bi bi-chevron-left"></i>
+                            </div>
+                            <div class="gallery-btn next-btn">
+                                <i class="bi bi-chevron-right"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="gallery-counter">
+                            <span class="current-slide">1</span> / <span class="total-slides">{{ all_images|length }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-thumbnails">
+                        {% for image in all_images %}
+                        <div class="thumbnail-item {% if loop.first %}active{% endif %}">
+                            <img src="{{ image.data }}" alt="{{ room.name }} thumbnail">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Room Description -->
+                <div class="room-description animate delay-2">
+                    <h3>Suite Description</h3>
+                    <p>{{ room.description }}</p>
+                    {% if room.long_description %}
+                    <p>{{ room.long_description }}</p>
+                    {% else %}
+                    <p>Experience luxury redefined in our spacious suite with premium amenities for the discerning traveler.</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Room Features -->
+                <div class="room-details animate delay-2">
+                    <div class="detail-section">
+                        <h3>Suite Features</h3>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h4>Accommodates</h4>
+                                    <p>{{ room.capacity }} Adults</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="bi bi-door-open"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h4>Room Size</h4>
+                                    <p>{{ room.size }} sq.ft</p>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="bi bi-tv"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h4>Room Type</h4>
+                                    <p>{{ room.room_type }}</p>
+                                </div>
+                            </div>
+
+                             <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="bi bi-tv"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h4>Floor</h4>
+                                    <p>{{ room.floor }}</p>
+                                </div>
+                            </div>
+
+
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-ruler-combined"></i>
+                                       
+                                </div>
+                                <h4>Room Size</h4>
+                                <span>{{ room.size }} sq.ft</span>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-bed"></i>
+                                      
+                                </div>
+                                 <h4>Bed Size</h4>
+                                <span>{{ room.bedsize }} sq.ft</span>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                        <h3 class="mb-3" style="color: var(--gold-light);">Room Amenities</h3>
+                    <div class="row" style="border: 2px solid var(--gold-light); padding: 1rem; border-radius: 30px;">
+                        {% if room.amenities %}
+                            {% if room.amenities is string %}
+                                {% set amenities_list = room.amenities.split(',') %}
+                            {% else %}
+                                {% set amenities_list = room.amenities %}
+                            {% endif %}
+                            {% for amenity in amenities_list %}
+                            <div class="col-md-6">
+                                <div class="amenity-item d-flex align-items-center mb-2" style="gap: 5px;">
+                                    <i class="bi bi-check2-circle me-2 " style="color: var(--gold-light);"></i>
+                                    {{ amenity|trim }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="col-12">
+                                <p class="text-muted">No amenities listed</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            
+            <!-- Right Column: Booking Widget -->
+            <div class="booking-widget animate delay-3">
+                <div class="booking-header">
+                    <h2>Reserve Your Stay</h2>
+                    <p>Experience luxury at its finest</p>
+                </div>
+                
+                <div class="price-display">
+                    {{ room.price|format_currency }}
+                    <span>per night</span>
+                </div>
+                
+                <form class="booking-form" action="{{ url_for('book_room', room_id=room.id) }}" method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-group">
+                        <label for="check_in_date">Check-in Date</label>
+                        {{ form.check_in_date(class="form-control", min=today) }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="check_out_date">Check-out Date</label>
+                        {{ form.check_out_date(class="form-control", min=today) }}
+                    </div>
+                    
+                    
+
+                    <div class="form-group">
+                        <label for="guests">Guests</label>
+                        <select id="guests" name="guests" class="form-control form-select" required>
+                            {% for i in range(1, room.capacity + 1) %}
+                            <option value="{{ i }}" {% if i == 2 %}selected{% endif %}>{{ i }} Guest{% if i > 1 %}s{% endif %}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="price-summary">
+                        <div class="price-row">
+                            <span class="price-label">Room rate x <span id="nights-count">0</span> nights</span>
+                            <span class="price-value" id="room-total">₦0.00</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">Taxes & Fees (10%)</span>
+                            <span class="price-value" id="taxes">₦0.00</span>
+                        </div>
+                        <div class="price-row total-price">
+                            <span class="price-label">Total</span>
+                            <span class="price-value" id="total-price">₦0.00</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-book">
+                        <i class="bi bi-calendar-check"></i> Book Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gallery functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.gallery-slide');
+            const thumbnails = document.querySelectorAll('.thumbnail-item');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            const currentSlideSpan = document.querySelector('.current-slide');
+            const totalSlidesSpan = document.querySelector('.total-slides');
+            
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+            
+            // Set total slides
+            totalSlidesSpan.textContent = totalSlides;
+            
+            // Function to show a specific slide
+            function showSlide(index) {
+                // Remove active class from all slides and thumbnails
+                slides.forEach(slide => slide.classList.remove('active'));
+                thumbnails.forEach(thumb => thumb.classList.remove('active'));
+                
+                // Add active class to current slide and thumbnail
+                slides[index].classList.add('active');
+                thumbnails[index].classList.add('active');
+                
+                // Update current slide counter
+                currentSlideSpan.textContent = index + 1;
+                
+                currentSlide = index;
+            }
+            
+            // Next slide
+            function nextSlide() {
+                let newIndex = currentSlide + 1;
+                if (newIndex >= totalSlides) newIndex = 0;
+                showSlide(newIndex);
+            }
+            
+            // Previous slide
+            function prevSlide() {
+                let newIndex = currentSlide - 1;
+                if (newIndex < 0) newIndex = totalSlides - 1;
+                showSlide(newIndex);
+            }
+            
+            // Initialize gallery
+            showSlide(0);
+            
+            // Add event listeners
+            prevBtn.addEventListener('click', prevSlide);
+            nextBtn.addEventListener('click', nextSlide);
+            
+            // Add thumbnail click events
+            thumbnails.forEach((thumb, index) => {
+                thumb.addEventListener('click', () => {
+                    showSlide(index);
+                });
+            });
+            
+            // Auto-rotate slides
+            let slideInterval = setInterval(nextSlide, 5000);
+            
+            // Pause auto-rotation when hovering over gallery
+            const gallery = document.querySelector('.gallery-container');
+            gallery.addEventListener('mouseenter', () => {
+                clearInterval(slideInterval);
+            });
+            
+            gallery.addEventListener('mouseleave', () => {
+                slideInterval = setInterval(nextSlide, 5000);
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') prevSlide();
+                else if (e.key === 'ArrowRight') nextSlide();
+            });
+            
+            // Price calculation
+            const roomPrice = {{ room.price }};
+            const checkInInput = document.getElementById('check_in_date');
+            const checkOutInput = document.getElementById('check_out_date');
+            
+            function calculatePrice() {
+                const checkInDate = new Date(checkInInput.value);
+                const checkOutDate = new Date(checkOutInput.value);
+                
+                if (checkInDate && checkOutDate && checkOutDate > checkInDate) {
+                    // Calculate nights
+                    const timeDiff = checkOutDate - checkInDate;
+                    const nights = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                    
+                    // Update nights count
+                    document.getElementById('nights-count').textContent = nights;
+                    
+                    // Calculate prices
+                    const roomTotal = roomPrice * nights;
+                    const taxes = roomTotal * 0.1; // 10% tax
+                    const total = roomTotal + taxes;
+                    
+                    // Update prices
+                    document.getElementById('room-total').textContent = `₦${roomTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                    document.getElementById('taxes').textContent = `₦${taxes.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                    document.getElementById('total-price').textContent = `₦${total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                }
+            }
+            
+            // Initial calculation
+            calculatePrice();
+            
+            // Update on date change
+            checkInInput.addEventListener('change', calculatePrice);
+            checkOutInput.addEventListener('change', calculatePrice);
+            
+            // Set min dates
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            // Format dates for input fields
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            // Set min and default dates
+            checkInInput.min = formatDate(today);
+            checkInInput.value = formatDate(today);
+            checkOutInput.min = formatDate(tomorrow);
+            checkOutInput.value = formatDate(tomorrow);
+        });
+    </script>
+{%endblock%}

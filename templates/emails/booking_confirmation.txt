@@ -1,0 +1,12 @@
+        subject = "Booking Confirmation - Hotel Marlin"
+        body = f"""Dear {booking.user.username},
+
+Your booking at Hotel Marlin has been confirmed!
+
+Booking ID: {booking.id}
+Room: {booking.room.name}
+Check-in: {booking.check_in_date}
+Check-out: {booking.check_out_date}
+Total Amount: {booking.total_amount}
+
+Thank you for choosing us!"""

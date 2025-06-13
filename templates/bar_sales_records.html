@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block title %}Bar Sales Records{% endblock %}
+
+{% block content %}
+<style>
+  .sales-container {
+    max-width: 1400px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+  }
+  
+  .dashboard-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    border: none;
+  }
+  
+  .card-header {
+    background: linear-gradient(135deg, var(--primary), var(--dark));
+    color: rgb(13, 40, 53);
+    padding: 1.25rem 1.75rem;
+    border-bottom: 3px solid var(--secondary);
+  }
+  
+  .filter-form {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  
+  .filter-form input {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgb(15, 14, 14);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+  }
+  
+  .filter-form input::placeholder {
+    color: rgba(13, 58, 58, 0.7);
+  }
+  
+  .filter-btn {
+    background: var(--secondary);
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  
+  .sales-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .sales-table th {
+    background: rgba(248, 249, 250, 0.9);
+    color: var(--primary);
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+    text-align: left;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .sales-table td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    color: var(--dark);
+  }
+  
+  .sales-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .sales-table tr:hover {
+    background-color: rgba(248, 249, 250, 0.5);
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+  
+  .page-item .page-link {
+    color: var(--primary);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 0 0.25rem;
+    border-radius: 6px;
+    transition: all 0.3s;
+  }
+  
+  .page-item.active .page-link {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: white;
+  }
+  
+  .page-item .page-link:hover {
+    background: rgba(197, 168, 128, 0.2);
+  }
+</style>
+
+<div class="sales-container">
+  <div class="dashboard-card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h3 class="card-title mb-0">Sales Records</h3>
+      <form class="filter-form">
+        <input type="date" name="start_date" class="form-control form-control-sm" 
+               value="{{ request.args.start_date }}">
+        <input type="date" name="end_date" class="form-control form-control-sm" 
+               value="{{ request.args.end_date }}">
+        <button type="submit" class="btn filter-btn">
+          <i class="bi bi-funnel"></i> Filter
+        </button>
+      </form>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="sales-table">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Total Price</th>
+              <th>Sold By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sale in sales.items %}
+            <tr>
+              <td>{{ sale.sale_time|datetimeformat('%Y-%m-%d %H:%M') }}</td>
+              <td>{{ sale.item.name }}</td>
+              <td>{{ sale.quantity_sold }}</td>
+              <td>{{ (sale.item.price * sale.quantity_sold)|format_currency }}</td>
+              <td>
+                {% if sale.staff %}
+                  {{ sale.staff.first_name }} {{ sale.staff.last_name }}
+                {% else %}
+                  System
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" class="text-center py-4">No sales records found</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer py-3">
+      <nav aria-label="Sales pagination">
+        <ul class="pagination justify-content-center mb-0">
+          {% if sales.has_prev %}
+          <li class="page-item">
+            <a class="page-link" 
+               href="{{ url_for('bar_sales_records', page=sales.prev_num, start_date=request.args.start_date, end_date=request.args.end_date) }}">
+              &laquo; Previous
+            </a>
+          </li>
+          {% endif %}
+          
+          {% for page_num in sales.iter_pages() %}
+          <li class="page-item {% if page_num == sales.page %}active{% endif %}">
+            <a class="page-link" 
+               href="{{ url_for('bar_sales_records', page=page_num, start_date=request.args.start_date, end_date=request.args.end_date) }}">
+              {{ page_num }}
+            </a>
+          </li>
+          {% endfor %}
+          
+          {% if sales.has_next %}
+          <li class="page-item">
+            <a class="page-link" 
+               href="{{ url_for('bar_sales_records', page=sales.next_num, start_date=request.args.start_date, end_date=request.args.end_date) }}">
+              Next &raquo;
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+{% endblock %}

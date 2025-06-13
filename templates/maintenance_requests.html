@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Maintenance Requests{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --primary: #023147; --secondary: #c5a880; --accent: #8c6d46; --light: #f8f9fa; --dark: #0a1429;
+    --text: #333; --border-color: #e9ecef; --border-radius: 999px; --success: #198754; --warning: #b08d57;
+    --subtle-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+</style>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 style="color: var(--primary); font-weight: 700;">Maintenance Requests</h1>
+        {% if session.user_role in ['super_admin', 'staff'] %}
+            <a href="{{ url_for('create_maintenance_request') }}" class="btn" style="background-color: var(--accent); color: white; border: none; padding: 12px 24px; font-weight: 500; border-radius: var(--border-radius); transition: var(--transition);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--hover-shadow)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                &#43; Create New Request
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="card" style="border: none; border-radius: 0.8rem; box-shadow: var(--subtle-shadow);">
+        <div class="table-responsive">
+            <table class="table table-hover" style="margin-bottom: 0;">
+                <thead style="border-bottom: 2px solid var(--border-color);">
+                    <tr style="color: #6c757d; font-weight: 500; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;">
+                        <th style="padding: 1rem 1.5rem;">Room</th>
+                        <th style="padding: 1rem 1.5rem;">Issue</th>
+                        <th style="padding: 1rem 1.5rem;">Reported By</th>
+                        <th style="padding: 1rem 1.5rem;">Status</th>
+                        <th style="padding: 1rem 1.5rem;">Created</th>
+                        <th style="padding: 1rem 1.5rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr style="vertical-align: middle; transition: var(--transition);" onmouseover="this.style.backgroundColor='rgba(2, 49, 71, 0.02)';" onmouseout="this.style.backgroundColor='transparent';">
+                        <td style="padding: 1rem 1.5rem; font-weight: 600; color: var(--primary);">{{ req.room.name }}</td>
+                        <td style="padding: 1rem 1.5rem;">{{ req.issue_type }}</td>
+                        <td style="padding: 1rem 1.5rem;">{{ req.reported_by.username if req.reported_by.username is not none else 'N/A' }}</td>
+                        <td style="padding: 1rem 1.5rem;">
+                            <span class="badge" style="color: white; background-color: {{ 'var(--success)' if req.status == 'Resolved' else 'var(--warning)' }}; font-size: 0.8rem; padding: 6px 12px; border-radius: var(--border-radius); font-weight: 500;">
+                                {{ req.status }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem 1.5rem;">{{ req.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td style="padding: 1rem 1.5rem;">
+                            <a href="{{ url_for('view_maintenance_request', request_id=req.id) }}" class="btn btn-sm" style="background-color: var(--secondary); color: var(--dark); border-radius: var(--border-radius); transition: var(--transition); border:none;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">View</a>
+                            {% if req.status != 'Resolved' %}
+                            <form method="POST" action="{{ url_for('resolve_maintenance_request', request_id=req.id) }}" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm" style="background-color: var(--success); color: white; border-radius: var(--border-radius); transition: var(--transition); border:none;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">Resolve</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center" style="padding: 3rem;">No maintenance requests found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a href="{{ url_for('housekeeping_dashboard') }}" class="btn mt-4" style="background-color: transparent; border: 1px solid var(--border-color); color: var(--text); padding: 10px 20px; font-weight: 500; border-radius: var(--border-radius); transition: var(--transition);" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text)';"> 
+       &larr; Back to dashboard
+     </a>
+</div>
+{% endblock %}

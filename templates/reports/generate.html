@@ -1,0 +1,49 @@
+<!-- templates/reports/generate.html -->
+{% extends "base.html" %}
+{% block title %}Generate Report{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Generate Report</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                 <input type="text" name="csrf_token" value="{{ csrf_token() }}" hidden>
+                {% include "partials/forms/error_messages.html" %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        {% with field=form.report_type %}
+                            {% include "partials/forms/field.html" %}
+                        {% endwith %}
+                    </div>
+                    <div class="col-md-6">
+                        {% with field=form.report_format %}
+                            {% include "partials/forms/field.html" %}
+                        {% endwith %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        {% with label="Start Date", name="start_date", value=form.start_date.data %}
+                            {% include "partials/forms/date_picker.html" %}
+                        {% endwith %}
+                    </div>
+                    <div class="col-md-6">
+                        {% with label="End Date", name="end_date", value=form.end_date.data %}
+                            {% include "partials/forms/date_picker.html" %}
+                        {% endwith %}
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Generate</button>
+                    <a href="{{ url_for('reports') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

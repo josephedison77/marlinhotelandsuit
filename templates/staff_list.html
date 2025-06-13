@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Staff Management{% endblock %}
+{% block content %}
+<div class="container mt-4" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+    <div class="d-flex justify-content-between align-items-center mb-4" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="color: #007bff; margin-bottom: 0;">Staff Members</h2>
+        <a href="{{ url_for('staff_register') }}" class="btn btn-success" style="color: #fff; background-color: #28a745; border-color: #28a745; padding: 0.5rem 1rem; font-size: 1rem; border-radius: 0.25rem; text-decoration: none; display: flex; align-items: center;">
+            <i class="bi bi-person-plus" style="margin-right: 0.5rem;"></i> Add Staff
+        </a>
+    </div>
+    
+    <div class="card" style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
+        <div class="card-body" style="flex: 1 1 auto; padding: 1.25rem;">
+            <table class="table" style="width: 100%; margin-bottom: 1rem; color: #212529; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Name</th>
+                        <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Position</th>
+                        <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Email</th>
+                        <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Status</th>
+                        <th style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; color: #495057;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for staff in staff_members %}
+                    <tr>
+                        <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ staff.first_name }} {{ staff.last_name }}</td>
+                        <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ staff.position }}</td>
+                        <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">{{ staff.email }}</td>
+                        <td style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6;">
+                            {% if staff.is_active %}
+                                <span class="badge bg-success" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; background-color: #28a745 !important; color: #fff;">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger" style="display: inline-block; padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; background-color: #dc3545 !important; color: #fff;">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td class="d-flex gap-2" style="padding: 0.75rem; vertical-align: top; border-top: 1px solid #dee2e6; display: flex; gap: 0.5rem;">
+                            <a href="{{ url_for('edit_staff', staff_id=staff.id) }}" class="btn btn-sm btn-warning" style="color: #212529; background-color: #ffc107; border-color: #ffc107; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem; text-decoration: none;">Edit</a>
+                            
+                            {% if staff.is_active %}
+                                <form action="{{ url_for('deactivate_staff', staff_id=staff.id) }}" method="POST" style="margin-bottom: 0;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-warning" style="color: #212529; background-color: #ffc107; border-color: #ffc107; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem; cursor: pointer;">
+                                        Deactivate
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form action="{{ url_for('activate_staff', staff_id=staff.id) }}" method="POST" style="margin-bottom: 0;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-success" style="color: #fff; background-color: #28a745; border-color: #28a745; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem; cursor: pointer;">
+                                        Activate
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                            <form action="{{ url_for('delete_staff', staff_id=staff.id) }}" method="POST" style="margin-bottom: 0;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-danger" style="color: #fff; background-color: #dc3545; border-color: #dc3545; padding: 0.25rem 0.5rem; font-size: 0.875rem; border-radius: 0.2rem; cursor: pointer;">
+                                        Delete
+                                    </button>
+                                </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a href="{{ url_for('hr_staff_management') }}" class="btn btn-primary" style="color: #fff; background-color: #007bff; border-color: #007bff; padding: 0.5rem 1rem; font-size: 1rem; border-radius: 0.25rem; text-decoration: none; margin-top: 1.5rem; display: inline-flex; align-items: center;">
+        <i class="bi bi-person-plus" style="margin-right: 0.5rem;"></i> Back to Staff Management
+    </a>
+</div>
+{% endblock %}

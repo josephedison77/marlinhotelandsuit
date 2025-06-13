@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Edit Maintenance Request{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4 class="mb-0">Edit Maintenance Request</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="room_id" class="form-label">Room</label>
+                            <select class="form-select" name="room_id" id="room_id" required>
+                                <option value="">Select Room</option>
+                                {% for room in rooms %}
+                                    <option value="{{ room.id }}" {% if request_obj.room_id == room.id %}selected{% endif %}>
+                                        {{ room.name or 'Room ' ~ room.id }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="issue_type" class="form-label">Issue Type</label>
+                            <select class="form-select" name="issue_type" id="issue_type" required>
+                                <option value="">Select Issue</option>
+                                <option value="Plumbing" {% if request_obj.issue_type == 'Plumbing' %}selected{% endif %}>Plumbing</option>
+                                <option value="Electrical" {% if request_obj.issue_type == 'Electrical' %}selected{% endif %}>Electrical</option>
+                                <option value="Furniture" {% if request_obj.issue_type == 'Furniture' %}selected{% endif %}>Furniture</option>
+                                <option value="Other" {% if request_obj.issue_type == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Priority</label>
+                            <select class="form-select" name="priority" id="priority">
+                                <option value="Low" {% if request_obj.priority == 'Low' %}selected{% endif %}>Low</option>
+                                <option value="Medium" {% if request_obj.priority == 'Medium' %}selected{% endif %}>Medium</option>
+                                <option value="High" {% if request_obj.priority == 'High' %}selected{% endif %}>High</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" name="description" id="description" rows="3" required>{{ request_obj.description }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Additional Notes (optional)</label>
+                            <textarea class="form-control" name="notes" id="notes" rows="2">{{ request_obj.notes }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Request</button>
+                        <a href="{{ url_for('view_maintenance_request', request_id=request_obj.id) }}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

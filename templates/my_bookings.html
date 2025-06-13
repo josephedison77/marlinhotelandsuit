@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}My Bookings{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --primary: #023147; --secondary: #c5a880; --accent: #8c6d46; --light: #f8f9fa; --dark: #0a1429;
+    --danger: #a4161a; --border-color: #e9ecef; --border-radius: 0.8rem; --pill-radius: 999px;
+    --subtle-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+</style>
+<div class="container mt-5">
+    <h1 class="mb-4" style="color: var(--primary); font-weight: 700;">My Bookings</h1>
+    <div class="card" style="border: none; border-radius: var(--border-radius); box-shadow: var(--subtle-shadow);">
+        <div class="table-responsive">
+            <table class="table table-hover" style="margin-bottom: 0;">
+                <thead style="border-bottom: 2px solid var(--border-color);">
+                    <tr style="color: #6c757d; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;">
+                        <th style="padding: 1rem 1.5rem;">Room</th>
+                        <th style="padding: 1rem 1.5rem;">Check-in</th>
+                        <th style="padding: 1rem 1.5rem;">Check-out</th>
+                        <th style="padding: 1rem 1.5rem;">Status</th>
+                        <th style="padding: 1rem 1.5rem;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr style="vertical-align: middle; transition: var(--transition);" onmouseover="this.style.backgroundColor='rgba(2, 49, 71, 0.02)';" onmouseout="this.style.backgroundColor='transparent';">
+                        <td style="padding: 1rem 1.5rem; font-weight: 600; color: var(--primary);">{{ booking.room.name }}</td>
+                        <td style="padding: 1rem 1.5rem;">{{ booking.check_in_date|datetimeformat }}</td>
+                        <td style="padding: 1rem 1.5rem;">{{ booking.check_out_date|datetimeformat }}</td>
+                        <td style="padding: 1rem 1.5rem;"><span style="color: var(--accent); font-weight: 500;">{{ booking.payment_status }}</span></td>
+                        <td style="padding: 1rem 1.5rem; text-align: right;">
+                            <a href="{{ url_for('booking_details', booking_id=booking.id) }}" class="btn btn-sm" style="border: 1px solid var(--secondary); color: var(--secondary); border-radius: var(--pill-radius); transition: var(--transition);" onmouseover="this.style.backgroundColor='var(--secondary)'; this.style.color='var(--dark)';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--secondary)';">View Details</a>
+                            {% if booking.payment_status == 'Paid' and booking.check_in_date > today and booking.cancellation_status in ['none', 'denied'] %}
+                                <button type="button" class="btn btn-sm" style="border: 1px solid var(--danger); color: var(--danger); border-radius: var(--pill-radius); transition: var(--transition);" data-bs-toggle="modal" data-bs-target="#cancelModal{{ booking.id }}" onmouseover="this.style.backgroundColor='var(--danger)'; this.style.color='white';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--danger)';">Request Cancellation</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% for booking in bookings %}
+<div class="modal fade" id="cancelModal{{ booking.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: var(--border-radius); border: none; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div class="modal-header" style="border-bottom: none; padding: 1.5rem 1.5rem 0 1.5rem;">
+                <h5 class="modal-title" style="color: var(--primary); font-weight: 600;">Request Cancellation for Booking #{{ booking.id }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('request_cancellation', booking_id=booking.id) }}">
+                <div class="modal-body" style="padding: 1.5rem;">
+                    <p style="color: #6c757d;">Please note that cancellation requests are subject to review. Provide a clear reason for our team.</p>
+                    <div class="mb-3">
+                        <label class="form-label" style="color: var(--primary); font-weight: 500;">Cancellation Reason:</label>
+                        <textarea name="reason" class="form-control" required rows="4" style="border-radius: 0.5rem; border: 1px solid var(--border-color);"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding: 1rem 1.5rem; background-color: #f8f9fa; border-bottom-left-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius);">
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: transparent; color: #555; border: 1px solid var(--border-color); border-radius: var(--pill-radius); transition: var(--transition);" onmouseover="this.style.backgroundColor='#e9ecef'" onmouseout="this.style.backgroundColor='transparent'">Nevermind</button>
+                    <button type="submit" class="btn" style="background-color: var(--danger); color: white; border: none; border-radius: var(--pill-radius); transition: var(--transition);" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+</div>
+{% endfor %}
+{% endblock %}

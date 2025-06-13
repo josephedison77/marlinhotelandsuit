@@ -1,0 +1,510 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    
+    .order-page {
+        background: linear-gradient(135deg, #f8f5f0 0%, #f1ebe0 100%);
+        min-height: 100vh;
+        padding: 30px 0 60px;
+    }
+    
+    .order-header {
+        background: linear-gradient(90deg, var(--primary) 0%, var(--primary) 100%);
+        padding: 25px 0;
+        border-radius: 30px;
+        margin-bottom: 40px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .order-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+    }
+    
+    .order-header h2 {
+        color: white;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .menu-card, .summary-card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        border: none;
+        transition: var(--transition);
+        background: white;
+    }
+    
+    .menu-card:hover, .summary-card:hover {
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        transform: translateY(-5px);
+    }
+    
+    .card-title {
+        color: var(--primary);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--secondary);
+        margin-bottom: 20px;
+        position: relative;
+    }
+    
+    .card-title::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 50px;
+        height: 2px;
+        background: var(--accent);
+    }
+    
+    .menu-item {
+        border: none;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        padding: 15px;
+        background: white;
+        transition: var(--transition);
+        cursor: pointer;
+        border-left: 4px solid transparent;
+        display: flex;
+        align-items: center;
+    }
+    
+    .menu-item:hover {
+        background: rgba(197, 168, 128, 0.08);
+        border-left-color: var(--secondary);
+        transform: translateX(5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    
+    .menu-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    
+    .placeholder-img {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--light) 0%, #e6e6e6 100%);
+        border-radius: 8px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    
+    .item-name {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 3px;
+    }
+    
+    .item-price {
+        color: var(--accent);
+        font-weight: 600;
+    }
+    
+    .order-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+    }
+    
+    .order-table thead th {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 15px;
+        font-weight: 600;
+    }
+    
+    .order-table tbody tr {
+        background: white;
+        transition: var(--transition);
+    }
+    
+    .order-table tbody tr:hover {
+        background-color: rgba(197, 168, 128, 0.1);
+    }
+    
+    .order-table tbody td {
+        padding: 15px;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .quantity-input {
+        width: 70px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 6px;
+        font-weight: 500;
+    }
+    
+    .remove-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background: var(--light);
+        border: 1px solid #e0e0e0;
+        transition: var(--transition);
+    }
+    
+    .remove-btn:hover {
+        background: #f8d7da;
+        transform: scale(1.1);
+    }
+    
+    .table-input {
+        background: var(--light);
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 10px 15px;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+    
+    .table-input:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 0.25rem rgba(197, 168, 128, 0.25);
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+        border: none;
+        padding: 12px 30px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: var(--transition);
+        width: 100%;
+        border-radius: 8px;
+        margin-top: 20px;
+        color: white;
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 15px rgba(2, 49, 71, 0.3);
+    }
+    
+    .total-display {
+        background: var(--gold-light);
+        color: var(--dark);
+        font-weight: 700;
+        padding: 10px 20px;
+        border-radius: 8px;
+        display: inline-block;
+        margin-left: 10px;
+    }
+    
+    .home-link {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+        color: white !important;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none !important;
+        transition: var(--transition);
+        margin-top: 30px;
+        box-shadow: 0 4px 10px rgba(2, 49, 71, 0.2);
+        width: fit-content;
+    }
+    
+    .home-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 15px rgba(2, 49, 71, 0.3);
+        text-decoration: none;
+    }
+    
+    .empty-cart {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--accent);
+        font-style: italic;
+        background: var(--light);
+        border-radius: 8px;
+    }
+    
+    .gold-divider {
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+        margin: 25px 0;
+        border: none;
+    }
+    
+    .section-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .order-summary-footer {
+        background: rgba(197, 168, 128, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .order-header {
+            padding: 20px 0;
+        }
+        
+        .menu-img, .placeholder-img {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .order-table thead {
+            display: none;
+        }
+        
+        .order-table tbody tr {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+        
+        .order-table tbody td {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: none;
+            padding: 8px 0;
+        }
+        
+        .order-table tbody td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: var(--primary);
+            margin-right: 15px;
+        }
+    }
+</style>
+
+<div class="order-page">
+    <div class="order-header">
+        <div class="container">
+            <h2>Place Your Order</h2>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="order-app">
+            <div class="row g-4">
+                <!-- Menu Column -->
+                <div class="col-md-4">
+                    <div class="menu-card card">
+                        <div class="card-body">
+                            <h5 class="card-title">Menu</h5>
+                            <div class="list-group">
+                                {% for item in items %}
+                                <div @click="addItem({{ item.id }})" class="menu-item">
+                                    <div class="flex-shrink-0 me-3">
+                                        {% if item.image %}
+                                        <img src="{{ url_for('static', filename='bar_items/' + item.image) }}" 
+                                             class="menu-img" alt="{{ item.name }}">
+                                        {% else %}
+                                        <div class="placeholder-img"></div>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div class="item-name">{{ item.name }}</div>
+                                        <div class="item-price">{{ item.price|format_currency }}</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Summary Column -->
+                <div class="col-md-8">
+                    <div class="summary-card card">
+                        <div class="card-body">
+                            <h5 class="card-title">Order Summary</h5>
+                            
+                            <div v-if="items.length === 0" class="empty-cart">
+                                <i class="bi bi-cart-x" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                                <h4>Your cart is empty</h4>
+                                <p class="mb-0">Select items from the menu to get started</p>
+                            </div>
+                            
+                            <template v-else>
+                                <table class="table order-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Price</th>
+                                            <th>Qty</th>
+                                            <th>Total</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, index) in items" :key="item.id">
+                                            <td data-label="Item" class="fw-semibold">[[ item.name ]]</td>
+                                            <td data-label="Price">[[ item.price ]]</td>
+                                            <td data-label="Qty">
+                                                <input type="number" v-model="item.quantity" min="1" class="form-control quantity-input">
+                                            </td>
+                                            <td data-label="Total" class="fw-semibold">[[ item.price * item.quantity ]]</td>
+                                            <td data-label="Remove">
+                                                <button @click="removeItem(index)" class="btn btn-danger btn-sm remove-btn">
+                                                    &times;
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <div class="order-summary-footer">
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <div>
+                                            <div class="section-label">Order Total</div>
+                                            <h3 class="mb-0">{{ total }}</h3>
+                                        </div>
+                                        <div>
+                                            <div class="section-label">Items</div>
+                                            <h3 class="mb-0">[[ items.length ]]</h3>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <div class="section-label">Table Number</div>
+                                        <input type="text" v-model="tableNumber" class="form-control table-input" placeholder="Enter table number" required>
+                                    </div>
+                                    
+                                    <button @click="submitOrder" class="btn btn-primary submit-btn">
+                                        Place Order
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a class="home-link" href="{{ url_for('home') }}">
+                    <i class="bi bi-house me-2"></i> back to home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/vue@3"></script>
+<script>
+const app = Vue.createApp({
+    delimiters: ['[[', ']]'],  // Add this line
+    data() {
+        return {
+            items: [],
+            tableNumber: '',
+            menuItems: {
+                {% for item in items %}
+                {{ item.id }}: {
+                    id: {{ item.id }},
+                    name: '{{ item.name }}',
+                    price: {{ item.price }}
+                },
+                {% endfor %}
+            }
+        }
+    },
+    computed: {
+        total() {
+            return this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+        }
+    },
+    methods: {
+        addItem(itemId) {
+            const existing = this.items.find(i => i.id === itemId)
+            if (existing) {
+                existing.quantity++
+            } else {
+                this.items.push({...this.menuItems[itemId], quantity: 1})
+            }
+        },
+        removeItem(index) {
+            this.items.splice(index, 1)
+        },
+        async submitOrder() {
+            if (this.tableNumber.trim() === '') {
+                alert('Please enter a table number');
+                return;
+            }
+            
+            if (this.items.length === 0) {
+                alert('Please add at least one item to your order');
+                return;
+            }
+            
+            const response = await fetch('/order/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    table_number: this.tableNumber,
+                    items: this.items.map(item => ({
+                        id: item.id,
+                        quantity: item.quantity
+                    }))
+                })
+            })
+            
+            const result = await response.json()
+            if (result.success) {
+                window.location.href = `/order/${result.order_id}`
+            } else {
+                alert('Error: ' + result.error)
+            }
+        }
+    }
+    
+}).mount('#order-app')
+</script>
+{% endblock %}

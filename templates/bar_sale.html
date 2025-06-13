@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}New Bar Sale{% endblock %}
+
+{% block content %}
+<style>
+  .bar-sale-container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+  }
+  
+  .sale-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+    border: none;
+  }
+  
+  .card-header {
+    background: linear-gradient(135deg, var(--primary), var(--dark));
+    color: white;
+    padding: 1.5rem;
+    border-bottom: 3px solid var(--secondary);
+  }
+  
+  .card-body {
+    padding: 2.5rem;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-control {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+  }
+  
+  .form-control:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 0.25rem rgba(197, 168, 128, 0.2);
+  }
+  
+  .btn-submit {
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    border: none;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(140, 109, 70, 0.3);
+  }
+  
+  .btn-cancel {
+    background: white;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+  }
+</style>
+
+<div class="bar-sale-container">
+  <div class="sale-card">
+    <div class="card-header">
+      <h3 class="card-title mb-0">Record Bar Sale</h3>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="mb-4">
+              <label class="form-label">Item</label>
+              {{ form.item_id(class="form-select form-control-lg") }}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-4">
+              <label class="form-label">Quantity</label>
+              {{ form.quantity(class="form-control form-control-lg") }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-submit">
+            Process Sale
+          </button>
+          <a href="{{ url_for('bar_items') }}" class="btn btn-cancel">
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

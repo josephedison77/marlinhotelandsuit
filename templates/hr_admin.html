@@ -1,0 +1,112 @@
+{% extends "admin_base.html" %}
+
+{% block dashboard_title %}HR Management Dashboard{% endblock %}
+
+{% block admin_content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    body {
+        background-color: var(--light);
+        color: var(--text);
+    }
+    .card {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        border: none;
+    }
+    .card.bg-info {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+    .card-title {
+        color: inherit;
+    }
+    .display-4 {
+        color: inherit;
+    }
+    .text-white {
+        color: var(--light) !important;
+    }
+    .card-header {
+        background-color: var(--light);
+        border-bottom: 1px solid var(--gold-light);
+        font-weight: 600;
+        color: var(--primary);
+    }
+    .list-group-item {
+        border-color: var(--gold-light);
+        color: var(--text);
+    }
+    .badge.bg-primary {
+        background-color: var(--accent) !important;
+        color: var(--light) !important;
+    }
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-color: #c3e6cb;
+        border-radius: 0.5rem;
+    }
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border-color: #ffeeba;
+        border-radius: 0.5rem;
+    }
+</style>
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total Staff</h5>
+                <h1 class="display-4">{{ total_staff }}</h1>
+                <a href="{{ url_for('staff_list') }}" class="text-white">View Staff</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">Today's Shifts</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Current Shifts</h6>
+                        <ul class="list-group">
+                            {% for shift in current_shifts %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ shift.staff.first_name }} {{ shift.staff.last_name }}
+                                <span class="badge bg-primary rounded-pill">
+                                    {{ shift.shift_start|timeformat }}
+                                </span>
+                            </li>
+                            {% else %}
+                            <li class="list-group-item">No active shifts</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Attendance Summary</h6>
+                        <div class="alert alert-success">
+                            Present Today: {{ attendance_stats[1] }}
+                        </div>
+                        <div class="alert alert-warning">
+                            Clocked In: {{ attendance_stats[0] - attendance_stats[1] }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

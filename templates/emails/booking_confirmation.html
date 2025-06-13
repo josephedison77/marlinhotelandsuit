@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4; /* Light gray background for the entire email */
+            color: #333333;
+            line-height: 1.6;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff; /* White background for the email content area */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eeeeee;
+        }
+        .header img {
+            max-width: 180px; /* Adjust logo size as needed */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #1a73e8; /* A professional blue for headings */
+            font-size: 28px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        h2 {
+            color: #1a73e8;
+            font-size: 22px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eeeeee;
+            padding-bottom: 8px;
+        }
+        p {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .booking-details {
+            background-color: #e8f0fe; /* Lighter blue background for details section */
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #cce0ff;
+        }
+        .booking-details p {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .booking-details strong {
+            color: #000000;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
+            text-align: center;
+            font-size: 14px;
+            color: #666666;
+        }
+        .footer p {
+            margin-bottom: 5px;
+        }
+    </style>
+    <title>Booking Confirmation</title>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+           <img src="/static/images/logo marlin.png"
+                     alt="Marlin Hotel & Suites Logo"
+                     class="navbar-logo">
+            <h1>Booking Confirmed!</h1>
+        </div>
+
+        <p>Dear {{ booking.user.username }},</p>
+
+        <p>Your booking at Hotel Marlin has been confirmed. Here are your booking details:</p>
+
+        <div class="booking-details">
+            <h2>Booking #{{ booking.id }}</h2>
+            <p><strong>Room:</strong> {{ booking.room.name }}</p>
+            <p><strong>Check-in:</strong> {{ booking.check_in_date.strftime('%Y-%m-%d') }}</p>
+            <p><strong>Check-out:</strong> {{ booking.check_out_date.strftime('%Y-%m-%d') }}</p>
+            <p><strong>Total Amount:</strong> {{ booking.total_amount | format_currency }}</p>
+            <p><strong>Check-in OTP:</strong> {{ booking.otp }}</p>
+            <p><strong>OTP Expiry:</strong> {{ booking.otp_expiry }} (This will expire in 24hrs)</p>
+        </div>
+
+        <p>We look forward to hosting you. If you have any questions, please reply to this email.</p>
+
+        <div class="footer">
+            <p>Best regards,</p>
+            <p>The Hotel Marlin Team</p>
+        </div>
+    </div>
+</body>
+</html>

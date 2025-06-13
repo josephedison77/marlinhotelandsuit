@@ -1,0 +1,294 @@
+<!-- templates/add_bar_item.html -->
+{% extends "base.html" %}
+{% block title %}Add Bar Item{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="form-title">Add New Bar Item</h2>
+    <form method="POST" action="{{ url_for('add_bar_item') }}" enctype="multipart/form-data" class="styled-form">
+        {{ form.hidden_tag() }}
+        
+        <div class="mb-3 form-group floating">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            {% if form.name.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.name.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3 form-group floating">
+            {{ form.price.label(class="form-label") }}
+            <div class="input-group">
+                <span class="input-group-text">₦</span>
+                {{ form.price(class="form-control", step="0.01") }}
+            </div>
+            {% if form.price.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.price.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3 form-group floating">
+            {{ form.quantity.label(class="form-label") }}
+            {{ form.quantity(class="form-control", min="0") }}
+            {% if form.quantity.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.quantity.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3 form-group">
+            {{ form.image.label(class="form-label") }}
+            <div class="file-upload-wrapper">
+                {{ form.image(class="form-control file-upload") }}
+                <div class="form-text">
+                    Allowed formats: PNG, JPG, JPEG, GIF. Max size: 5MB
+                </div>
+                {% if form.image.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.image.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Image preview -->
+            <div class="mt-2" id="imagePreview" style="display:none;">
+                <img id="previewImg" class="img-thumbnail preview-image">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-submit">Add Item</button>
+            <a href="{{ url_for('bar_items') }}" class="btn btn-secondary btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .styled-form {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .styled-form:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .form-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #2c3e50;
+        font-weight: 600;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .form-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(to right, #3498db, #9b59b6);
+        border-radius: 3px;
+    }
+
+    .form-group.floating {
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    .form-control {
+        height: 50px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 10px 15px;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-right: none;
+    }
+
+    .file-upload-wrapper {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .file-upload {
+        padding: 12px;
+        border: 2px dashed #ddd;
+        background-color: #f9f9f9;
+        transition: all 0.3s;
+    }
+
+    .file-upload:hover {
+        border-color: #3498db;
+        background-color: #f0f7fd;
+    }
+
+    .preview-image {
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .preview-image:hover {
+        transform: scale(1.02);
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border: none;
+        padding: 12px 30px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+    }
+
+    .btn-cancel {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        border: none;
+        padding: 12px 30px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+    }
+
+    .btn-cancel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(149, 165, 166, 0.4);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .styled-form {
+        animation: fadeIn 0.6s ease-out forwards;
+    }
+</style>
+
+<script>
+    // Image preview functionality with enhanced UI
+    document.getElementById('image').addEventListener('change', function(e) {
+        const preview = document.getElementById('imagePreview');
+        const img = document.getElementById('previewImg');
+        
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            
+            if (!validTypes.includes(file.type)) {
+                showAlert('error', 'Please select a valid image format (JPEG, PNG, JPG, GIF)');
+                this.value = '';
+                preview.style.display = 'none';
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showAlert('error', 'File size exceeds 5MB limit');
+                this.value = '';
+                preview.style.display = 'none';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                preview.style.display = 'block';
+                preview.style.animation = 'fadeIn 0.5s ease-out';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.style.display = 'none';
+        }
+    });
+
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert-${type}`;
+        alertDiv.textContent = message;
+        alertDiv.style.position = 'fixed';
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.padding = '15px 25px';
+        alertDiv.style.borderRadius = '8px';
+        alertDiv.style.color = 'white';
+        alertDiv.style.zIndex = '1000';
+        alertDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        alertDiv.style.animation = 'slideIn 0.3s ease-out';
+        
+        if (type === 'error') {
+            alertDiv.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+        } else {
+            alertDiv.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+        }
+        
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(() => {
+                document.body.removeChild(alertDiv);
+            }, 300);
+        }, 3000);
+    }
+
+    // Add floating label effect
+    document.querySelectorAll('.floating .form-control').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentNode.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            if (!this.value) {
+                this.parentNode.classList.remove('focused');
+            }
+        });
+        
+        // Initialize on page load
+        if (input.value) {
+            input.parentNode.classList.add('focused');
+        }
+    });
+</script>
+{% endblock %}

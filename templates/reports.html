@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5" style="padding: 20px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <h2 style="color: #333; text-align: center; margin-bottom: 30px;">Reports Overview</h2>
+
+    <div class="row" style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+        <div class="col-md-4" style="flex: 0 0 30%; max-width: 30%; margin-bottom: 20px; padding: 15px; border: 1px solid #e9ecef; border-radius: 8px; background-color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            <h4 style="color: #007bff; margin-bottom: 15px;">Bookings Report</h4>
+            <p style="color: #666;">View detailed reports on all hotel bookings.</p>
+            <a href="{{ url_for('main.bookings_report') }}" class="btn btn-info" style="display: inline-block; padding: 8px 15px; background-color: #17a2b8; color: white; text-decoration: none; border-radius: 5px;">View Report</a>
+        </div>
+
+        <div class="col-md-4" style="flex: 0 0 30%; max-width: 30%; margin-bottom: 20px; padding: 15px; border: 1px solid #e9ecef; border-radius: 8px; background-color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            <h4 style="color: #007bff; margin-bottom: 15px;">Revenue Report</h4>
+            <p style="color: #666;">Analyze revenue generated from bookings and services.</p>
+            <a href="{{ url_for('main.revenue_report') }}" class="btn btn-info" style="display: inline-block; padding: 8px 15px; background-color: #17a2b8; color: white; text-decoration: none; border-radius: 5px;">View Report</a>
+        </div>
+
+        <div class="col-md-4" style="flex: 0 0 30%; max-width: 30%; margin-bottom: 20px; padding: 15px; border: 1px solid #e9ecef; border-radius: 8px; background-color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            <h4 style="color: #007bff; margin-bottom: 15px;">Occupancy Report</h4>
+            <p style="color: #666;">Check room occupancy rates over time.</p>
+            <a href="{{ url_for('main.occupancy_report') }}" class="btn btn-info" style="display: inline-block; padding: 8px 15px; background-color: #17a2b8; color: white; text-decoration: none; border-radius: 5px;">View Report</a>
+        </div>
+    </div>
+
+    <div class="mt-4" style="text-align: center; margin-top: 30px;">
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary" style="padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

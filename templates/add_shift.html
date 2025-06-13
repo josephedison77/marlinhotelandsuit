@@ -1,0 +1,206 @@
+<!-- add_shift.html -->
+{% extends "base.html" %}
+{% block title %}Create New Shift{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+    }
+
+    
+    .container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        width: 100%;
+        max-width: 800px;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, var(--primary), var(--dark));
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .card-title {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-select, .form-control {
+        border-radius: 8px;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+        font-size: 16px;
+    }
+    
+    .form-select:focus, .form-control:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.2);
+        outline: none;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--dark));
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        color: white;
+        width: 100%;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(2, 49, 71, 0.3);
+    }
+    
+    .btn-secondary {
+        background: var(--secondary);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        color: var(--dark);
+        width: 100%;
+    }
+    
+    .btn-secondary:hover {
+        background: var(--accent);
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .d-grid.gap-2 {
+        gap: 15px !important;
+    }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .bi {
+        margin-right: 8px;
+    }
+    
+    .mb-3 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -10px;
+    }
+    
+    .col-md-6 {
+        padding: 0 10px;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    @media (max-width: 768px) {
+        .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Create New Shift</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_shift') }}" class="needs-validation" novalidate>
+                        <input type="text" name="csrf_token" value="{{ csrf_token() }}" hidden>
+                        <div class="mb-3">
+                            <label for="staff_id" class="form-label">Staff Member</label>
+                            <select class="form-select" id="staff_id" name="staff_id" required>
+                                <option value="">Select Staff Member</option>
+                                {% for staff in staff_members %}
+                                <option value="{{ staff.id }}">{{ staff.first_name }} {{ staff.last_name }} ({{ staff.position }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="shift_start" class="form-label">Start Time</label>
+                                <input type="datetime-local" class="form-control" 
+                                       id="shift_start" name="shift_start" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="shift_end" class="form-label">End Time (optional)</label>
+                                <input type="datetime-local" class="form-control" 
+                                       id="shift_end" name="shift_end">
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Create Shift
+                            </button>
+                            <a href="{{ url_for('shift_list') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const forms = document.querySelectorAll('.needs-validation');
+        
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+    });
+</script>
+{% endblock %}

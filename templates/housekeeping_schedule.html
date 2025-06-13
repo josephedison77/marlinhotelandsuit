@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Cleaning Schedule</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-4">
+                <a href="{{ url_for('housekeeping_schedule', date=(dates[0] - timedelta(days=7)).isoformat()) }}" 
+                   class="btn btn-outline-primary">
+                    &larr; Previous Week
+                </a>
+                <h4 class="text-center">
+                    Week of {{ dates[0].strftime('%b %d, %Y') }} to {{ dates[-1].strftime('%b %d, %Y') }}
+                </h4>
+                <a href="{{ url_for('housekeeping_schedule', date=(dates[0] + timedelta(days=7)).isoformat()) }}" 
+                   class="btn btn-outline-primary">
+                    Next Week &rarr;
+                </a>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Room</th>
+                            <th>Assigned Staff</th>
+                            <th>Due By</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for date in dates %}
+                        <tr class="{% if date == today %}table-info{% endif %}">
+                            <td rowspan="{{ assignments[date]|length or 1 }}">
+                                <strong>{{ date.strftime('%A') }}</strong><br>
+                                {{ date.strftime('%b %d') }}
+                                {% if date == today %}
+                                <span class="badge bg-primary">Today</span>
+                                {% endif %}
+                            </td>
+                            
+                            {% if assignments[date] %}
+                                {% for assignment in assignments[date] %}
+                                {% if not loop.first %}</tr><tr>{% endif %}
+                                <td>{{ assignment.room.name }}</td>
+                                <td>{{ assignment.staff.first_name }} {{ assignment.staff.last_name }}</td>
+                                <td>{{ assignment.due_by.strftime('%I:%M %p') }}</td>
+                                <td>
+                                    <span class="badge bg-{% if assignment.priority == 1 %}danger{% elif assignment.priority == 2 %}warning{% else %}secondary{% endif %}">
+                                        {% if assignment.priority == 1 %}High{% elif assignment.priority == 2 %}Medium{% else %}Low{% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if assignment.status == 'completed' %}success{% elif assignment.status == 'in_progress' %}info{% else %}warning{% endif %}">
+                                        {{ assignment.status|replace('_', ' ')|title }}
+                                    </span>
+                                </td>
+                                {% endfor %}
+                            {% else %}
+                                <td colspan="5" class="text-center text-muted">No assignments scheduled</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    body {
+        background-color: var(--light);
+        color: var(--text);
+    }
+    .container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    h2 {
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+    .card {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        border: none;
+        overflow: hidden;
+    }
+    .card-body {
+        padding: 1.5rem;
+    }
+    .btn-outline-primary {
+        color: var(--primary) !important;
+        border-color: var(--primary) !important;
+        border-radius: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+    .btn-outline-primary:hover {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+    h4.text-center {
+        color: var(--primary);
+        font-weight: 600;
+    }
+    .table {
+        --bs-table-color: var(--text);
+        --bs-table-bg: var(--light);
+        --bs-table-border-color: var(--gold-light);
+        --bs-table-hover-color: var(--text);
+        --bs-table-hover-bg: rgba(0,0,0,0.03);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    .table thead th {
+        background-color: var(--primary);
+        color: var(--light);
+        border-color: var(--primary);
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+    }
+    .table tbody tr td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+    }
+    .table-bordered th, .table-bordered td {
+        border: 1px solid var(--gold-light);
+    }
+    .table-light {
+        background-color: var(--light);
+    }
+    .badge {
+        padding: 0.5em 0.75em;
+        border-radius: 0.35rem;
+        font-weight: 600;
+    }
+    .badge.bg-danger {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+    .badge.bg-warning {
+        background-color: var(--secondary) !important;
+        color: var(--dark) !important;
+    }
+    .badge.bg-secondary {
+        background-color: var(--accent) !important;
+        color: var(--light) !important;
+    }
+    .badge.bg-success {
+        background-color: var(--accent) !important;
+        color: var(--light) !important;
+    }
+    .badge.bg-info {
+        background-color: var(--gold-light) !important;
+        color: var(--dark) !important;
+    }
+</style>
+{% endblock %}

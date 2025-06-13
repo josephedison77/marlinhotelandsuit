@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  :root {
+    --primary: #023147; --danger: #dc3545; --border-color: #e9ecef;
+    --border-radius-md: 0.8rem; --border-radius-pill: 999px;
+  }
+</style>
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="card text-center" style="border: 1px solid var(--border-color); border-top: 4px solid var(--danger); border-radius: var(--border-radius-md); padding: 2.5rem;">
+        <h2 style="color: var(--danger); font-weight: 700; margin-bottom: 0.5rem;">Order Processing Failed</h4>
+        <p style="color: #6c757d; line-height: 1.6;">Unfortunately, there was an error while processing your payment. Please check your details and try again, or contact support for assistance.</p>
+        <div class="mt-4">
+            <a href="{{ url_for('view_orders') }}" class="btn" style="background-color: var(--primary); color: white; border: none; padding: 12px 28px; border-radius: var(--border-radius-pill);">
+                Back to My Orders
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <h2 style="color: #333; text-align: center; margin-bottom: 20px;">Request Booking Cancellation</h2>
+    <p style="text-align: center; color: #555; margin-bottom: 30px;">
+        You are requesting to cancel booking #{{ booking.id }}.
+        <br>Room: {{ booking.room.name }} ({{ booking.room.room_type.name }})
+        <br>Check-in: {{ booking.check_in_date.strftime('%Y-%m-%d') }}
+        <br>Check-out: {{ booking.check_out_date.strftime('%Y-%m-%d') }}
+    </p>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            {{ form.reason.label(style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;") }}
+            {{ form.reason(class="form-control", rows=5, style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; resize: vertical;") }}
+            {% for error in form.reason.errors %}
+                <small class="text-danger" style="color: #dc3545; display: block; margin-top: 5px;">{{ error }}</small>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-danger" style="width: 100%; padding: 12px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Confirm Cancellation Request</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('main.booking_detail', booking_id=booking.id) }}" class="btn btn-secondary" style="display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;">Go Back</a>
+    </div>
+</div>
+{% endblock %}

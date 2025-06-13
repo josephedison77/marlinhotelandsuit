@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Notification Details{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+    --primary: #023147; --secondary: #c5a880; --text: #333; --border-color: #e9ecef;
+    --border-radius: 0.8rem; --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+</style>
+<div class="container mt-5" style="max-width: 720px;">
+    <div class="mb-4">
+        <a href="{{ url_for('notifications') }}" class="btn" style="background-color: transparent; color: var(--secondary); font-weight: 500; padding: 5px 0; transition: var(--transition);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+            &larr; Back to Notifications
+        </a>
+    </div>
+    <div class="bg-white p-5" style="border: 1px solid var(--border-color); border-radius: var(--border-radius);">
+        <h1 class="mb-3" style="color: var(--primary); font-weight: 700;">{{ notification.title }}</h1>
+        <p class="mb-5" style="color: #6c757d; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+            Received on {{ notification.created_at|datetimeformat }}
+        </p>
+        <div class="content-body" style="color: var(--text); line-height: 1.75;">
+            <p>{{ notification.message }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

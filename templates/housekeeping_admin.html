@@ -1,0 +1,138 @@
+{% extends "admin_base.html" %}
+
+{% block dashboard_title %}Housekeeping Dashboard{% endblock %}
+
+{% block admin_content %}
+<style>
+    :root {
+        --primary: #023147;
+        --secondary: #c5a880;
+        --accent: #8c6d46;
+        --light: #f8f9fa;
+        --dark: #0a1429;
+        --text: #333;
+        --gold-light: #e6c78a;
+        --gold-dark: #b08d57;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    body {
+        background-color: var(--light);
+        color: var(--text);
+    }
+    .card {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        border: none;
+    }
+    .card.bg-warning {
+        background-color: var(--secondary) !important;
+        color: var(--dark) !important;
+    }
+    .card.bg-danger {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+    .card.bg-info {
+        background-color: var(--accent) !important;
+        color: var(--light) !important;
+    }
+    .card-title {
+        color: inherit;
+    }
+    .display-4 {
+        color: inherit;
+    }
+    .text-dark {
+        color: var(--dark) !important;
+    }
+    .text-white {
+        color: var(--light) !important;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    .badge {
+        padding: 0.5em 0.75em;
+        border-radius: 0.35rem;
+        font-weight: 600;
+    }
+    .badge.bg-success {
+        background-color: var(--accent) !important;
+        color: var(--light) !important;
+    }
+    .badge.bg-danger {
+        background-color: var(--primary) !important;
+        color: var(--light) !important;
+    }
+</style>
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <h5 class="card-title">Pending Cleaning</h5>
+                <h1 class="display-4">{{ pending_cleaning }}</h1>
+                <a href="{{ url_for('cleaning_logs') }}" class="text-dark">View Schedule</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5 class="card-title">Active Requests</h5>
+                <h1 class="display-4">{{ active_requests }}</h1>
+                <a href="{{ url_for('maintenance_requests') }}" class="text-white">View Requests</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Room Status</h5>
+                <div id="roomStatusChart" style="height: 100px"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Cleaning Schedule</div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Last Cleaned</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for room in rooms %}
+                <tr>
+                    <td>{{ room.name }}</td>
+                    <td>{{ room.last_cleaned|dateformat if room.last_cleaned else 'Never' }}</td>
+                    <td>
+                        <span class="badge bg-{{ 'success' if room.cleaning_status == 'clean' else 'danger' }}">
+                            {{ room.cleaning_status|replace('_', ' ')|title }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if room.assignments and room.assignments[0].staff %}
+                            {{ room.assignments[0].staff.first_name }} {{ room.assignments[0].staff.last_name }}
+                        {% else %}
+                            Not Assigned
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No rooms found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

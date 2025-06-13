@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Payment Management{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --primary: #023147; --accent: #8c6d46; --success: #198754; --danger: #dc3545;
+    --border-color: #e9ecef; --border-radius-pill: 999px; --shadow-subtle: 0 4px 6px -1px rgba(0,0,0,0.05);
+  }
+</style>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 style="color: var(--primary); font-weight: 700;">Payment Records</h1>
+        <a href="{{ url_for('add_payment') }}" class="btn" style="background-color: var(--accent); color: white; border: none; padding: 12px 24px; font-weight: 500; border-radius: var(--border-radius-pill);">
+            &#43; Add New Payment
+        </a>
+    </div>
+
+    <div class="card" style="border: none; border-radius: 0.8rem; box-shadow: var(--shadow-subtle);">
+        <div class="table-responsive">
+            <table class="table table-hover" style="margin-bottom: 0;">
+                <thead style="border-bottom: 2px solid var(--border-color);">
+                    <tr style="color: #6c757d; font-weight: 500; text-transform: uppercase; font-size: 0.8rem;">
+                        <th style="padding: 1rem 1.5rem;">Booking ID</th>
+                        <th style="padding: 1rem 1.5rem;">Amount</th>
+                        <th style="padding: 1rem 1.5rem;">Method</th>
+                        <th style="padding: 1rem 1.5rem;">Date</th>
+                        <th style="padding: 1rem 1.5rem;">Status</th>
+                        <th style="padding: 1rem 1.5rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr style="vertical-align: middle;">
+                        <td style="padding: 1rem 1.5rem; font-weight: 600; color: var(--primary);">{{ payment.booking_id }}</td>
+                        <td style="padding: 1rem 1.5rem;">₦{{ payment.amount }}</td>
+                        <td style="padding: 1rem 1.5rem;">{{ payment.payment_method }}</td>
+                        <td style="padding: 1rem 1.5rem;">{{ payment.payment_date.strftime('%Y-%m-%d') }}</td>
+                        <td style="padding: 1rem 1.5rem;">
+                            <span class="badge" style="color: white; background-color: {{ 'var(--success)' if payment.status == 'success' else 'var(--danger)' }}; border-radius: var(--border-radius-pill); font-weight: 500;">
+                                {{ payment.status|capitalize }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem 1.5rem;">
+                            <a href="{{ url_for('edit_payment', payment_id=payment.id) }}" class="btn btn-sm" style="background-color: var(--primary); color: white; border:none; border-radius: var(--border-radius-pill);">Edit</a>
+                            <form method="POST" action="{{ url_for('delete_payment', payment_id=payment.id) }}" class="d-inline">
+                                <button type="submit" class="btn btn-sm" style="background-color: var(--danger); color: white; border:none; border-radius: var(--border-radius-pill);">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center" style="padding: 3rem;">No payment records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

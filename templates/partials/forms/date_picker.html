@@ -1,0 +1,10 @@
+<!-- templates/partials/forms/date_picker.html -->
+<div class="mb-3">
+    <label class="form-label">{{ label }}</label>
+    <input type="datetime-local" 
+           class="form-control" 
+           name="{{ name }}" 
+           value="{{ value|default('', true) }}"
+           min="{{ min|default('', true) }}"
+           required>
+</div>

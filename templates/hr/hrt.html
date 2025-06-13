@@ -1,0 +1,42 @@
+NOTE FOR EVERY ROUTE OR FUNCTION YOU WILL BE CORRECTING PLS GIVEE ME THE FULL CODE OF THAT ROUTE OR FUNCTION  NOT SNIPPET ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\DELL\Desktop\marl\app.py", line 620, in generate_shift_otps
+    send_shift_otp(shift.staff, "checkin", otp, shift.start_time)
+TypeError: send_shift_otp() takes 2 positional arguments but 4 were given
+Job "generate_shift_otp_job (trigger: interval[0:01:00], next run at: 2025-06-07 19:51:50 WAT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Python312\Lib\site-packages\apscheduler\executors\base.py", line 131, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\DELL\Desktop\marl\app.py", line 656, in generate_shift_otp_job
+    send_shift_otp(shift.staff, "checkin", otp, shift.start_time)
+TypeError: send_shift_otp() takes 2 positional arguments but 4 were given
+[2025-06-07 19:50:51,764] INFO in app: Cleaned up 0 pending payments
+c:\Users\DELL\Desktop\marl\app.py:821: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  staff = Staff.query.get(shift.staff_id)
+Job "send_shift_otp_job (trigger: interval[0:01:00], next run at: 2025-06-07 19:51:51 WAT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Python312\Lib\site-packages\apscheduler\executors\base.py", line 131, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\DELL\Desktop\marl\app.py", line 830, in send_shift_otp_job
+    send_shift_otp(staff, shift, otp)
+TypeError: send_shift_otp() takes 2 positional arguments but 3 were given
+c:\Users\DELL\Desktop\marl\models.py:639: SAWarning: Usage of the 'Session.add()' operation is not currently supported within the execution stage of the flush 
+process. Results may not be consistent.  Consider using alternative event listeners or connection-level operations instead. (This warning originated from the Session 'autoflush' process, which was invoked automatically in response to a user-initiated operation.)
+  db.session.add(log)
+Job "generate_shift_otp_job (trigger: interval[0:01:00], next run at: 2025-06-07 19:51:51 WAT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Python312\Lib\site-packages\apscheduler\executors\base.py", line 131, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\DELL\Desktop\marl\app.py", line 656, in generate_shift_otp_job
+    send_shift_otp(shift.staff, "checkin", otp, shift.start_time)
+TypeError: send_shift_otp() takes 2 positional arguments but 4 were given
+Job "generate_shift_otps (trigger: interval[0:01:00], next run at: 2025-06-07 19:51:51 WAT)" raised an exception
+Traceback (most recent call last):
+  File "C:\Python312\Lib\site-packages\apscheduler\executors\base.py", line 131, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\DELL\Desktop\marl\app.py", line 620, in generate_shift_otps
+    send_shift_otp(shift.staff, "checkin", otp, shift.start_time)
+TypeError: send_shift_otp() takes 2 positional arguments but 4 were given

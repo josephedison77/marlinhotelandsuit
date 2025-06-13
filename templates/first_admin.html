@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .first-admin-container {
+        max-width: 500px;
+        margin: 3rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+    h1 {
+        color: #023147;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #c5a880;
+    }
+    form {
+        margin-top: 2rem;
+    }
+    form div {
+        margin-bottom: 1.5rem;
+    }
+    label {
+        display: block;
+        font-weight: 600;
+        color: #0a1429;
+        margin-bottom: 0.5rem;
+    }
+    input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    input:focus {
+        border-color: #c5a880;
+        box-shadow: 0 0 0 0.25rem rgba(197, 168, 128, 0.25);
+        outline: none;
+    }
+    button {
+        width: 100%;
+        padding: 0.75rem;
+        background: linear-gradient(to right, #023147, #002738);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(2, 49, 71, 0.3);
+    }
+</style>
+
+<div class="first-admin-container animate-fade">
+    <h1>Create First Admin</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>{{ form.email.label }} {{ form.email }}</div>
+        <div>{{ form.password.label }} {{ form.password }}</div>
+        <button type="submit">Create Admin</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to form elements
+        const formElements = document.querySelectorAll('form div');
+        formElements.forEach((element, index) => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.animation = `fadeInUp 0.5s ease-out forwards ${index * 0.1}s`;
+        });
+
+        // Button hover effect
+        const button = document.querySelector('button');
+        button.addEventListener('mouseenter', () => {
+            button.style.transform = 'translateY(-2px)';
+            button.style.boxShadow = '0 6px 15px rgba(2, 49, 71, 0.3)';
+        });
+        button.addEventListener('mouseleave', () => {
+            button.style.transform = 'translateY(0)';
+            button.style.boxShadow = 'none';
+        });
+    });
+</script>
+{% endblock %}

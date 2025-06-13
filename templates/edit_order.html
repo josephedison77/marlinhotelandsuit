@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .order-edit-container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+    .card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+    .card-header {
+        background: linear-gradient(to right, #023147, #002738);
+        color: white;
+        padding: 1.2rem 1.5rem;
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #0a1429;
+    }
+    .form-control {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #c5a880;
+        box-shadow: 0 0 0 0.25rem rgba(197, 168, 128, 0.25);
+    }
+    .item-row {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .item-row:hover {
+        background-color: #e9ecef;
+        transform: translateY(-2px);
+    }
+    .remove-item {
+        transition: all 0.3s ease;
+    }
+    .remove-item:hover {
+        transform: scale(1.1);
+    }
+    .btn-primary {
+        background: linear-gradient(to right, #023147, #002738);
+        border: none;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(2, 49, 71, 0.3);
+    }
+</style>
+
+<div class="container mt-4 order-edit-container">
+    <h2>Edit Order #{{ order.id }}</h2>
+    <form method="POST" action="{{ url_for('edit_order', order_id=order.id) }}">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                Order Details
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="table_number" class="form-label">Table Number</label>
+                    <input type="text" class="form-control" id="table_number" 
+                           name="table_number" value="{{ order.table_number }}" required>
+                </div>
+
+                <h5 class="mb-3">Order Items</h5>
+                <div id="items-container">
+                    {% for item in order.order_items %}
+                    <div class="item-row mb-3 border p-2">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Item</label>
+                                <select class="form-select" name="item_id" required>
+                                    <option value="">Select Item</option>
+                                    {% for bar_item in bar_items %}
+                                    <option value="{{ bar_item.id }}" 
+                                        {{ 'selected' if bar_item.id == item.item_id }}>
+                                        {{ bar_item.name }} - {{ bar_item.price|format_currency }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-control" 
+                                       name="quantity" value="{{ item.quantity }}" 
+                                       min="1" required>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger btn-sm remove-item">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-3">
+                    <button type="button" class="btn btn-success btn-sm" id="add-item">
+                        <i class="bi bi-plus-circle"></i> Add Item
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{{ url_for('order_details', order_id=order.id) }}" 
+               class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Update Order</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add new item row
+    document.getElementById('add-item').addEventListener('click', function() {
+        const newRow = document.createElement('div');
+        newRow.className = 'item-row mb-3 border p-2';
+        newRow.innerHTML = `
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <select class="form-select" name="item_id" required>
+                        <option value="">Select Item</option>
+                        {% for bar_item in bar_items %}
+                        <option value="{{ bar_item.id }}">
+                            {{ bar_item.name }} - {{ bar_item.price|format_currency }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input type="number" class="form-control" 
+                           name="quantity" value="1" min="1" required>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger btn-sm remove-item">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        document.getElementById('items-container').appendChild(newRow);
+        
+        // Add animation to new row
+        newRow.style.opacity = '0';
+        newRow.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            newRow.style.opacity = '1';
+            newRow.style.transform = 'translateY(0)';
+            newRow.style.transition = 'all 0.3s ease';
+        }, 10);
+    });
+
+    // Remove item row with animation
+    document.getElementById('items-container').addEventListener('click', function(e) {
+        if(e.target.classList.contains('remove-item')) {
+            const row = e.target.closest('.item-row');
+            row.style.opacity = '0';
+            row.style.transform = 'translateX(50px)';
+            row.style.transition = 'all 0.3s ease';
+            setTimeout(() => {
+                row.remove();
+            }, 300);
+        }
+    });
+});
+</script>
+{% endblock %}

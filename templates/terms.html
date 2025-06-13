@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Service | Marlin Hotel{% endblock %}
+
+{% block content %}
+
+
+<style>
+    
+  :root {
+      --primary: #023147;
+      --secondary: #c5a880;
+      --accent: #8c6d46;
+      --light: #f8f9fa;
+      --dark: #0a1429;
+      --text: #333;
+      --gold-light: #e6c78a;
+      --gold-dark: #b08d57;
+      --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+  
+  body {
+      font-family: 'Montserrat', sans-serif;
+     
+      color: var(--light);
+      overflow-x: hidden;
+      background: linear-gradient(55deg, #031924 0%, var(--primary) 100%), url('https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+      line-height: 1.6;
+
+      
+  }
+   .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3px 10px;
+  }
+
+  .card-body{background: rgba(255, 255, 255, 0);
+      backdrop-filter: blur(10);
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      transition: var(--transition);
+      position: relative;
+      transform: translateY(0);
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--accent);
+      padding: 3rem 4rem;
+      color: var(--light); }
+  
+.mb-3 input{background-color: var(--gold-light); border-radius: 20px; border: 1px solid var(--accent); color: var(--gold-light);margin: 0.5rem }
+input:hover{background-color: #c5a880;}
+label{color: #e6c78a; font-style: italic; font-size: 0.8rem;}
+input::placeholder{font-size: 0.7rem;}
+
+.text-center{padding: 1rem 1rem;}
+
+.card-body{background-color: var(--primary);}
+
+</style>
+
+
+
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h1 class="mb-4">Terms & Conditions</h1>
+        
+        <div class="card shadow-sm mb-4" style="background-color: var(--primary);">
+          <div class="card-body">
+            <h2 class="h4 mb-3">Reservations</h2>
+            <ul>
+              <li>Check-in: at arrival</li>
+              <li>Valid ID required at check-in</li>
+              <li>50% deposit required for bookings</li>
+               <li>full payment is also accepted</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card shadow-sm mb-4" style="background-color: var(--primary);">
+          <div class="card-body">
+            <h2 class="h4 mb-3">Cancellation Policy</h2>
+            <ul>
+              <li>Free cancellation 6hrs 30min before check-in</li>
+              <li>50% charge for late cancellations</li>
+              <li>No refund for no-shows</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card shadow-sm mb-4" style="background-color: var(--primary);">
+          <div class="card-body">
+            <h2 class="h4 mb-3">Hotel Policies</h2>
+            <ul>
+              <li>No smoking in rooms</li>
+              <li>Pets require prior approval</li>
+              <li>Damage charges may apply</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
