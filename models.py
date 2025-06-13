@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from flask_login import UserMixin
 from sqlalchemy import and_
 from flask import url_for
@@ -62,7 +62,9 @@ class APIKey(db.Model):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), nullable=False, unique=True)
+    first_name = db.Column(db.String(64), nullable=False, unique=True)
+    last_name = db.Column(db.String(64), nullable=False, unique=True)
+    phone_number = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(256), nullable=False)
     last_login = db.Column(db.DateTime, default=datetime.now(timezone.utc))
@@ -449,7 +451,7 @@ class Attendance(db.Model):
     shift_id = db.Column(db.Integer, db.ForeignKey('shift.id'), nullable=True)
     clock_in_time = db.Column(db.DateTime, nullable=True)  # Changed to nullable
     clock_out_time = db.Column(db.DateTime, nullable=True)
-    date = db.Column(db.Date, default=datetime.utcnow().date())
+    date = db.Column(db.Date, default=lambda: datetime.now(UTC).date())
     status = db.Column(db.String(20), default='pending')  # Add status field
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -633,13 +635,15 @@ def log_crud_event(target, action):
         except Exception:
             pass
     
-    log = ActivityLog(
-        title=f"{target.__class__.__name__} {action.capitalize()}",
-        description=f"{action.capitalize()} {target.__class__.__name__} (ID: {getattr(target, 'id', 'N/A')}) by {username}",
-        initiator_id=user_id,
-        timestamp=datetime.utcnow()
-    )
-    db.session.add(log)
+    from sqlalchemy import event
+
+    # Example event listener for a specific model (replace 'Room' with your model if needed)
+    # @event.listens_for(Room, 'after_insert')
+    # def log_insert(mapper, connection, target):
+    #     connection.execute(
+    #         Log.__table__.insert(),
+    #         {"message": "Something happened"}
+    #     )
 
 def after_insert(mapper, connection, target):
     log_crud_event(target, "created")

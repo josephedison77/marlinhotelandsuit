@@ -2322,22 +2322,28 @@ def privacy():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        username = form.username.data
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        phone = form.phone.data
+        if not phone:
+            flash('Phone number is required', 'error')
+            return redirect(url_for('register'))
         email = form.email.data
         password = form.password.data
         
         try:
             # Check for existing users first
-            if User.query.filter_by(username=username).first():
-                flash('Username already exists', 'error')
+            if User.query.filter_by(first_name=first_name).first():
+                flash('First Name already exists', 'error')
                 return redirect(url_for('register'))
-            
-            if User.query.filter_by(email=email).first():
-                flash('Email already exists', 'error')
+
+            if User.query.filter_by(last_name=last_name).first():
+                flash('Last Name already exists', 'error')
                 return redirect(url_for('register'))
 
             new_user = User(
-                username=username,
+                first_name=first_name,
+                last_name=last_name,
                 email=email,
                 password=generate_password_hash(password),
                 status='active',

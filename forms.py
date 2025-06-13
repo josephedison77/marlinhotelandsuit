@@ -303,9 +303,18 @@ class ExpenseForm(FlaskForm):
     submit = SubmitField('Record Expense')
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[
+    first_name = StringField('First Name', validators=[
         DataRequired(),
-        Length(min=4, max=25)
+        Length(min=2, max=25)
+    ])
+    last_name = StringField('Last Name', validators=[
+        DataRequired(),
+        Length(min=2, max=25)
+    ])
+    phone_number = StringField('Phone Number', validators=[
+        DataRequired(),
+        Length(min=10, max=15),
+        Regexp(r'^[0-9]+$', message="Phone number must contain only digits")
     ])
     email = StringField('Email', validators=[
         DataRequired(),
