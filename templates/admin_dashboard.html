@@ -135,6 +135,24 @@
             .quick-actions-grid {
                 grid-template-columns: 1fr;
             }
+
+            .admin-dashboard-sidebar {
+    height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #b08d57 #052f41;
+}
+.admin-dashboard-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+.admin-dashboard-sidebar::-webkit-scrollbar-thumb {
+    background: #b08d57;
+    border-radius: 4px;
+}
+.admin-dashboard-sidebar::-webkit-scrollbar-track {
+    background: #052f41;
+}
         }
 
     /* --- Sidebar --- */
@@ -325,6 +343,8 @@ border-radius: 100px;}
         align-items: center;
         justify-content: space-between;
         min-height: 60px;
+        position: relative;
+        z-index: 2000; /* Increased z-index for header */
     }
     .admin-page-header .page-title {
         font-size: 1.25rem;
@@ -343,7 +363,38 @@ border-radius: 100px;}
     .admin-page-header .header-actions .btn-icon:hover { color: var(--text-primary); }
     .admin-page-header .user-dropdown img { width: 32px; height: 32px; }
 
+    /* Add this to your CSS section */
+.admin-dashboard-sidebar .collapse.show {
+    display: block !important;
+}
 
+.admin-dashboard-sidebar.collapsed .collapse {
+    display: none !important;
+}
+
+/* Ensure dropdowns are visible */
+.admin-dashboard-sidebar .dropdown-menu {
+    z-index: 1060 !important;
+    position: relative !important;
+    transform: none !important;
+    min-width: 200px !important;
+    background-color: #0a3d5f !important;
+    border: none !important;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.admin-dashboard-sidebar .dropdown-item {
+    color: var(--sidebar-text) !important;
+    padding: 0.5rem 1rem !important;
+}
+
+.admin-dashboard-sidebar .dropdown-item:hover {
+    background-color: rgba(255,255,255,0.1) !important;
+}
+
+.admin-dashboard-sidebar .dropdown-divider {
+    border-color: rgba(255,255,255,0.1) !important;
+}
     .admin-content-wrapper { /* New wrapper for content and right panel */
         display: flex;
         flex-grow: 1;
@@ -462,18 +513,41 @@ border-radius: 100px;}
 
 
     @media (max-width: 991.98px) {
-        .admin-dashboard-sidebar { transform: translateX(-100%); }
-        .admin-dashboard-sidebar.open { transform: translateX(0); box-shadow: 0 0 25px rgba(0,0,0,0.1); }
+        .admin-dashboard-sidebar { 
+            transform: translateX(-100%); 
+            height: 100vh; /* Ensure full height */
+            overflow-y: auto; /* Enable scrolling */
+        }
+        .admin-dashboard-sidebar.open { 
+            transform: translateX(0); 
+            box-shadow: 0 0 25px rgba(0,0,0,0.1); 
+        }
         .admin-main-container { margin-left: 0; width: 100%; }
         .admin-page-header .desktop-sidebar-toggler { display: none; }
         .admin-page-header .mobile-sidebar-toggler { display: inline-block !important; }
         .admin-right-panel {
-            position: fixed; top: 60px; /* Below page header */ right:0; transform: translateX(100%);
-            z-index: 1045; box-shadow: 0 0 25px rgba(0,0,0,0.1); display: block;
-             height: calc(100vh - 60px); /* Full height below header */
+            position: fixed; 
+            top: 60px; /* Below page header */
+            right:0; 
+            transform: translateX(100%);
+            z-index: 1045; 
+            box-shadow: 0 0 25px rgba(0,0,0,0.1); 
+            display: block;
+            height: calc(100vh - 60px); /* Full height below header */
+            overflow-y: auto; /* Enable scrolling */
         }
         .admin-right-panel.open { transform: translateX(0); }
         .admin-page-header .mobile-right-panel-toggler { display: inline-block !important; }
+        
+        /* Fix for dropdown menu positioning */
+        .admin-page-header .dropdown-menu {
+            position: fixed !important;
+            top: auto !important;
+            right: 15px !important;
+            left: auto !important;
+            margin-top: 10px;
+            z-index: 2001 !important; /* Above overlay */
+        }
     }
     @media (min-width: 992px) {
         .admin-page-header .desktop-sidebar-toggler { display: inline-block !important; }
@@ -536,7 +610,11 @@ border-radius: 100px;}
         .mobile-3-column-active .admin-main-container { margin-left: 0 !important; width: 100%; flex-grow: 1; }
         .mobile-3-column-active .admin-content-wrapper { display: flex; flex-grow: 1; }
         .mobile-3-column-active .admin-content-area { flex-grow: 1; padding: 0.75rem; min-width: 0; }
-        .mobile-3-column-active .admin-page-header { padding: 0.5rem 0.75rem; min-height: 50px;}
+        .mobile-3-column-active .admin-page-header { 
+            padding: 0.5rem 0.75rem; 
+            min-height: 50px;
+            z-index: 2000; /* Ensure header stays on top */
+        }
         .mobile-3-column-active .admin-page-header .page-title { font-size: 1rem; }
         .mobile-3-column-active .admin-page-header .header-actions .form-control { display: none; }
 
@@ -570,6 +648,76 @@ border-radius: 100px;}
     .admin-dashboard-sidebar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
     .admin-dashboard-sidebar::-webkit-scrollbar-thumb { background: var(--sidebar-text); opacity: 0.5; border-radius: 3px;}
     .admin-dashboard-sidebar::-webkit-scrollbar-thumb:hover { opacity: 0.8; }
+
+    /* Ensure dropdowns in the header are always visible above the sidebar */
+.admin-page-header .dropdown-menu {
+    position: absolute !important;
+    left: auto !important;
+    right: 0 !important;
+    top: 100% !important;
+    z-index: 2000 !important;
+    min-width: 180px;
+    background: #fff;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+}
+.admin-dashboard-sidebar {
+    overflow: visible !important;
+}
+
+/* Fix for dropdown issue */
+.dropdown-toggle::after {
+    display: inline-block !important;
+}
+
+.dropdown-menu {
+    min-width: 300px !important;
+    z-index: 1060 !important;
+}
+
+/* Mobile Dropdown Fix */
+.admin-page-header .dropdown-menu {
+    z-index: 2001 !important; /* Higher than overlay */
+}
+
+/* Sidebar Scrolling Fix */
+.admin-dashboard-sidebar {
+    width: 280px;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    padding: 1rem 0;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    overflow-y: auto;
+    transition: width 0.3s ease, transform 0.3s ease;
+}
+
+@media (max-width: 991.98px) {
+    .admin-dashboard-sidebar.open {
+        height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+.admin-dashboard-sidebar {
+    height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #b08d57 #052f41;
+}
+.admin-dashboard-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+.admin-dashboard-sidebar::-webkit-scrollbar-thumb {
+    background: #b08d57;
+    border-radius: 4px;
+}
+.admin-dashboard-sidebar::-webkit-scrollbar-track {
+    background: #052f41;
+}
 </style>
 
 <div class="d-flex"> 
@@ -597,26 +745,31 @@ border-radius: 100px;}
                     <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
                 </a>
             </li>
-            
             <li class="nav-item">
-                <a class="nav-link {% if request.endpoint in ['admin_rooms', 'create_room'] %}active{% endif %}" href="#roomsSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                    <i class="bi bi-door-open"></i> <span>Rooms</span>
-                </a>
-                <ul class="collapse nav flex-column" id="roomsSubmenu" data-bs-parent="#adminMenu">
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_rooms') }}">Manage Rooms</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('create_room') }}">Add New Room</a></li>
-                </ul>
-            </li>
-             <li class="nav-item">
-                <a class="nav-link {% if request.endpoint in ['staff_list', 'staff_register'] %}active{% endif %}" href="#staffSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                    <i class="bi bi-people"></i> <span>Staff</span>
-                </a>
-                <ul class="collapse nav flex-column" id="staffSubmenu" data-bs-parent="#adminMenu">
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_dashboard') }}">Staff Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_list') }}">Staff List</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_register') }}">Register Staff</a></li>
-                </ul>
-            </li>
+    <a class="nav-link dropdown-toggle {% if request.endpoint in ['admin_rooms', 'create_room'] %}active{% endif %}"
+       href="#roomsSubmenu"
+       data-bs-toggle="collapse"
+       aria-expanded="false">
+        <i class="bi bi-door-open"></i> <span>Rooms</span>
+    </a>
+    <ul class="collapse nav flex-column" id="roomsSubmenu" data-bs-parent="#adminMenu">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_rooms') }}">Manage Rooms</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('create_room') }}">Add New Room</a></li>
+    </ul>
+</li>
+<li class="nav-item">
+    <a class="nav-link dropdown-toggle {% if request.endpoint in ['staff_list', 'staff_register'] %}active{% endif %}"
+       href="#staffSubmenu"
+       data-bs-toggle="collapse"
+       aria-expanded="false">
+        <i class="bi bi-people"></i> <span>Staff</span>
+    </a>
+    <ul class="collapse nav flex-column" id="staffSubmenu" data-bs-parent="#adminMenu">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_dashboard') }}">Staff Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_list') }}">Staff List</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('staff_register') }}">Register Staff</a></li>
+    </ul>
+</li>
              
 
             <li class="nav-heading"><span>Management</span></li>
@@ -671,7 +824,6 @@ border-radius: 100px;}
         <i class="bi bi-graph-up"></i> <span>use inventory</span>
     </a>
 </li>
-
 
 
             <li class="nav-item">
@@ -766,7 +918,7 @@ border-radius: 100px;}
             </div>
             <div class="flex-grow-1">
                 <div class="stat-title">Daily Revenue</div>
-                <div class="stat-value">{{ daily_revenue|format_currency if daily_revenue is not none else '$0.00' }}</div>
+                <div class="stat-value">{{ daily_revenue_paid|format_currency if daily_revenue_paid is not none else '$0.00' }}</div>
                 <div class="stat-meta {% if daily_revenue_change >= 0 %}text-success{% else %}text-danger{% endif %}">
                     <i class="bi {% if daily_revenue_change >= 0 %}bi-arrow-up-short{% else %}bi-arrow-down-short{% endif %}"></i> 
                     {{ daily_revenue_change|abs }}%
@@ -830,27 +982,6 @@ border-radius: 100px;}
                         </div>
                     </div>
                 </div>
-
-                <!-- Add this after your main stats cards in finance_dashboard.html -->
-<div class="dashboard-card mb-4">
-    <div class="card-header">
-        <h3 class="card-title">Revenue Breakdown</h3>
-    </div>
-    <div class="card-body">
-        <ul class="list-group list-group-flush">
-            {% for label, value in revenue_breakdown.items() %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>{{ label }}</span>
-                <span class="fw-bold">{{ value|format_currency }}</span>
-            </li>
-            {% endfor %}
-            <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                <span>Total Revenue</span>
-                <span class="fw-bold">{{ total_revenue|format_currency }}</span>
-            </li>
-        </ul>
-    </div>
-</div>
 
                 <div class="row">
                     <div class="col-lg-8">

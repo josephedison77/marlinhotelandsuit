@@ -5448,8 +5448,8 @@ def create_notification():
     
     # Populate dynamic choices
     form.roles.choices = [(r.id, r.name) for r in Role.query.order_by(Role.name).all()]
-    form.custom_users.choices = [(u.id, f"{u.username} <{u.email}>") 
-                               for u in User.query.order_by(User.username).all()]
+    form.custom_users.choices = [(u.id, f"{u.first_name} <{u.email}>") 
+                               for u in User.query.order_by(User.email).all()]
     
     if form.validate_on_submit():
         recipients = []
@@ -5991,7 +5991,7 @@ def admin_gallery():
     return render_template('admin_gallery.html', images=images)
 
 
-    
+
 @app.route('/admin/gallery/delete/<int:image_id>', methods=['POST'])
 @login_required  # or your admin_required decorator
 def delete_gallery_image(image_id):
