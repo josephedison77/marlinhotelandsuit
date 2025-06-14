@@ -904,13 +904,15 @@ def cleanup_expired_bookings():
             app.logger.error(f"Error cleaning expired bookings: {str(e)}")
 
 
-
 @app.route('/booking/receipt/<int:booking_id>')
 @login_required
 def booking_receipt(booking_id):
     try:
-        # Get booking details with room preloaded
-        booking = Booking.query.options(db.joinedload(Booking.room)).get_or_404(booking_id)
+        # Get booking details with room and user preloaded
+        booking = Booking.query.options(
+            db.joinedload(Booking.room),
+            db.joinedload(Booking.user)
+        ).get_or_404(booking_id)
         
         # Authorization check
         if booking.user_id != current_user.id and not any(role.name in ['admin', 'super_admin', 'staff'] for role in current_user.roles):
@@ -920,6 +922,13 @@ def booking_receipt(booking_id):
         if not booking.room:
             flash('Room information is missing for this booking', 'error')
             return redirect(url_for('booking_details', booking_id=booking_id))
+
+        # Create guest name from first_name and last_name
+        guest_name = "Unknown Guest"
+        if booking.user:
+            first_name = booking.user.first_name or ""
+            last_name = booking.user.last_name or ""
+            guest_name = f"{first_name} {last_name}".strip()
 
         # Create room details with fallbacks
         room_name = booking.room.name if booking.room else "Unknown Room"
@@ -984,7 +993,7 @@ def booking_receipt(booking_id):
         details = [
             ("Receipt No:", f"BK-{booking.id:05d}"),
             ("Date:", datetime.now(NIGERIA_TZ).strftime("%d-%b-%Y %H:%M")),
-            ("Guest:", booking.user.username if booking.user else "Unknown Guest"),
+            ("Guest:", guest_name),  # Use the constructed name
             ("Room:", room_name),
             ("Room Type:", room_type),
             ("Check-in:", booking.check_in_date.strftime("%d %b %Y, %H:%M") if booking.check_in_date else "N/A"),
@@ -1051,6 +1060,9 @@ def booking_receipt(booking_id):
         app.logger.error(f"Receipt generation failed: {str(e)}")
         flash('Could not generate receipt. Please try again.', 'error')
         return redirect(url_for('booking_details', booking_id=booking_id))
+
+
+
 # New helper function
 # In staff registration
 def assign_housekeeping_shifts(staff):
