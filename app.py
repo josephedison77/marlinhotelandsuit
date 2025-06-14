@@ -1107,15 +1107,26 @@ def load_user(user_id):
 
 def get_recent_expenses(limit=5):
     return Expense.query.order_by(Expense.date.desc()).limit(limit).all()
+
 @app.route('/order/receipt/html/<int:order_id>')
 @login_required
 def order_receipt_html1(order_id):
     order = BarOrder.query.options(
-        db.joinedload(BarOrder.order_items).joinedload(OrderItem.item)
+        db.joinedload(BarOrder.order_items).joinedload(OrderItem.item),
+        db.joinedload(BarOrder.user)
     ).get_or_404(order_id)
-    
     auto_print = request.args.get('auto_print', '0') == '1'
-    return render_template('order_receipt.html', order=order, auto_print=auto_print)
+    # Get first and last name if available
+    first_name = order.user.first_name if order.user and hasattr(order.user, 'first_name') else ''
+    last_name = order.user.last_name if order.user and hasattr(order.user, 'last_name') else ''
+    return render_template(
+        'order_receipt.html',
+        order=order,
+        auto_print=auto_print,
+        first_name=first_name,
+        last_name=last_name
+    )
+
 from flask import g
 
 # app.py

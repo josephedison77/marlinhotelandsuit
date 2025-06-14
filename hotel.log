@@ -14164,3 +14164,17 @@ WHERE booking.check_out_date < ? AND booking.checked_out = 0]
 2025-06-14 13:59:41,568 - app - INFO - Cleaned up 0 pending payments
 2025-06-14 13:59:41,572 - app - INFO - No dirty rooms found
 2025-06-14 13:59:41,588 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 14:13:55,977 - app - INFO - Running room assignment scheduler at 2025-06-14 14:13:55.976383+01:00
+2025-06-14 14:13:55,998 - app - INFO - No dirty rooms found
+2025-06-14 14:13:56,008 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 14:13:58,821 - app - INFO - Running room assignment scheduler at 2025-06-14 14:13:58.821686+01:00
+2025-06-14 14:13:58,856 - app - INFO - No dirty rooms found
+2025-06-14 14:13:58,864 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 14:18:55,976 - app - INFO - Running room assignment scheduler at 2025-06-14 14:18:55.976528+01:00
+2025-06-14 14:18:55,988 - app - INFO - No dirty rooms found
+2025-06-14 14:18:55,993 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 14:18:55,996 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 14:18:58,815 - app - INFO - Running room assignment scheduler at 2025-06-14 14:18:58.815028+01:00
+2025-06-14 14:18:58,825 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 14:18:58,829 - app - INFO - No dirty rooms found
+2025-06-14 14:18:58,835 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
