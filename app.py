@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, make_response, render_template, redir
 from flask_migrate import Migrate
 from functools import wraps
 import jwt
-
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta, timezone, time
 from werkzeug.security import generate_password_hash, check_password_hash
 import random
@@ -119,7 +119,7 @@ from models import (
     User, Room, APIKey, Role, Booking, ActivityLog, Staff, Attendance,
     BarItem, Feedback, Shift, BarSale, CleaningLog, Payment,
     MaintenanceRequest, RoomImage, Notification, Automation, Report,
-    BarOrder, OrderItem, AdminRegistrationToken, CleaningAssignment, Rating,  Expense,StoreInventory,InventoryRequest,InventoryUsage
+    BarOrder, OrderItem, AdminRegistrationToken, CleaningAssignment, Rating, GalleryImage, Expense, StoreInventory, InventoryRequest, InventoryUsage
 )
 
 # Initialize extensions
@@ -2195,32 +2195,30 @@ def run_automations(trigger_type, context=None):
 _cached_signature_rooms = None
 _cached_signature_rooms_timestamp = None
 SIGNATURE_ROOM_CACHE_DURATION = timedelta(minutes=30)
-NUMBER_OF_SIGNATURE_ROOMS = 4
+NUMBER_OF_SIGNATURE_ROOMS = 6
 # Routes
 @app.route('/')
 def home():
     days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-    # Signature Rooms Logic
     global _cached_signature_rooms, _cached_signature_rooms_timestamp
     selected_signature_rooms = []
-    now_dt = datetime.now(NIGERIA_TZ)  # Use timezone-aware datetime
+    now_dt = datetime.now(NIGERIA_TZ)
     update_overdue_bookings_and_rooms()
     if _cached_signature_rooms and \
-   _cached_signature_rooms_timestamp and \
-   (now_dt - _cached_signature_rooms_timestamp < SIGNATURE_ROOM_CACHE_DURATION):
+       _cached_signature_rooms_timestamp and \
+       (now_dt - _cached_signature_rooms_timestamp < SIGNATURE_ROOM_CACHE_DURATION):
         selected_signature_rooms = _cached_signature_rooms
         app.logger.info("Using cached signature rooms.")
     else:
         app.logger.info("Signature rooms cache expired or not found. Regenerating...")
-        # Fetch all rooms with their images preloaded
-        all_rooms_for_selection = Room.query.options(db.joinedload(Room.images)).all()
+        # Only fetch active rooms
+        all_rooms_for_selection = Room.query.filter_by(is_active=True).options(db.joinedload(Room.images)).all()
 
         if all_rooms_for_selection:
             if len(all_rooms_for_selection) >= NUMBER_OF_SIGNATURE_ROOMS:
                 selected_signature_rooms = random.sample(all_rooms_for_selection, NUMBER_OF_SIGNATURE_ROOMS)
             else:
-                # If fewer than 4 rooms exist, use all of them
                 selected_signature_rooms = all_rooms_for_selection
 
             _cached_signature_rooms = selected_signature_rooms
@@ -2228,27 +2226,24 @@ def home():
             app.logger.info(f"Selected {len(selected_signature_rooms)} new signature rooms.")
         else:
             app.logger.warning("No rooms found in the database to select signature rooms.")
-            selected_signature_rooms = [] # Ensure it's an empty list if no rooms
+            selected_signature_rooms = []
 
-    # Prepare images for all rooms (including signature rooms)
-    # This part can remain largely the same, as it prepares images for any room that might be displayed.
-    all_display_rooms = Room.query.options(db.joinedload(Room.images)).all() # Or use all_rooms_for_selection if it covers all needs
+    # Only display active rooms
+    all_display_rooms = Room.query.filter_by(is_active=True).options(db.joinedload(Room.images)).all()
     room_images = {}
-    for room in all_display_rooms: # Iterate through all rooms to build the image map
+    for room in all_display_rooms:
         primary_image = next((img for img in room.images if img.is_primary), None)
         if not primary_image and room.images:
-            primary_image = room.images[0] # Fallback to the first image
-
-        if primary_image and primary_image.filename: # Ensure filename is not None
+            primary_image = room.images[0]
+        if primary_image and primary_image.filename:
             img_path = os.path.join(app.config['UPLOAD_FOLDER'], primary_image.filename)
-            if os.path.exists(img_path): # Check if image file exists
+            if os.path.exists(img_path):
                 room_images[room.id] = convert_image_to_base64(img_path)
             else:
                 app.logger.warning(f"Image file not found: {img_path} for room ID {room.id}")
-                room_images[room.id] = None # Placeholder or default image path
+                room_images[room.id] = None
         else:
-            room_images[room.id] = None # Placeholder or default image path
-
+            room_images[room.id] = None
 
     user_notifications = []
     if current_user.is_authenticated:
@@ -2256,20 +2251,18 @@ def home():
             user_id=current_user.id,
             is_read=False
         ).order_by(Notification.created_at.desc()).all()
-    
+
+    gallery_images = GalleryImage.query.order_by(GalleryImage.uploaded_at.desc()).limit(6).all()
+
     return render_template(
         'index.html',
         days=days,
-        # 'rooms' can be all rooms if other parts of your index page use them, 
-        # or you can pass selected_signature_rooms if that's the only list needed.
-        # For now, assuming 'rooms' might be used elsewhere.
-        rooms=all_display_rooms, 
-        signature_rooms=selected_signature_rooms, # Specifically pass the 4 signature rooms
+        rooms=all_display_rooms,
+        signature_rooms=selected_signature_rooms,
         room_images=room_images,
-        notifications=user_notifications 
+        notifications=user_notifications,
+        gallery_images=gallery_images
     )
-
-
 @app.template_filter('time_ago')
 def time_ago_filter(dt):
     if dt is None:
@@ -2629,7 +2622,7 @@ def refresh_token():
 # Booking Management
 @app.route('/rooms')
 def rooms():
-    rooms = Room.query.options(db.joinedload(Room.images)).all()
+    rooms = Room.query.filter_by(is_active=True).options(db.joinedload(Room.images)).all()
     room_images = {}
     for room in rooms:
         primary_image = next((img for img in room.images if img.is_primary), None)
@@ -5740,59 +5733,68 @@ def admin_register(token):
 
 
 
+
 @app.route('/create-first-admin', methods=['GET', 'POST'])
 @csrf.exempt  # Only if you're not using CSRF protection
 def create_first_admin():
     # Check if any super admin exists
     if User.query.join(User.roles).filter(Role.name == 'super_admin').count() > 0:
-        abort(403, description="Super admin already exists")
-    
+        flash('A super admin already exists. Please log in.', 'warning')
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
+        first_name = request.form.get('first_name', '').strip()
+        last_name = request.form.get('last_name', '').strip()
+        phone_number = request.form.get('phone_number', '').strip()
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
-        
-        if not email or not password:
-            flash('Email and password are required', 'error')
-            return redirect(url_for('create_first_admin'))
-        
+
+        # Validate required fields
+        if not all([first_name, last_name, phone_number, email, password]):
+            flash('All fields are required.', 'danger')
+            return render_template('create_first_admin.html')
+
+        # Check for existing email or username
         if User.query.filter_by(email=email).first():
-            flash('Email already registered', 'error')
-            return redirect(url_for('create_first_admin'))
+            flash('Email already exists.', 'danger')
+            return render_template('create_first_admin.html')
+        if User.query.filter_by(first_name=first_name).first():
+            flash('First name already exists.', 'danger')
+            return render_template('create_first_admin.html')
+        if User.query.filter_by(last_name=last_name).first():
+            flash('Last name already exists.', 'danger')
+            return render_template('create_first_admin.html')
+
+        # Get or create super_admin role
+        super_admin_role = Role.query.filter_by(name='super_admin').first()
+        if not super_admin_role:
+            super_admin_role = Role(name='super_admin', description='Super Administrator')
+            db.session.add(super_admin_role)
+            db.session.commit()
 
         try:
-            # Create super admin user
-            super_admin = User(
-                
+            user = User(
+                first_name=first_name,
+                last_name=last_name,
+                phone_number=phone_number,
                 email=email,
                 password=generate_password_hash(password),
                 status='approved',
                 is_main_admin=True,
-                created_at=datetime.now(NIGERIA_TZ)
+                email_verified=True
             )
-            db.session.add(super_admin)
-            db.session.flush()  # Get the ID before committing
-
-            # Create or get super_admin role
-            super_admin_role = Role.query.filter_by(name='super_admin').first()
-            if not super_admin_role:
-                super_admin_role = Role(name='super_admin')
-                db.session.add(super_admin_role)
-                db.session.flush()
-
-            # Assign role
-            super_admin.roles.append(super_admin_role)
+            user.roles.append(super_admin_role)
+            db.session.add(user)
             db.session.commit()
-            
-            flash('First super admin created successfully!', 'success')
-            return redirect(url_for('admin_login'))
-
+            flash('Super admin account created successfully! Please log in.', 'success')
+            return redirect(url_for('login'))
+        except IntegrityError:
+            db.session.rollback()
+            flash('A user with this information already exists.', 'danger')
         except Exception as e:
             db.session.rollback()
-            app.logger.error(f"First admin creation error: {str(e)}")
-            flash('Error creating super admin. Please try again.', 'error')
-            return redirect(url_for('create_first_admin'))
+            flash(f'Error creating super admin: {str(e)}', 'danger')
 
-    # GET request - show form
     return render_template('create_first_admin.html')
 
 
@@ -5956,6 +5958,54 @@ def admin_login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('admin_login.html', form=form)
 
+GALLERY_FOLDER = os.path.join(app.root_path, 'static', 'gallery')
+os.makedirs(GALLERY_FOLDER, exist_ok=True)
+
+@app.route('/admin/gallery', methods=['GET', 'POST'])
+@login_required  # or your admin_required decorator
+@csrf.exempt
+def admin_gallery():
+    if request.method == 'POST':
+        files = request.files.getlist('image')
+        uploaded = 0
+        for file in files:
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                save_path = os.path.join(GALLERY_FOLDER, filename)
+                # Ensure unique filename
+                if os.path.exists(save_path):
+                    import uuid
+                    filename = f"{uuid.uuid4().hex}_{filename}"
+                    save_path = os.path.join(GALLERY_FOLDER, filename)
+                file.save(save_path)
+                img = GalleryImage(filename=filename)
+                db.session.add(img)
+                uploaded += 1
+        if uploaded:
+            db.session.commit()
+            flash(f'{uploaded} image(s) uploaded!', 'success')
+        else:
+            flash('No valid images uploaded.', 'danger')
+        return redirect(url_for('admin_gallery'))
+    images = GalleryImage.query.order_by(GalleryImage.uploaded_at.desc()).all()
+    return render_template('admin_gallery.html', images=images)
+
+
+    
+@app.route('/admin/gallery/delete/<int:image_id>', methods=['POST'])
+@login_required  # or your admin_required decorator
+def delete_gallery_image(image_id):
+    img = GalleryImage.query.get_or_404(image_id)
+    # Delete the image file from the filesystem
+    img_path = os.path.join(app.root_path, 'static', 'gallery', img.filename)
+    if os.path.exists(img_path):
+        os.remove(img_path)
+    # Delete from database
+    db.session.delete(img)
+    db.session.commit()
+    flash('Image deleted!', 'success')
+    return redirect(url_for('admin_gallery'))
+
 @app.route('/admin/rooms')
 @room_management_required
 def admin_rooms():
@@ -6023,6 +6073,28 @@ def create_room():
             db.session.rollback()
             app.logger.error(f"Room creation error: {str(e)}")
             flash('Error creating room. Please try again.', 'error')
+        
+    return render_template('admin_room_create.html', form=form)
+        
+
+
+@app.route('/admin/rooms/deactivate/<int:room_id>', methods=['POST'])
+@room_management_required
+def deactivate_room(room_id):
+    room = Room.query.get_or_404(room_id)
+    room.is_active = False
+    db.session.commit()
+    flash(f'Room "{room.name}" deactivated.', 'success')
+    return redirect(url_for('admin_rooms'))
+
+@app.route('/admin/rooms/activate/<int:room_id>', methods=['POST'])
+@room_management_required
+def activate_room(room_id):
+    room = Room.query.get_or_404(room_id)
+    room.is_active = True
+    db.session.commit()
+    flash(f'Room "{room.name}" activated.', 'success')
+    return redirect(url_for('admin_rooms'))
 
     return render_template('admin_room_create.html', form=form)
 @app.route('/admin/rooms/edit/<int:room_id>', methods=['GET', 'POST'])

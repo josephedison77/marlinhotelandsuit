@@ -841,24 +841,11 @@ font-size: large;}
             <p>A visual journey through the exquisite spaces and vibrant experiences at Marlin Hotel.</p>
         </div>
         <div class="gallery-grid">
-            <div class="gallery-item animate-on-scroll">
-                <img src="https://images.unsplash.com/photo-1542314881-30ba26f21226?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hotel Pool" loading="lazy">
-            </div>
-            <div class="gallery-item animate-on-scroll">
-                <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hotel Lobby" loading="lazy">
-            </div>
-            <div class="gallery-item animate-on-scroll">
-                <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Luxury Dining" loading="lazy">
-            </div>
-            <div class="gallery-item animate-on-scroll">
-                <img src="https://images.unsplash.com/photo-1590447192732-c51d622f98f6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hotel Exterior Night" loading="lazy">
-            </div>
-            <div class="gallery-item animate-on-scroll">
-                <img src="https://images.unsplash.com/photo-1568494002621-2e6b230263f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Spa Room" loading="lazy">
-            </div>
-            <div class="gallery-item animate-on-scroll">
-                <img src="https://images.unsplash.com/photo-1596706935639-af55f9a1f28b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Fitness Center" loading="lazy">
-            </div>
+    {% for img in gallery_images %}
+        <div class="gallery-item animate-on-scroll">
+            <img src="{{ url_for('static', filename='gallery/' ~ img.filename) }}" alt="Gallery Image" loading="lazy">
+        </div>
+    {% endfor %}
         </div>
     </div>
 </section>

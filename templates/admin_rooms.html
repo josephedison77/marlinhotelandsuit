@@ -215,6 +215,25 @@
                             </button>
                         </form>
                     </div>
+                    <!-- In admin_rooms.html -->
+{% for room in rooms %}
+  <tr>
+    <td>{{ room.name }}</td>
+    <td>
+      {% if room.is_active %}
+        <form action="{{ url_for('deactivate_room', room_id=room.id) }}" method="post" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-warning btn-sm">Deactivate</button>
+        </form>
+      {% else %}
+        <form action="{{ url_for('activate_room', room_id=room.id) }}" method="post" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-success btn-sm">Activate</button>
+        </form>
+      {% endif %}
+    </td>
+  </tr>
+{% endfor %}
                 </div>
             </div>
         </div>

@@ -124,6 +124,15 @@ class User(db.Model, UserMixin):
             user_id=self.id,
             is_read=False
         ).count()
+    
+
+
+class GalleryImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -132,6 +141,7 @@ class Room(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
     size = db.Column(db.Integer, nullable=False)
+    is_active = db.Column(db.Boolean, default=True)  # Add this line
     room_type = db.Column(db.String(50), nullable=False)  # e.g., 'single', 'double', 'suite'
     floor = db.Column(db.String(50), nullable=False)  # e.g., '1st', '2nd', '3rd'
     bedsize = db.Column(db.Integer, nullable=False)
