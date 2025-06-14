@@ -5762,7 +5762,7 @@ def create_first_admin():
         try:
             # Create super admin user
             super_admin = User(
-                username=email.split('@')[0],
+                
                 email=email,
                 password=generate_password_hash(password),
                 status='approved',
