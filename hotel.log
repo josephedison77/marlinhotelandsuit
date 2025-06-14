@@ -14178,3 +14178,69 @@ WHERE booking.check_out_date < ? AND booking.checked_out = 0]
 2025-06-14 14:18:58,825 - app - INFO - Cleaned up 0 pending payments
 2025-06-14 14:18:58,829 - app - INFO - No dirty rooms found
 2025-06-14 14:18:58,835 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 20:55:20,522 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 20:55:20,525 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 20:55:20,541 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 20:56:32,354 - app - INFO - Successful login: josephchukwubike2@gmail.com with roles: ['super_admin']
+2025-06-14 20:56:36,903 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 20:56:36,905 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 20:56:36,912 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 20:56:56,891 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 20:56:56,902 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 20:56:56,908 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 21:00:09,239 - app - INFO - Running room assignment scheduler at 2025-06-14 21:00:09.239298+01:00
+2025-06-14 21:00:09,257 - app - INFO - No dirty rooms found
+2025-06-14 21:00:09,441 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:00:12,000 - app - INFO - Running room assignment scheduler at 2025-06-14 21:00:12.000568+01:00
+2025-06-14 21:00:12,006 - app - INFO - No dirty rooms found
+2025-06-14 21:00:12,037 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:05:22,181 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:05:22,182 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 21:05:22,198 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 21:05:22,635 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:05:22,730 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 21:05:22,948 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 21:11:51,009 - app - INFO - Running room assignment scheduler at 2025-06-14 21:11:51.009095+01:00
+2025-06-14 21:11:51,016 - app - INFO - No dirty rooms found
+2025-06-14 21:11:51,050 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:13:09,273 - app - INFO - Successful login: glorychukwubike2@gmail.com with roles: ['user']
+2025-06-14 21:13:09,312 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:13:09,315 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 21:13:09,333 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 21:16:51,015 - app - INFO - Running room assignment scheduler at 2025-06-14 21:16:51.015564+01:00
+2025-06-14 21:16:51,025 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 21:16:51,036 - app - INFO - No dirty rooms found
+2025-06-14 21:16:51,040 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:17:01,640 - app - INFO - Running room assignment scheduler at 2025-06-14 21:17:01.640327+01:00
+2025-06-14 21:17:01,658 - app - INFO - No dirty rooms found
+2025-06-14 21:17:01,674 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:21:51,020 - app - INFO - Running room assignment scheduler at 2025-06-14 21:21:51.020488+01:00
+2025-06-14 21:21:51,029 - app - INFO - No dirty rooms found
+2025-06-14 21:21:51,036 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:22:01,635 - app - INFO - Running room assignment scheduler at 2025-06-14 21:22:01.635092+01:00
+2025-06-14 21:22:01,646 - app - INFO - No dirty rooms found
+2025-06-14 21:22:01,651 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 21:22:01,655 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:26:51,021 - app - INFO - Running room assignment scheduler at 2025-06-14 21:26:51.020404+01:00
+2025-06-14 21:26:51,033 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 21:26:51,035 - app - INFO - No dirty rooms found
+2025-06-14 21:26:51,044 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:27:47,261 - app - ERROR - Error sending email: [Errno 11001] getaddrinfo failed
+2025-06-14 21:29:16,566 - app - INFO - Running room assignment scheduler at 2025-06-14 21:29:16.566810+01:00
+2025-06-14 21:29:16,590 - app - INFO - No dirty rooms found
+2025-06-14 21:29:16,603 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:31:51,006 - app - INFO - Running room assignment scheduler at 2025-06-14 21:31:51.006425+01:00
+2025-06-14 21:31:51,008 - app - INFO - No dirty rooms found
+2025-06-14 21:31:51,039 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:34:16,561 - app - INFO - Running room assignment scheduler at 2025-06-14 21:34:16.561317+01:00
+2025-06-14 21:34:16,572 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 21:34:16,586 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:34:16,598 - app - INFO - No dirty rooms found
+2025-06-14 21:36:51,014 - app - INFO - Running room assignment scheduler at 2025-06-14 21:36:51.014329+01:00
+2025-06-14 21:36:51,027 - app - INFO - Cleaned up 0 expired bookings
+2025-06-14 21:36:51,029 - app - INFO - No dirty rooms found
+2025-06-14 21:36:51,030 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 21:36:51,054 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:39:16,572 - app - INFO - Running room assignment scheduler at 2025-06-14 21:39:16.572602+01:00
+2025-06-14 21:39:16,583 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:39:16,589 - app - INFO - No dirty rooms found

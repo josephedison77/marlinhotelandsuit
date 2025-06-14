@@ -174,18 +174,11 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, validators
 
 class ContactForm(FlaskForm):
-    name = StringField('Name', [
-        validators.DataRequired(),
-        validators.Length(min=2, max=50)
-    ])
-    email = StringField('Email', [
-        validators.DataRequired(),
-        validators.Email()
-    ])
-    message = TextAreaField('Message', [
-        validators.DataRequired(),
-        validators.Length(min=10, max=500)
-    ])
+    name = StringField('Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    subject = StringField('Subject', validators=[DataRequired()])
+    message = TextAreaField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send Message')
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[

@@ -209,12 +209,13 @@
         .contact-details h4 {
             color: var(--gold-light);
             margin-bottom: 5px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         .contact-details p {
             color: rgba(255,255,255,0.75);
             margin-bottom: 0;
+            font-size: 0.7rem;
         }
         
         .social-links {
@@ -457,37 +458,64 @@
                 <h2>Get in Touch</h2>
                 <p>Have questions or special requests? Our team is ready to assist you 24/7.</p>
             </div>
-            
-            <div class="contact-grid">
-                <!-- Contact Form -->
-                <div class="contact-card animate-on-scroll">
-                    <h2>Send Us a Message</h2>
-                    <form method="POST" action="{{ url_for('contact') }}" class="needs-validation" novalidate>
-                            {{ form.csrf_token }}  <!-- Add this line -->
-                        <div class="form-group">
-                            <label for="name" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" name="name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" name="email" required>
-                        </div>
+            <!-- Add flashed messages display at the top of the form -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages" style="margin-bottom: 20px;">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
 
-                        <div class="form-group">
-                            <label for="subject" class="form-label">Subject</label>
-                            <input type="text" class="form-control" name="subject" required>
-                        </div>
+<form method="POST" action="{{ url_for('contact') }}" class="needs-validation" novalidate>
+  {{ form.csrf_token }}
+  
+  <!-- Name Field -->
+  <div class="form-group">
+    <label for="name" class="form-label">Name</label>
+    <input type="text" class="form-control" name="name" id="name" required>
+    {% if form.name.errors %}
+      <div class="invalid-feedback" style="display: block;">
+        {% for error in form.name.errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
 
-                        <div class="form-group">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea class="form-control" name="message" row="5"></textarea>
-                        </div>
+  <!-- Email Field -->
+  <div class="form-group">
+    <label for="email" class="form-label">Email Address</label>
+    <input type="email" class="form-control" name="email" id="email" required>
+    {% if form.email.errors %}
+      <div class="invalid-feedback" style="display: block;">
+        {% for error in form.email.errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
 
-                        <button type="submit" class="btn-luxury">Send Message</button>
-                    </form>
-                </div>
-                
+  <!-- Subject Field -->
+  <div class="form-group">
+    <label for="subject" class="form-label">Subject</label>
+    <input type="text" class="form-control" name="subject" id="subject" required>
+    {% if form.subject.errors %}
+      <div class="invalid-feedback" style="display: block;">
+        {% for error in form.subject.errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+<div class="div">
+
+  <button type="submit" class="btn-luxury">Send Message</button>
+</form>
+
+<div class="con">
                 <!-- Contact Information -->
                 <div class="contact-card animate-on-scroll">
                     <h2>Contact Information</h2>
@@ -502,7 +530,7 @@
                                 <p>Festac Extension, Abule-Ado, Lagos, Nigeria</p>
                             </div>
                         </div>
-                        
+                        </div>
                         <div class="contact-item">
                             <div class="contact-icon">
                                 <i class="fas fa-phone-alt"></i>
@@ -543,7 +571,7 @@
             </div>
         </div>
     </section>
-    
+    </div>
     <!-- Footer -->
     <footer class="footer">
         <div class="container">

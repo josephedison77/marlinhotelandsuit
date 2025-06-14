@@ -49,10 +49,17 @@
       transform: translateY(0);
       backdrop-filter: blur(10px);
       border: 2px solid var(--accent);
-      padding: 3rem 0.5rem;
+      padding: 3rem 1.5rem;
       color: var(--light); }
   
-.mb-3 input{background-color: var(--gold-light); border-radius: 20px; border: 1px solid var(--accent); color: var(--gold-light);margin: 0.5rem }
+.mb-3 input {
+    background-color: var(--gold-light);
+    border-radius: 20px;
+    border: 1px solid var(--accent);
+    color: var(--dark); /* <-- Fix: make text visible */
+    margin: 0.5rem;
+}
+
 input:hover{background-color: #c5a880;}
 label{color: #e6c78a; font-style: italic; font-size: 0.8rem;}
 input::placeholder{font-size: 0.7rem;}
@@ -74,7 +81,19 @@ input::placeholder{font-size: 0.7rem;}
                         <h2 class="card-title text-center mb-4" style="color: var(--gold-light) ; font-family: monospace;">Create Account</h2>
                         
                         <form method="POST" action="{{ url_for('register') }}">
-                            {{ form.csrf_token }}
+                            
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
                             
                             <div class="mb-3">
                                 <label class="form-label">firstname</label>
@@ -98,7 +117,7 @@ input::placeholder{font-size: 0.7rem;}
                                 <label class="form-label">Phone Number</label>
                                 <input type="text" 
                                        class="form-control" 
-                                       name="phone" 
+                                       name="phone_number" 
                                        required
                                        placeholder="Enter phone number">
                             </div>

@@ -2342,7 +2342,7 @@ def register():
     if form.validate_on_submit():
         first_name = form.first_name.data
         last_name = form.last_name.data
-        phone = form.phone.data
+        phone = form.phone_number.data
         if not phone:
             flash('Phone number is required', 'error')
             return redirect(url_for('register'))
@@ -2351,14 +2351,10 @@ def register():
         
         try:
             # Check for existing users first
-            if User.query.filter_by(first_name=first_name).first():
-                flash('First Name already exists', 'error')
+            existing_user = User.query.filter(func.lower(User.email) == func.lower(email)).first()
+            if existing_user:
+                flash('Email address already exists', 'error')
                 return redirect(url_for('register'))
-
-            if User.query.filter_by(last_name=last_name).first():
-                flash('Last Name already exists', 'error')
-                return redirect(url_for('register'))
-
             new_user = User(
                 first_name=first_name,
                 last_name=last_name,
@@ -2366,7 +2362,8 @@ def register():
                 password=generate_password_hash(password),
                 status='active',
                 created_at=datetime.now(NIGERIA_TZ),
-                email_verified=False
+                email_verified=False,
+                phone_number=phone
             )
             db.session.add(new_user)
             db.session.flush()
