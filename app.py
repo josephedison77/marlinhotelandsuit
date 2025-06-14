@@ -1107,34 +1107,15 @@ def load_user(user_id):
 
 def get_recent_expenses(limit=5):
     return Expense.query.order_by(Expense.date.desc()).limit(limit).all()
-
-@app.route('/order/receipt/<int:order_id>')
-def order_receipt(order_id):
-    order = BarOrder.query.get_or_404(order_id)
+@app.route('/order/receipt/html/<int:order_id>')
+@login_required
+def order_receipt_html1(order_id):
+    order = BarOrder.query.options(
+        db.joinedload(BarOrder.order_items).joinedload(OrderItem.item)
+    ).get_or_404(order_id)
     
-    buffer = BytesIO()
-    p = canvas.Canvas(buffer)
-    
-    # Create PDF content
-    p.drawString(100, 800, f"Hotel Marlin Receipt - Order #{order.id}")
-    y = 780
-    for item in order.order_items:
-        p.drawString(100, y, f"{item.quantity}x {item.item.name} @ {item.price} each")
-        y -= 20
-    p.drawString(100, y-40, f"Total: {order.total_amount}")
-    
-    p.showPage()
-    p.save()
-    
-    pdf = buffer.getvalue()
-    buffer.close()
-    
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f'attachment; filename=receipt_{order_id}.pdf'
-    return response
-
-
+    auto_print = request.args.get('auto_print', '0') == '1'
+    return render_template('order_receipt.html', order=order, auto_print=auto_print)
 from flask import g
 
 # app.py

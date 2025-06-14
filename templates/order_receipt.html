@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Receipt</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 300px; margin: 0 auto; }
+        .header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 10px; }
+        .item { display: flex; justify-content: space-between; margin: 5px 0; }
+        .total { font-weight: bold; text-align: right; margin-top: 10px; }
+        .footer { text-align: center; margin-top: 20px; font-size: 0.8em; }
+    </style>
+    {% if auto_print %}
+    <script>
+        window.onload = function() {
+            window.print();
+        }
+    </script>
+    {% endif %}
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Hotel Marlin</h2>
+            <p>91 Road, Festac Extension, Abule Ado</p>
+            <p>Lagos, Nigeria</p>
+        </div>
+        
+        <div class="details">
+            <p><strong>Order #:</strong> {{ order.id }}</p>
+            <p><strong>Date:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p><strong>Table:</strong> {{ order.table_number }}</p>
+        </div>
+        
+        <div class="items">
+            {% for item in order.order_items %}
+            <div class="item">
+                <span>{{ item.quantity }}x {{ item.item.name }}</span>
+                <span>₦{{ item.price * item.quantity }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="total">
+            <p>Total: ₦{{ order.total_amount }}</p>
+        </div>
+        
+        <div class="footer">
+            <p>Thank you for your order!</p>
+            <p>marlinhotel007@gmail.com</p>
+        </div>
+    </div>
+</body>
+</html>
