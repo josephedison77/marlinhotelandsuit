@@ -14267,3 +14267,11 @@ WHERE booking.check_out_date < ? AND booking.checked_out = 0]
 2025-06-14 21:52:20,511 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
 2025-06-14 21:52:20,518 - app - INFO - Signature rooms cache expired or not found. Regenerating...
 2025-06-14 21:52:20,527 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 21:56:44,424 - app - INFO - Running room assignment scheduler at 2025-06-14 21:56:44.424267+01:00
+2025-06-14 21:56:44,438 - app - INFO - No dirty rooms found
+2025-06-14 21:56:44,443 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 21:56:44,453 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:56:51,017 - app - INFO - Running room assignment scheduler at 2025-06-14 21:56:51.016402+01:00
+2025-06-14 21:56:51,021 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 21:56:51,028 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 21:56:51,030 - app - INFO - No dirty rooms found
