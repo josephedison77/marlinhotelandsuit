@@ -13765,3 +13765,49 @@ WHERE booking.check_out_date < ? AND booking.checked_out = 0]
 2025-06-14 09:26:43,488 - app - INFO - Cleaned up 0 pending payments
 2025-06-14 09:26:43,502 - app - INFO - No dirty rooms found
 2025-06-14 09:26:43,503 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:39:34,770 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:39:34,772 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 09:39:34,788 - app - INFO - Selected 1 new signature rooms.
+2025-06-14 09:39:36,719 - app - ERROR - HTTPException: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-14 09:39:52,149 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:39:52,151 - app - INFO - Using cached signature rooms.
+2025-06-14 09:40:58,934 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:40:58,935 - app - INFO - Using cached signature rooms.
+2025-06-14 09:42:39,600 - app - INFO - Running room assignment scheduler at 2025-06-14 09:42:39.600476+01:00
+2025-06-14 09:42:39,618 - app - INFO - No dirty rooms found
+2025-06-14 09:42:39,676 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:46:47,205 - app - ERROR - HTTPException: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-14 09:46:49,485 - app - ERROR - HTTPException: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-14 09:47:34,551 - app - INFO - Running room assignment scheduler at 2025-06-14 09:47:34.551283+01:00
+2025-06-14 09:47:34,616 - app - INFO - No dirty rooms found
+2025-06-14 09:47:34,654 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:47:39,596 - app - INFO - Running room assignment scheduler at 2025-06-14 09:47:39.596814+01:00
+2025-06-14 09:47:39,603 - app - INFO - No dirty rooms found
+2025-06-14 09:47:39,625 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 09:47:39,640 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:48:04,256 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:48:04,285 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 09:48:04,307 - app - INFO - Selected 1 new signature rooms.
+2025-06-14 09:49:54,058 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:49:54,059 - app - INFO - Using cached signature rooms.
+2025-06-14 09:50:03,971 - app - ERROR - HTTPException: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-14 09:50:07,186 - app - ERROR - HTTPException: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-14 09:52:34,540 - app - INFO - Running room assignment scheduler at 2025-06-14 09:52:34.540531+01:00
+2025-06-14 09:52:34,549 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 09:52:34,551 - app - INFO - No dirty rooms found
+2025-06-14 09:52:34,577 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:52:39,603 - app - INFO - Running room assignment scheduler at 2025-06-14 09:52:39.603774+01:00
+2025-06-14 09:52:39,607 - app - INFO - No dirty rooms found
+2025-06-14 09:52:39,640 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:53:44,993 - app - ERROR - HTTPException: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-14 09:55:15,994 - app - INFO - Initializing Paystack payment: {'email': 'josephchukwubike2@gmail.com', 'amount': 20000, 'reference': 'ORDER_1_7b7a6b4a', 'metadata': {'order_id': 1}, 'callback_url': 'http://127.0.0.1:5000/paystack/barorder_callback'}
+2025-06-14 09:55:17,858 - app - INFO - Paystack response: {'status': True, 'message': 'Authorization URL created', 'data': {'authorization_url': 'https://checkout.paystack.com/ieq4fs3htu6fbo0', 'access_code': 'ieq4fs3htu6fbo0', 'reference': 'ORDER_1_7b7a6b4a'}}
+2025-06-14 09:56:17,236 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:56:17,237 - app - INFO - Using cached signature rooms.
+2025-06-14 09:57:34,538 - app - INFO - Running room assignment scheduler at 2025-06-14 09:57:34.538629+01:00
+2025-06-14 09:57:34,542 - app - INFO - No dirty rooms found
+2025-06-14 09:57:34,578 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 09:57:39,603 - app - INFO - Running room assignment scheduler at 2025-06-14 09:57:39.603657+01:00
+2025-06-14 09:57:39,608 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 09:57:39,612 - app - INFO - No dirty rooms found
+2025-06-14 09:57:39,642 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
