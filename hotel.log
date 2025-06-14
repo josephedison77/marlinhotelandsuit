@@ -13953,3 +13953,168 @@ WHERE booking.check_out_date < ? AND booking.checked_out = 0]
 2025-06-14 11:33:26,109 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
 2025-06-14 11:33:26,110 - app - INFO - Signature rooms cache expired or not found. Regenerating...
 2025-06-14 11:33:26,126 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 11:34:23,110 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:34:23,111 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 11:34:23,122 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 11:38:18,214 - app - INFO - Running room assignment scheduler at 2025-06-14 11:38:18.214143+01:00
+2025-06-14 11:38:18,245 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:38:18,247 - app - INFO - No dirty rooms found
+2025-06-14 11:38:21,506 - app - INFO - Running room assignment scheduler at 2025-06-14 11:38:21.506682+01:00
+2025-06-14 11:38:21,538 - app - INFO - No dirty rooms found
+2025-06-14 11:38:21,556 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:43:18,219 - app - INFO - Running room assignment scheduler at 2025-06-14 11:43:18.219530+01:00
+2025-06-14 11:43:18,229 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 11:43:18,234 - app - INFO - No dirty rooms found
+2025-06-14 11:43:18,240 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:43:21,498 - app - INFO - Running room assignment scheduler at 2025-06-14 11:43:21.498704+01:00
+2025-06-14 11:43:21,510 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 11:43:21,513 - app - INFO - No dirty rooms found
+2025-06-14 11:43:21,525 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:48:18,226 - app - INFO - Running room assignment scheduler at 2025-06-14 11:48:18.226462+01:00
+2025-06-14 11:48:18,234 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:48:18,236 - app - INFO - No dirty rooms found
+2025-06-14 11:48:21,506 - app - INFO - Running room assignment scheduler at 2025-06-14 11:48:21.506554+01:00
+2025-06-14 11:48:21,514 - app - INFO - No dirty rooms found
+2025-06-14 11:48:21,516 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:50:00,021 - app - INFO - Sent 0 checkout reminders
+2025-06-14 11:50:00,032 - app - INFO - Sent 0 checkout reminders
+2025-06-14 11:53:18,219 - app - INFO - Running room assignment scheduler at 2025-06-14 11:53:18.219527+01:00
+2025-06-14 11:53:18,226 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 11:53:18,235 - app - INFO - No dirty rooms found
+2025-06-14 11:53:18,238 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:53:21,509 - app - INFO - Running room assignment scheduler at 2025-06-14 11:53:21.509706+01:00
+2025-06-14 11:53:21,516 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 11:53:21,524 - app - INFO - No dirty rooms found
+2025-06-14 11:53:21,529 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:58:18,221 - app - INFO - Running room assignment scheduler at 2025-06-14 11:58:18.221007+01:00
+2025-06-14 11:58:18,228 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 11:58:18,230 - app - INFO - No dirty rooms found
+2025-06-14 11:58:21,501 - app - INFO - Running room assignment scheduler at 2025-06-14 11:58:21.501454+01:00
+2025-06-14 11:58:21,504 - app - INFO - No dirty rooms found
+2025-06-14 11:58:21,522 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:00:00,006 - app - INFO - Processed 0 automatic checkouts
+2025-06-14 12:03:18,214 - app - INFO - Running room assignment scheduler at 2025-06-14 12:03:18.214149+01:00
+2025-06-14 12:03:18,222 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:03:18,223 - app - INFO - Cleaned up 0 expired bookings
+2025-06-14 12:03:18,224 - app - INFO - No dirty rooms found
+2025-06-14 12:03:18,236 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:03:21,504 - app - INFO - Running room assignment scheduler at 2025-06-14 12:03:21.504528+01:00
+2025-06-14 12:03:21,512 - app - INFO - Cleaned up 0 expired bookings
+2025-06-14 12:03:21,518 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:03:21,522 - app - INFO - No dirty rooms found
+2025-06-14 12:03:21,523 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:08:18,213 - app - INFO - Running room assignment scheduler at 2025-06-14 12:08:18.213567+01:00
+2025-06-14 12:08:18,216 - app - INFO - No dirty rooms found
+2025-06-14 12:08:18,236 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:08:21,510 - app - INFO - Running room assignment scheduler at 2025-06-14 12:08:21.510039+01:00
+2025-06-14 12:08:21,516 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:08:21,519 - app - INFO - No dirty rooms found
+2025-06-14 12:13:18,213 - app - INFO - Running room assignment scheduler at 2025-06-14 12:13:18.213774+01:00
+2025-06-14 12:13:18,220 - app - INFO - No dirty rooms found
+2025-06-14 12:13:18,220 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:13:18,236 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:13:21,508 - app - INFO - Running room assignment scheduler at 2025-06-14 12:13:21.508728+01:00
+2025-06-14 12:13:21,521 - app - INFO - No dirty rooms found
+2025-06-14 12:13:21,526 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:13:21,540 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:18:18,211 - app - INFO - Running room assignment scheduler at 2025-06-14 12:18:18.211241+01:00
+2025-06-14 12:18:18,213 - app - INFO - No dirty rooms found
+2025-06-14 12:18:18,233 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:18:21,508 - app - INFO - Running room assignment scheduler at 2025-06-14 12:18:21.508528+01:00
+2025-06-14 12:18:21,514 - app - INFO - No dirty rooms found
+2025-06-14 12:18:21,516 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:23:18,226 - app - INFO - Running room assignment scheduler at 2025-06-14 12:23:18.226366+01:00
+2025-06-14 12:23:18,229 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:23:18,237 - app - INFO - No dirty rooms found
+2025-06-14 12:23:18,238 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:23:21,509 - app - INFO - Running room assignment scheduler at 2025-06-14 12:23:21.509340+01:00
+2025-06-14 12:23:21,514 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:23:21,521 - app - INFO - No dirty rooms found
+2025-06-14 12:23:21,522 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:28:18,211 - app - INFO - Running room assignment scheduler at 2025-06-14 12:28:18.211732+01:00
+2025-06-14 12:28:18,214 - app - INFO - No dirty rooms found
+2025-06-14 12:28:18,233 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:28:21,507 - app - INFO - Running room assignment scheduler at 2025-06-14 12:28:21.507979+01:00
+2025-06-14 12:28:21,514 - app - INFO - No dirty rooms found
+2025-06-14 12:28:21,516 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:33:18,224 - app - INFO - Running room assignment scheduler at 2025-06-14 12:33:18.224731+01:00
+2025-06-14 12:33:18,228 - app - INFO - Cleaned up 0 expired bookings
+2025-06-14 12:33:18,229 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:33:18,241 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:33:18,244 - app - INFO - No dirty rooms found
+2025-06-14 12:33:21,496 - app - INFO - Running room assignment scheduler at 2025-06-14 12:33:21.496543+01:00
+2025-06-14 12:33:21,503 - app - INFO - Cleaned up 0 expired bookings
+2025-06-14 12:33:21,504 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:33:21,505 - app - INFO - No dirty rooms found
+2025-06-14 12:33:21,522 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:38:18,213 - app - INFO - Running room assignment scheduler at 2025-06-14 12:38:18.213611+01:00
+2025-06-14 12:38:18,216 - app - INFO - No dirty rooms found
+2025-06-14 12:38:18,235 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:38:21,509 - app - INFO - Running room assignment scheduler at 2025-06-14 12:38:21.509713+01:00
+2025-06-14 12:38:21,515 - app - INFO - No dirty rooms found
+2025-06-14 12:38:21,518 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:43:18,215 - app - INFO - Running room assignment scheduler at 2025-06-14 12:43:18.215792+01:00
+2025-06-14 12:43:18,219 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:43:18,223 - app - INFO - No dirty rooms found
+2025-06-14 12:43:18,239 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:43:21,503 - app - INFO - Running room assignment scheduler at 2025-06-14 12:43:21.503912+01:00
+2025-06-14 12:43:21,509 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:43:21,513 - app - INFO - No dirty rooms found
+2025-06-14 12:43:21,518 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:48:18,224 - app - INFO - Running room assignment scheduler at 2025-06-14 12:48:18.224922+01:00
+2025-06-14 12:48:18,233 - app - INFO - No dirty rooms found
+2025-06-14 12:48:18,234 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:48:21,498 - app - INFO - Running room assignment scheduler at 2025-06-14 12:48:21.498066+01:00
+2025-06-14 12:48:21,501 - app - INFO - No dirty rooms found
+2025-06-14 12:48:21,520 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:53:18,218 - app - INFO - Running room assignment scheduler at 2025-06-14 12:53:18.218529+01:00
+2025-06-14 12:53:18,221 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:53:18,232 - app - INFO - No dirty rooms found
+2025-06-14 12:53:18,236 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:53:21,500 - app - INFO - Running room assignment scheduler at 2025-06-14 12:53:21.500021+01:00
+2025-06-14 12:53:21,503 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 12:53:21,507 - app - INFO - No dirty rooms found
+2025-06-14 12:53:21,523 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:58:18,214 - app - INFO - Running room assignment scheduler at 2025-06-14 12:58:18.214642+01:00
+2025-06-14 12:58:18,219 - app - INFO - No dirty rooms found
+2025-06-14 12:58:18,238 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:58:21,509 - app - INFO - Running room assignment scheduler at 2025-06-14 12:58:21.509048+01:00
+2025-06-14 12:58:21,519 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 12:58:21,520 - app - INFO - No dirty rooms found
+2025-06-14 13:03:18,213 - app - INFO - Running room assignment scheduler at 2025-06-14 13:03:18.213784+01:00
+2025-06-14 13:03:18,220 - app - INFO - Cleaned up 0 expired bookings
+2025-06-14 13:03:18,228 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 13:03:18,228 - app - INFO - No dirty rooms found
+2025-06-14 13:03:18,240 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 13:03:21,510 - app - INFO - Running room assignment scheduler at 2025-06-14 13:03:21.510549+01:00
+2025-06-14 13:03:21,519 - app - INFO - Cleaned up 0 expired bookings
+2025-06-14 13:03:21,524 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 13:03:21,534 - app - INFO - No dirty rooms found
+2025-06-14 13:03:21,535 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 13:04:04,223 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 13:04:04,225 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 13:04:04,242 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 13:04:04,480 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 13:04:04,482 - app - INFO - Signature rooms cache expired or not found. Regenerating...
+2025-06-14 13:04:04,487 - app - WARNING - No rooms found in the database to select signature rooms.
+2025-06-14 13:04:18,302 - app - WARNING - Failed login attempt for email: josephchukwubike2@gmail.com
+2025-06-14 13:09:00,319 - app - INFO - Running room assignment scheduler at 2025-06-14 13:09:00.319276+01:00
+2025-06-14 13:09:00,343 - app - INFO - No dirty rooms found
+2025-06-14 13:09:00,350 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 13:11:54,912 - app - INFO - Running room assignment scheduler at 2025-06-14 13:11:54.912066+01:00
+2025-06-14 13:11:54,928 - app - INFO - No dirty rooms found
+2025-06-14 13:11:55,002 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 13:14:00,413 - app - INFO - Running room assignment scheduler at 2025-06-14 13:14:00.413164+01:00
+2025-06-14 13:14:00,421 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 13:14:00,593 - app - INFO - No dirty rooms found
+2025-06-14 13:14:00,715 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 13:19:00,316 - app - INFO - Running room assignment scheduler at 2025-06-14 13:19:00.316358+01:00
+2025-06-14 13:19:00,325 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 13:19:00,331 - app - INFO - No dirty rooms found
+2025-06-14 13:22:54,512 - app - INFO - Running room assignment scheduler at 2025-06-14 13:22:54.512655+01:00
+2025-06-14 13:22:54,520 - app - INFO - No dirty rooms found
+2025-06-14 13:22:54,554 - app - INFO - Updated 0 overdue bookings and 0 expired bookings
+2025-06-14 13:24:00,310 - app - INFO - Running room assignment scheduler at 2025-06-14 13:24:00.310539+01:00
+2025-06-14 13:24:00,314 - app - INFO - Cleaned up 0 pending payments
+2025-06-14 13:24:00,322 - app - INFO - No dirty rooms found
+2025-06-14 13:24:00,343 - app - INFO - Updated 0 overdue bookings and 0 expired bookings

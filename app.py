@@ -903,132 +903,154 @@ def cleanup_expired_bookings():
             db.session.rollback()
             app.logger.error(f"Error cleaning expired bookings: {str(e)}")
 
+
+
 @app.route('/booking/receipt/<int:booking_id>')
 @login_required
 def booking_receipt(booking_id):
-    # Get booking details
-    booking = Booking.query.get_or_404(booking_id)
+    try:
+        # Get booking details with room preloaded
+        booking = Booking.query.options(db.joinedload(Booking.room)).get_or_404(booking_id)
+        
+        # Authorization check
+        if booking.user_id != current_user.id and not any(role.name in ['admin', 'super_admin', 'staff'] for role in current_user.roles):
+            abort(403)
 
-    # Authorization check
-    if booking.user_id != current_user.id and not any(role.name in ['admin', 'super_admin', 'staff'] for role in current_user.roles):
-        abort(403)
+        # Handle missing room information
+        if not booking.room:
+            flash('Room information is missing for this booking', 'error')
+            return redirect(url_for('booking_details', booking_id=booking_id))
 
-    # 80mm receipt size: width ~227 points, height can be long (e.g. 600)
-    RECEIPT_WIDTH = 227  # 80mm in points
-    RECEIPT_HEIGHT = 600  # Adjust as needed for content
+        # Create room details with fallbacks
+        room_name = booking.room.name if booking.room else "Unknown Room"
+        room_type = booking.room.room_type if booking.room else "Unknown Type"
+        room_price = booking.room.price if booking.room else 0
 
-    buffer = BytesIO()
-    from reportlab.pdfgen import canvas
-    p = canvas.Canvas(buffer, pagesize=(RECEIPT_WIDTH, RECEIPT_HEIGHT))
-    width, height = RECEIPT_WIDTH, RECEIPT_HEIGHT
+        # Receipt dimensions
+        RECEIPT_WIDTH = 227
+        RECEIPT_HEIGHT = 600
 
-    # Styling variables for receipt
-    normal_font = "Courier"
-    bold_font = "Courier-Bold"
-    font_size = 9
-    header_size = 12
-    line_height = 13
-    margin = 10
-    top = height - margin
+        # Create PDF
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer, pagesize=(RECEIPT_WIDTH, RECEIPT_HEIGHT))
+        width, height = RECEIPT_WIDTH, RECEIPT_HEIGHT
 
-    # Header
-    p.setFont(bold_font, header_size)
-    p.drawCentredString(width/2, top, "MARLIN HOTEL AND SUITES")
-    top -= line_height
-    p.setFont(normal_font, font_size)
-    p.drawCentredString(width/2, top, "91 Road, Festac Extension, Abule Ado")
-    top -= line_height
-    p.drawCentredString(width/2, top, "Lagos, Nigeria")
-    top -= line_height
-    p.drawCentredString(width/2, top, "Tel: +234 916 455 6280")
-    top -= line_height
-    p.drawCentredString(width/2, top, "marlinhotel007@gmail.com")
-    top -= line_height
+        # Styling
+        normal_font = "Courier"
+        bold_font = "Courier-Bold"
+        font_size = 9
+        header_size = 12
+        line_height = 13
+        margin = 10
+        top = height - margin
 
-    # Divider
-    p.line(margin, top, width - margin, top)
-    top -= line_height
-
-    # Receipt Title
-    p.setFont(bold_font, header_size)
-    p.drawCentredString(width/2, top, "BOOKING RECEIPT")
-    top -= line_height
-
-    # Divider
-    p.line(margin, top, width - margin, top)
-    top -= line_height
-
-    # Booking Details
-    p.setFont(bold_font, font_size)
-    p.drawString(margin, top, "Booking Details:")
-    top -= line_height
-
-    p.setFont(normal_font, font_size)
-    details = [
-        ("Receipt No:", f"BK-{booking.id:05d}"),
-        ("Date:", datetime.now(NIGERIA_TZ).strftime("%d-%b-%Y %H:%M")),
-        ("Guest:", booking.user.username),
-        ("Room:", booking.room.name),
-        ("Room Type:", booking.room.room_type),
-        ("Check-in:", booking.check_in_date.strftime("%d %b %Y, %H:%M")),
-        ("Check-out:", booking.check_out_date.strftime("%d %b %Y, %H:%M")),
-        ("Nights:", str(max(1, (booking.check_out_date.date() - booking.check_in_date.date()).days))),
-        ("Rate/Night:", f"₦{booking.room.price:,.2f}"),
-    ]
-    for label, value in details:
-        p.drawString(margin, top, f"{label} {value}")
+        # Header
+        p.setFont(bold_font, header_size)
+        p.drawCentredString(width/2, top, "MARLIN HOTEL AND SUITES")
+        top -= line_height
+        p.setFont(normal_font, font_size)
+        p.drawCentredString(width/2, top, "91 Road, Festac Extension, Abule Ado")
+        top -= line_height
+        p.drawCentredString(width/2, top, "Lagos, Nigeria")
+        top -= line_height
+        p.drawCentredString(width/2, top, "Tel: +234 916 455 6280")
+        top -= line_height
+        p.drawCentredString(width/2, top, "marlinhotel007@gmail.com")
         top -= line_height
 
-    # Divider
-    p.line(margin, top, width - margin, top)
-    top -= line_height
-
-    # Payment Details
-    p.setFont(bold_font, font_size)
-    p.drawString(margin, top, "Payment Details:")
-    top -= line_height
-
-    p.setFont(normal_font, font_size)
-    p.drawString(margin, top, f"Room Charges: ₦{booking.total_amount:,.2f}")
-    top -= line_height
-
-    p.setFont(bold_font, font_size + 1)
-    p.drawString(margin, top, f"TOTAL PAID: ₦{booking.total_amount:,.2f}")
-    top -= line_height * 2
-
-    # Payment status
-    p.setFont(normal_font, font_size)
-    p.drawString(margin, top, f"Payment status: {booking.payment_status or 'Paystack'}")
-    top -= line_height
-
-    # Divider
-    p.line(margin, top, width - margin, top)
-    top -= line_height
-
-    # Footer
-    p.setFont(normal_font, font_size)
-    notes = [
-        "Thank you for choosing Marlin Hotel & Suites!",
-        "For inquiries: marlinhotel007@gmail.com",
-        "Check-out time: 12:00 PM",
-        f"Receipt No: BK-{booking.id:05d}"
-    ]
-    for note in notes:
-        p.drawCentredString(width/2, top, note)
+        # Divider
+        p.line(margin, top, width - margin, top)
         top -= line_height
 
-    # Finalize PDF
-    p.showPage()
-    p.save()
+        # Receipt Title
+        p.setFont(bold_font, header_size)
+        p.drawCentredString(width/2, top, "BOOKING RECEIPT")
+        top -= line_height
 
-    pdf = buffer.getvalue()
-    buffer.close()
+        # Divider
+        p.line(margin, top, width - margin, top)
+        top -= line_height
 
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f'inline; filename=booking_receipt_{booking_id}.pdf'
-    return response
+        # Booking Details
+        p.setFont(bold_font, font_size)
+        p.drawString(margin, top, "Booking Details:")
+        top -= line_height
 
+        p.setFont(normal_font, font_size)
+        
+        # Calculate nights with fallback
+        nights = max(1, (booking.check_out_date.date() - booking.check_in_date.date()).days) if booking.check_out_date and booking.check_in_date else 1
+        
+        details = [
+            ("Receipt No:", f"BK-{booking.id:05d}"),
+            ("Date:", datetime.now(NIGERIA_TZ).strftime("%d-%b-%Y %H:%M")),
+            ("Guest:", booking.user.username if booking.user else "Unknown Guest"),
+            ("Room:", room_name),
+            ("Room Type:", room_type),
+            ("Check-in:", booking.check_in_date.strftime("%d %b %Y, %H:%M") if booking.check_in_date else "N/A"),
+            ("Check-out:", booking.check_out_date.strftime("%d %b %Y, %H:%M") if booking.check_out_date else "N/A"),
+            ("Nights:", str(nights)),
+            ("Rate/Night:", f"₦{room_price:,.2f}"),
+        ]
+        
+        for label, value in details:
+            p.drawString(margin, top, f"{label} {value}")
+            top -= line_height
+
+        # Divider
+        p.line(margin, top, width - margin, top)
+        top -= line_height
+
+        # Payment Details
+        p.setFont(bold_font, font_size)
+        p.drawString(margin, top, "Payment Details:")
+        top -= line_height
+
+        p.setFont(normal_font, font_size)
+        p.drawString(margin, top, f"Room Charges: ₦{booking.total_amount:,.2f}")
+        top -= line_height
+
+        p.setFont(bold_font, font_size + 1)
+        p.drawString(margin, top, f"TOTAL PAID: ₦{booking.total_amount:,.2f}")
+        top -= line_height * 2
+
+        # Payment status
+        p.setFont(normal_font, font_size)
+        p.drawString(margin, top, f"Payment status: {booking.payment_status or 'Paystack'}")
+        top -= line_height
+
+        # Divider
+        p.line(margin, top, width - margin, top)
+        top -= line_height
+
+        # Footer
+        p.setFont(normal_font, font_size)
+        notes = [
+            "Thank you for choosing Marlin Hotel & Suites!",
+            "For inquiries: marlinhotel007@gmail.com",
+            "Check-out time: 12:00 PM",
+            f"Receipt No: BK-{booking.id:05d}"
+        ]
+        for note in notes:
+            p.drawCentredString(width/2, top, note)
+            top -= line_height
+
+        # Finalize PDF
+        p.showPage()
+        p.save()
+
+        pdf = buffer.getvalue()
+        buffer.close()
+
+        response = make_response(pdf)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = f'inline; filename=booking_receipt_{booking_id}.pdf'
+        return response
+
+    except Exception as e:
+        app.logger.error(f"Receipt generation failed: {str(e)}")
+        flash('Could not generate receipt. Please try again.', 'error')
+        return redirect(url_for('booking_details', booking_id=booking_id))
 # New helper function
 # In staff registration
 def assign_housekeeping_shifts(staff):
