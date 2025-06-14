@@ -64,8 +64,6 @@ import uuid
         
 app = Flask(__name__)
 # Configuration - Security First Approach
-app.config.from_object('config')
-
 # 1. Application Security - ADDED FALLBACK DEFAULTS
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-secret-key-for-development')
 app.config['ADMIN_REG_TOKEN'] = os.environ.get('ADMIN_REG_TOKEN', 'default-admin-token')
