@@ -59,12 +59,12 @@ from flask import render_template_string
 import uuid
 from dotenv import load_dotenv
 load_dotenv() 
-
+from flask_sitemap import Sitemap
 import uuid
         
 app = Flask(__name__)
 # Configuration - Security First Approach
-
+ext = Sitemap(app)
 # 1. Application Security - ADDED FALLBACK DEFAULTS
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-secret-key-for-development')
 app.config['ADMIN_REG_TOKEN'] = os.environ.get('ADMIN_REG_TOKEN', 'default-admin-token')
