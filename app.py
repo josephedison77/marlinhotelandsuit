@@ -2516,7 +2516,7 @@ def logout():
 
 
 
-# Add to utility func@app.route('/profile')
+@app.route('/profile')
 @role_required(['user', 'super_admin', 'staff'])
 def profile():
     user = User.query.get(current_user.id)
