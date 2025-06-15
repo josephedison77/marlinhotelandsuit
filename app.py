@@ -2513,15 +2513,20 @@ def logout():
     flash('Logged out successfully!', 'success')
     return redirect(url_for('home'))
 
-@app.route('/profile')
+
+
+
+# Add to utility func@app.route('/profile')
 @role_required(['user', 'super_admin', 'staff'])
 def profile():
     user = User.query.get(current_user.id)
-    form = EditProfileForm(obj=user)
+    form = EditProfileForm(
+        original_first_name=user.first_name,
+        original_last_name=user.last_name,
+        obj=user
+    )
     return render_template('profile.html', user=user, form=form)
 
-
-# Add to utility functions
 def hr_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
