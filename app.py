@@ -2563,17 +2563,24 @@ def user_settings():
 @role_required(['user', 'super_admin', 'staff'])
 def edit_profile():
     user = User.query.get(current_user.id)
-    form = EditProfileForm(original_username=user.username, obj=user)
-    
+    form = EditProfileForm(original_first_name=user.first_name,
+                           original_last_name=user.last_name,
+                           obj=user)
+
     if form.validate_on_submit():
         try:
-            # Check if username is being changed
-            if user.username != form.username.data:
-                if User.query.filter_by(username=form.username.data).first():
-                    flash('Username already taken!', 'error')
-                    return redirect(url_for('edit_profile'))
+            # Check if first name is being changed
+            if user.first_name != form.first_name.data:
+                flash('First name cannot be changed!', 'error')
+                return redirect(url_for('edit_profile'))
 
-            user.username = form.username.data
+            # Check if last name is being changed
+            if user.last_name != form.last_name.data:
+                flash('Last name cannot be changed!', 'error')
+                return redirect(url_for('edit_profile'))
+
+            user.first_name = form.first_name.data
+            user.last_name = form.last_name.data
             user.email = form.email.data
             
             if form.password.data:
