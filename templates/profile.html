@@ -21,7 +21,7 @@
                 <div class="profile-sidebar" style="background-color: var(--primary-light-shade); border-radius: var(--border-radius-md); padding: 2rem; border: 1px solid var(--accent);">
                     <div class="text-center mb-4">
                         <img src="{{ url_for('static', filename='uploads/ftt.png') }}" alt="Profile Avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 1rem;">
-                        <h3 style="color: var(--light); margin-bottom: 0.25rem;">{{ current_user.username }}</h3>
+                        <h3 style="color: var(--light); margin-bottom: 0.25rem;">{{ current_user.first_name }}</h3>
                         <p style="color: var(--secondary); margin-bottom: 0;">{{ current_user.email }}</p>
                     </div>
                     <hr style="border-color: var(--accent); opacity: 0.5;">
