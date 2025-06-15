@@ -414,7 +414,7 @@
                     {% for user in results.user_results %}
                     <div class="result-card user-result">
                         <div class="result-type"><i class="fas fa-user"></i> Guest</div>
-                        <div class="result-title">{{ user.username }}</div>
+                        <div class="result-title">{{ user.first_name }} {{ user.last_name }}</div>
                         <div class="result-meta">
                             <span class="status-badge status-{{ user.status }}">{{ user.status }}</span>
                             <span>{{ user.email }}</span>

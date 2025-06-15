@@ -325,19 +325,26 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Register')
 
 class EditProfileForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('New Password')
     submit = SubmitField('Update Profile')
 
-    def __init__(self, original_username, *args, **kwargs):
+    def __init__(self, original_first_name, original_last_name, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
-        self.original_username = original_username
+        self.original_first_name = original_first_name
+        self.original_last_name = original_last_name
 
-    def validate_username(self, field):
-        if field.data != self.original_username:
-            if User.query.filter_by(username=field.data).first():
-                raise ValidationError('Username already in use.')
+    def validate_first_name(self, field):
+        if field.data != self.original_first_name:
+            if User.query.filter_by(first_name=field.data).first():
+                raise ValidationError('First name already in use.')
+
+    def validate_last_name(self, field):
+        if field.data != self.original_last_name:
+            if User.query.filter_by(last_name=field.data).first():
+                raise ValidationError('Last name already in use.')
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])

@@ -42,8 +42,11 @@
                     
                     <h5 style="color: var(--light);">Personal Information</h5>
                     <dl class="row mt-3" style="line-height: 2;">
-                        <dt class="col-sm-4" style="color: var(--secondary); font-weight: 400;">Username</dt>
-                        <dd class="col-sm-8">{{ current_user.username }}</dd>
+                        <dt class="col-sm-4" style="color: var(--secondary); font-weight: 400;">First Name</dt>
+                        <dd class="col-sm-8">{{ current_user.first_name }}</dd>
+
+                        <dt class="col-sm-4" style="color: var(--secondary); font-weight: 400;">Last Name</dt>
+                        <dd class="col-sm-8">{{ current_user.last_name }}</dd>
 
                         <dt class="col-sm-4" style="color: var(--secondary); font-weight: 400;">Email</dt>
                         <dd class="col-sm-8">{{ current_user.email }}</dd>

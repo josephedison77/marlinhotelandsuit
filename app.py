@@ -2517,7 +2517,7 @@ def logout():
 @role_required(['user', 'super_admin', 'staff'])
 def profile():
     user = User.query.get(current_user.id)
-    form = EditProfileForm(original_username=user.username, obj=user)
+    form = EditProfileForm(obj=user)
     return render_template('profile.html', user=user, form=form)
 
 

@@ -510,7 +510,19 @@
       </div>
     {% endif %}
   </div>
-<div class="div">
+
+  <!-- Message Field -->
+  <div class="form-group">
+    <label for="message" class="form-label">Message</label>
+    <textarea class="form-control" name="message" id="message" required></textarea>
+    {% if form.message.errors %}
+      <div class="invalid-feedback" style="display: block;">
+        {% for error in form.message.errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
 
   <button type="submit" class="btn-luxury">Send Message</button>
 </form>
