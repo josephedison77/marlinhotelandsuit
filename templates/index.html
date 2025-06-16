@@ -774,7 +774,8 @@ font-size: large;}
         </div>
        
         <div class="room-grid">
-            {% for room in signature_rooms %}  <div class="room-card animate-on-scroll">
+            {% for room in signature_rooms %}
+                {% if room.is_active %} <div class="room-card animate-on-scroll">
                 <div class="img-container">
                     <img src="{{ room_images[room.id] }}" alt="{{ room.name }}" class="room-img"> {% if loop.index <= 2 %} <div class="room-badge">Most Popular</div>
                     {% endif %}
@@ -828,6 +829,8 @@ font-size: large;}
                     </ul>
                 </div>
             </div>
+            {% endif %}
+            
             {% endfor %}
         </div>
     </div>
@@ -1188,13 +1191,13 @@ font-size: large;}
             <div class="col-md-4 animate-on-scroll">
                 <div class="offer-card room-card h-100">
                      <div class="img-container">
-                         <div class="offer-badge">FAMILY DEAL</div>
+                         <div class="offer-badge">GYM AND SPORT</div>
                         <img src="/static/images/gym.jpg" class="room-img" alt="Family Fun" loading="lazy">
                      </div>
                     <div class="room-content">
-                        <h3 class="room-title">Family Getaway</h3>
-                        <p class="room-desc">Book two connecting rooms and get 10% off the second room, plus complimentary kids' club access.</p>
-                      
+                        <h3 class="room-title">Gym and Sport Package</h3>
+                        <p class="room-desc">Stay active with our Gym and Sport Package, featuring complimentary access to our fitness center, personal training sessions, and a selection of healthy meals.</p>
+
                     </div>
                 </div>
             </div>

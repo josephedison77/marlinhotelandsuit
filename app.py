@@ -2255,9 +2255,11 @@ def home():
             selected_signature_rooms = []
 
     # Only display active rooms
-    all_display_rooms = Room.query.filter_by(is_active=True).options(db.joinedload(Room.images)).all()
+    if not _cached_signature_rooms or ...:
+    # Only fetch active rooms
+        all_rooms_for_selection = Room.query.filter_by(is_active=True).options(db.joinedload(Room.images)).all()
     room_images = {}
-    for room in all_display_rooms:
+    for room in all_rooms_for_selection:
         primary_image = next((img for img in room.images if img.is_primary), None)
         if not primary_image and room.images:
             primary_image = room.images[0]
@@ -2283,7 +2285,7 @@ def home():
     return render_template(
         'index.html',
         days=days,
-        rooms=all_display_rooms,
+        rooms=all_rooms_for_selection,
         signature_rooms=selected_signature_rooms,
         room_images=room_images,
         notifications=user_notifications,
