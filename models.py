@@ -348,6 +348,10 @@ class Booking(db.Model):
         if not self.checkout_otp or not self.checkout_otp_expiry:
             return False
         return datetime.utcnow() < self.checkout_otp_expiry
+    
+    def generate_rating_url(self):
+        return url_for('rate_booking', booking_id=self.id, _external=True)
+
 class Staff(db.Model):
     __tablename__ = 'staff'
     id = db.Column(db.Integer, primary_key=True)

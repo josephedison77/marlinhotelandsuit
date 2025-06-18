@@ -770,22 +770,52 @@
         <canvas id="attendanceChart"></canvas>
     </div>
 </div>
-          <!-- staff_dashboard.html -->
-           <!-- Check-in Verification Widget -->
-<!-- Add this to staff dashboard template -->
-<div class="card mt-4">
+
+<div class="card mb-4">
     <div class="card-header bg-primary text-white">
-        <h5>Clock In</h5>
+        <h5 class="mb-0">Staff Check-in Verification</h5>
     </div>
     <div class="card-body">
-        <form method="POST" action="{{ url_for('clock_in') }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="mb-3">
-                <label for="otp" class="form-label">Enter OTP</label>
-                <input type="text" class="form-control" id="otp" name="otp" required>
-                <small class="form-text text-muted">Check your email for today's OTP</small>
+        <form method="POST" action="{{ url_for('verify_checkin_otp') }}">
+            <div class="form-group">
+                <label for="staff_id">Staff Member</label>
+                <select class="form-control" id="staff_id" name="staff_id" required>
+                    <option value="">Select Staff</option>
+                    {% for staff in active_staff %}
+                        <option value="{{ staff.id }}">{{ staff.first_name }} {{ staff.last_name }}</option>
+                    {% endfor %}
+                </select>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Clock In</button>
+            <div class="form-group">
+                <label for="otp">Check-in OTP</label>
+                <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter OTP" required>
+            </div>
+            <button type="submit" class="btn btn-success">Verify Check-in</button>
+        </form>
+    </div>
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">Staff Check-out Verification</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('verify_checkout_otp') }}">
+            <div class="form-group">
+                <label for="staff_id">Staff Member</label>
+                <select class="form-control" id="staff_id" name="staff_id" required>
+                    <option value="">Select Staff</option>
+                    {% for staff in active_staff %}
+                        <option value="{{ staff.id }}">{{ staff.first_name }} {{ staff.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="otp">Check-out OTP</label>
+                <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter OTP" required>
+            </div>
+            <button type="submit" class="btn btn-warning">Verify Check-out</button>
         </form>
     </div>
 </div>

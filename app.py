@@ -89,7 +89,7 @@ app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'true').lower() == '
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
-
+app.config['WEASYPRINT_IMAGEMAGICK'] = True 
 # 6. Payment Gateway (Paystack)
 app.config['PAYSTACK_SECRET_KEY'] = os.environ.get('PAYSTACK_SECRET_KEY', '')
 app.config['PAYSTACK_PUBLIC_KEY'] = os.environ.get('PAYSTACK_PUBLIC_KEY', '')
@@ -702,13 +702,12 @@ def send_shift_reminders():
         
 
 
-# CORRECTED SCHEDULER JOBS
 def generate_shift_otps():
     with app.app_context():
         now = datetime.now(NIGERIA_TZ)
         ten_minutes_from_now = now + timedelta(minutes=10)
         
-        # Check-in OTPs (for shifts starting in 10 minutes)
+        # Generate check-in OTPs (for shifts starting in 10 minutes)
         upcoming_shifts = Shift.query.filter(
             Shift.start_time.between(now, ten_minutes_from_now),
             Shift.attendance_otp.is_(None)
@@ -720,13 +719,13 @@ def generate_shift_otps():
             shift.otp_expiry = shift.start_time + timedelta(minutes=20)
             send_shift_otp(shift.staff, "checkin", otp, shift.start_time)
         
-        # Check-out OTPs (for shifts ending in 10 minutes)
-        upcoming_checkouts = Shift.query.filter(
+        # Generate check-out OTPs (for shifts ending in 10 minutes)
+        ending_shifts = Shift.query.filter(
             Shift.end_time.between(now, ten_minutes_from_now),
             Shift.checkout_otp.is_(None)
         ).all()
         
-        for shift in upcoming_checkouts:
+        for shift in ending_shifts:
             otp = generate_otp(6)
             shift.checkout_otp = otp
             shift.checkout_otp_expiry = shift.end_time + timedelta(minutes=20)
@@ -1221,71 +1220,77 @@ app.config['SHIFT_CONFIG'] = SHIFT_CONFIG  # Add to app config
 
 
 # Shift Management
-@app.route('/admin/shifts/generate', methods=['POST', 'GET'])
-@admin_required
 def generate_rotational_shifts():
     with app.app_context():
         try:
-            shift_config = app.config['SHIFT_CONFIG']
-            Shift.query.delete()
+            today = datetime.now(NIGERIA_TZ).date()
+            # Delete future shifts
+            Shift.query.filter(Shift.shift_date >= today).delete()
             
-            positions = shift_config['positions']
-            total_shifts_created = 0
-            base_date = datetime.now(NIGERIA_TZ).date()
+            # Get active staff
+            active_staff = Staff.query.filter(Staff.is_active == True).all()
+            if not active_staff:
+                return
+                
+            # Split staff into two groups
+            group1 = active_staff[:len(active_staff)//2]
+            group2 = active_staff[len(active_staff)//2:]
             
-            for position in positions:
-                staff_members = Staff.query.filter(
-                    Staff.position == position,
-                    Staff.is_active == True
-                ).all()
+            # Get next Monday
+            days_until_monday = (7 - today.weekday()) % 7
+            start_date = today + timedelta(days=days_until_monday)
+            
+            # Generate shifts for 2 weeks
+            for week in range(2):
+                week_start = start_date + timedelta(weeks=week)
                 
-                if not staff_members:
-                    continue
+                # Monday to Sunday
+                for day_offset in range(7):
+                    current_date = week_start + timedelta(days=day_offset)
+                    weekday = current_date.weekday()
                     
-                groups = [staff_members[:len(staff_members)//2], staff_members[len(staff_members)//2:]]
-                
-                for day in range(7):
-                    shift_date = base_date + timedelta(days=day)
-                    rotation_index = day % 2
-                    shift_types = ['Day', 'Night'] if rotation_index == 0 else ['Night', 'Day']
-                    
-                    for group_idx, group in enumerate(groups):
-                        if group_idx >= len(shift_types):
-                            continue
-                            
-                        shift_type = shift_types[group_idx]
-                        config = shift_config[shift_type]
-                        
-                        start_time = datetime.strptime(config['start'], '%H:%M').time()
-                        end_time = datetime.strptime(config['end'], '%H:%M').time()
-                        
-                        if shift_type == 'Night' and end_time < start_time:
-                            shift_start = NIGERIA_TZ.localize(datetime.combine(shift_date, start_time))
-                            shift_end = NIGERIA_TZ.localize(datetime.combine(shift_date + timedelta(days=1), end_time))
+                    # Friday, Saturday, Sunday - all staff work
+                    if weekday >= 4:  # 4=Friday, 5=Saturday, 6=Sunday
+                        staff_list = active_staff
+                    else:
+                        # Alternate groups every 2 days
+                        if (day_offset // 2) % 2 == week % 2:
+                            staff_list = group1
                         else:
-                            shift_start = NIGERIA_TZ.localize(datetime.combine(shift_date, start_time))
-                            shift_end = NIGERIA_TZ.localize(datetime.combine(shift_date, end_time))
-                            
-                        for staff in group:
-                            new_shift = Shift(
-                                staff_id=staff.id,
-                                shift_type=shift_type,
-                                start_time=shift_start,
-                                end_time=shift_end,
-                                shift_date=shift_date,
-                                position=position
-                            )
-                            db.session.add(new_shift)
-                            total_shifts_created += 1
-
+                            staff_list = group2
+                    
+                    # Nigeria timezone for shifts
+                    nigeria_tz = pytz.timezone('Africa/Lagos')
+                    
+                    for staff in staff_list:
+                        # Day shift: 8:00 AM - 8:00 PM
+                        day_shift = Shift(
+                            staff_id=staff.id,
+                            shift_type='Day',
+                            shift_date=current_date,
+                            start_time=nigeria_tz.localize(datetime.combine(current_date, time(8, 0))),
+                            end_time=nigeria_tz.localize(datetime.combine(current_date, time(20, 0))),
+                            position=staff.position
+                        )
+                        db.session.add(day_shift)
+                        
+                        # Night shift: 8:00 PM - 8:00 AM next day
+                        night_shift = Shift(
+                            staff_id=staff.id,
+                            shift_type='Night',
+                            shift_date=current_date,
+                            start_time=nigeria_tz.localize(datetime.combine(current_date, time(20, 0))),
+                            end_time=nigeria_tz.localize(datetime.combine(current_date + timedelta(days=1), time(8, 0))),
+                            position=staff.position
+                        )
+                        db.session.add(night_shift)
+            
             db.session.commit()
-            flash(f'Shifts generated! Created {total_shifts_created} shifts', 'success')
+            flash('Shifts generated successfully!', 'success')
         except Exception as e:
             db.session.rollback()
             app.logger.error(f"Shift generation error: {str(e)}")
             flash(f'Shift generation failed: {str(e)}', 'error')
-        return redirect(url_for('hr_dashboard'))
-    
 
 def assign_dirty_rooms():
     with app.app_context():
@@ -1602,7 +1607,87 @@ def assign_immediate_cleaning(room_id):
         )
         db.session.add(notification)
         db.session.commit()
+# Check-in endpoint
+@app.route('/staff/checkin', methods=['POST'])
+@role_required(['staff'])
+def staff_checkin():
+    otp = request.form.get('otp')
+    staff = Staff.query.filter_by(user_id=current_user.id).first()
+    
+    if not staff:
+        flash('Staff profile not found', 'error')
+        return redirect(url_for('staff_dashboard'))
+    
+    now = datetime.now(NIGERIA_TZ)
+    
+    # Find current shift
+    shift = Shift.query.filter(
+        Shift.staff_id == staff.id,
+        Shift.start_time <= now,
+        Shift.end_time >= now,
+        Shift.attendance_otp == otp,
+        Shift.otp_expiry >= now
+    ).first()
+    
+    if shift:
+        # Create attendance record
+        attendance = Attendance(
+            staff_id=staff.id,
+            shift_id=shift.id,
+            clock_in_time=now,
+            status='on-time' if now <= shift.start_time else 'late'
+        )
+        db.session.add(attendance)
+        shift.attendance_status = attendance.status
+        db.session.commit()
+        
+        flash('Checked in successfully!', 'success')
+    else:
+        flash('Invalid OTP or no active shift', 'error')
+    
+    return redirect(url_for('staff_dashboard'))
 
+# Checkout endpoint
+@app.route('/staff/checkout', methods=['POST'])
+@role_required(['staff'])
+def staff_checkout():
+    otp = request.form.get('otp')
+    staff = Staff.query.filter_by(user_id=current_user.id).first()
+    
+    if not staff:
+        flash('Staff profile not found', 'error')
+        return redirect(url_for('staff_dashboard'))
+    
+    now = datetime.now(NIGERIA_TZ)
+    
+    # Find current shift
+    shift = Shift.query.filter(
+        Shift.staff_id == staff.id,
+        Shift.start_time <= now,
+        Shift.end_time >= now,
+        Shift.checkout_otp == otp,
+        Shift.checkout_otp_expiry >= now
+    ).first()
+    
+    if shift:
+        # Find open attendance record
+        attendance = Attendance.query.filter(
+            Attendance.staff_id == staff.id,
+            Attendance.shift_id == shift.id,
+            Attendance.clock_out_time.is_(None)
+        ).first()
+        
+        if attendance:
+            attendance.clock_out_time = now
+            shift.attendance_status = 'completed'
+            db.session.commit()
+            flash('Checked out successfully!', 'success')
+        else:
+            flash('No active attendance record found', 'error')
+    else:
+        flash('Invalid OTP or no active shift', 'error')
+    
+    return redirect(url_for('staff_dashboard'))
 
 # Cleaning Assignment Routes
 @app.route('/staff/cleaning-tasks')
@@ -1835,17 +1920,14 @@ def update_overdue_bookings_and_rooms():
             db.session.rollback()
             app.logger.error(f"Error updating overdue bookings: {str(e)}")
 
-
+# Auto-checkout function with notifications
 def auto_checkout_overdue_bookings():
     with app.app_context():
         now = datetime.now(NIGERIA_TZ)
         # Only run at 12:00 PM Nigeria time
         if now.hour == 12 and now.minute == 0:
-            # Find bookings that should have checked out by today at 12 PM
-            check_out_time = now.replace(hour=12, minute=0, second=0, microsecond=0)
-            
             overdue_bookings = Booking.query.filter(
-                Booking.check_out_date <= check_out_time,
+                Booking.check_out_date == now.date(),
                 Booking.checked_out == False,
                 Booking.check_in_status == 'Checked-in'
             ).all()
@@ -1861,58 +1943,57 @@ def auto_checkout_overdue_bookings():
                 booking.room.status = 'available'
                 booking.room.cleaning_status = 'dirty'
                 
-                # Create notification
+                # Create notification with rating link
                 notification = Notification(
                     user_id=booking.user_id,
-                    title="Automatic Checkout",
-                    message=f"You've been automatically checked out of Room {booking.room.name}",
+                    title="Checkout Completed",
+                    message=f"You've been checked out of Room {booking.room.name}. Please rate your stay: {booking.generate_rating_url()}",
                     category="booking"
                 )
                 db.session.add(notification)
                 
-                # Log activity
-                log_activity(
-                    "Auto Checkout",
-                    f"Booking {booking.id} automatically checked out of room {booking.room.name}"
+                # Send email with rating link
+                send_email(
+                    booking.user.email,
+                    "Checkout Completed - Rate Your Stay",
+                    f"Your checkout for Room {booking.room.name} is complete.\n\n"
+                    f"Please rate your experience: {booking.generate_rating_url()}"
                 )
-            
+                
             db.session.commit()
-            app.logger.info(f"Processed {len(overdue_bookings)} automatic checkouts")
 
 
 def send_checkout_reminders():
     with app.app_context():
         now = datetime.now(NIGERIA_TZ)
-        # Run at 11:50 AM daily (10 minutes before checkout)
-        if now.hour == 11 and now.minute == 50:
-            # Get bookings checking out today
+        # Run at 11:30 AM daily (30 minutes before checkout)
+        if now.hour == 11 and now.minute == 30:
             today_date = now.date()
-            upcoming_checkouts = Booking.query.filter(
+            bookings = Booking.query.filter(
                 Booking.check_out_date == today_date,
                 Booking.checked_out == False,
                 Booking.check_in_status == 'Checked-in'
             ).all()
             
-            for booking in upcoming_checkouts:
-                # Send email reminder
-                send_email(
-                    to_email=booking.user.email,
-                    subject="Upcoming Checkout Reminder",
-                    body=f"""Your checkout for Room {booking.room.name} is scheduled for 12:00 PM today.
-Please prepare to vacate the room."""
-                )
-                
+            for booking in bookings:
                 # Create notification
                 notification = Notification(
                     user_id=booking.user_id,
                     title="Checkout Reminder",
-                    message=f"Checkout for Room {booking.room.name} in 10 minutes (12:00 PM)",
+                    message=f"Your checkout for Room {booking.room.name} is in 30 minutes (12:00 PM)",
                     category="booking"
                 )
                 db.session.add(notification)
+                
+                # Send email reminder
+                send_email(
+                    booking.user.email,
+                    "Checkout Reminder",
+                    f"Your checkout for Room {booking.room.name} is in 30 minutes (12:00 PM).\n"
+                    f"Please prepare to vacate the room."
+                )
             
             db.session.commit()
-            app.logger.info(f"Sent {len(upcoming_checkouts)} checkout reminders")
 
 
 def check_missed_checkouts():
@@ -2046,8 +2127,7 @@ scheduler.add_job(
 scheduler.add_job(
     func=auto_checkout_overdue_bookings,
     trigger="cron",
-    hour=12,
-    minute=0,
+    hour=12, minute=0,
     timezone=NIGERIA_TZ,
     id='auto_checkout_daily'
 )
@@ -2056,10 +2136,9 @@ scheduler.add_job(
 scheduler.add_job(
     func=send_checkout_reminders,
     trigger="cron",
-    hour=11,
-    minute=50,
+    hour=11, minute=30,
     timezone=NIGERIA_TZ,
-    id='checkout_reminders'
+    id='checkout_reminder_30min'
 )
 
 # Check for missed checkouts every 30 minutes
@@ -7619,92 +7698,61 @@ def send_rating_request(booking):
             f"Your feedback helps us improve our services!"
         )
     )
-
-
-@app.route('/rate_stay/<int:booking_id>', methods=['GET', 'POST'])
+# Rating route
+@app.route('/booking/<int:booking_id>/rate', methods=['GET', 'POST'])
 @login_required
-def rate_stay(booking_id):
+def rate_booking(booking_id):
     booking = Booking.query.get_or_404(booking_id)
     
-    # Check if user is authorized and booking is completed
+    # Authorization
     if booking.user_id != current_user.id:
         abort(403)
     
-    if booking.payment_status != 'paid' or booking.check_in_status != 'Checked-out':
-        flash('You can only rate completed stays', 'error')
-        return redirect(url_for('my_bookings'))
-    
-    # Check if already rated
-    if booking.rating:
-        flash('You have already rated this stay', 'info')
-        return redirect(url_for('my_bookings'))
+    if booking.is_rated:
+        flash('You have already rated this booking', 'info')
+        return redirect(url_for('booking_details', booking_id=booking_id))
     
     form = RatingForm()
     
     if form.validate_on_submit():
+        # Create rating
         rating = Rating(
             booking_id=booking.id,
             rating=form.rating.data,
             comments=form.comments.data
         )
         db.session.add(rating)
+        
+        # Update booking
         booking.is_rated = True
         db.session.commit()
         
-        flash('Thank you for your feedback!', 'success')
-        return redirect(url_for('my_bookings'))
+        flash('Thank you for your rating!', 'success')
+        return redirect(url_for('booking_details', booking_id=booking_id))
     
     return render_template('rate_stay.html', form=form, booking=booking)
 
-@app.route('/rate_stay1/<int:booking_id>', methods=['GET', 'POST'])
-@login_required
-def rate_stay1(booking_id):
-    # Simplified version without comments
-    booking = Booking.query.get_or_404(booking_id)
-    
-    if booking.user_id != current_user.id:
-        abort(403)
-    
-    if booking.payment_status != 'paid' or booking.check_in_status != 'Checked-out':
-        flash('You can only rate completed stays', 'error')
-        return redirect(url_for('my_bookings'))
-    
-    if booking.is_rated:
-        flash('You have already rated this stay', 'info')
-        return redirect(url_for('my_bookings'))
-    
-    if request.method == 'POST':
-        rating_value = request.form.get('rating')
-        if not rating_value:
-            flash('Please select a rating', 'error')
-            return redirect(url_for('rate_stay1', booking_id=booking.id))
-        
-        rating = Rating(
-            booking_id=booking.id,
-            rating=int(rating_value),
-            comments="Quick rating"
-        )
-        db.session.add(rating)
-        booking.is_rated = True
-        db.session.commit()
-        
-        flash('Rating submitted!', 'success')
-        return redirect(url_for('my_bookings'))
-    
-    return render_template('rate_stay1.html', booking=booking)
-
-# app.py
-@app.route('/staff/id_card/<int:staff_id>')
+from flask_weasyprint import HTML, render_pdf
+@app.route('/staff/id_card/<int:staff_id>', defaults={'pdf': False})
+@app.route('/staff/id_card/<int:staff_id>.pdf')
 @role_required(['super_admin', 'staff'])
-def staff_id_card(staff_id):
+def staff_id_card(staff_id, pdf=False):
     staff = Staff.query.get_or_404(staff_id)
     
     # Verify staff ownership
     if staff.user_id != current_user.id and not current_user.has_role('super_admin'):
         abort(403)
     
-    return render_template('staff_id_card.html', staff=staff)
-
+    if request.path.endswith('.pdf'):
+        pdf = True
+    
+    # Render PDF version
+    if pdf:
+        html = render_template('staff_id_card.html', staff=staff, pdf=True)
+        return render_pdf(HTML(string=html))
+    
+    # Render HTML version
+    return render_template('staff_id_card.html', staff=staff, pdf=False)
 
 @app.route('/finance/dashboard')
 @role_required(['finance_admin', 'super_admin'])

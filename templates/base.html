@@ -57,6 +57,23 @@
         padding: 2px 5px;
         border-radius: 50%;
     }
+
+@media print {
+        body * {
+            visibility: hidden;
+        }
+        .print-this, .print-this * {
+            visibility: visible;
+        }
+        .print-this {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    }
+
+
+
     .user-initials-circle {
         display: inline-flex;
         align-items: center;

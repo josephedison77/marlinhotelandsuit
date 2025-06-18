@@ -1,26 +1,39 @@
-<!-- templates/staff_id_card.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Staff ID Card</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
+        /* PDF specific adjustments */
+        {% if pdf %}
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: white !important;
+            }
+            .id-card {
+                box-shadow: none !important;
+                margin: 0 auto;
+            }
+        {% else %}
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f0f0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+            }
+        {% endif %}
         
+        /* Common Styles */
         .id-card {
             width: 220px;
             height: 350px;
-            background-image: url(/static/uploads/MARLIN\ TEMP.png);
+            background-image: url('{{ url_for('static', filename='uploads/MARLIN TEMP.png') }}');
             background-size: contain;
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            {% if not pdf %}box-shadow: 0 10px 20px rgba(0,0,0,0.2);{% endif %}
             padding: 20px;
             color: white;
             position: relative;
@@ -65,7 +78,6 @@
             position: relative;
             margin-top: 13rem;
             position: relative;
-           
         }
         
         .photo {
@@ -75,12 +87,12 @@
             border: 3px solid white;
             border-radius: 5px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             position: absolute;
             margin-top: -8rem;
             margin-left: 3rem;
             border-radius: 50%;
             width: 55%;
+            {% if not pdf %}box-shadow: 0 4px 8px rgba(0,0,0,0.2);{% endif %}
         }
         
         .photo img {
@@ -130,9 +142,27 @@
             display: none;
         }
 
-        .detail-row1{position: absolute;
-        margin-top: -2rem; font-size: 19px;
-    font-weight: bolder;}
+        .detail-row1 {
+            position: absolute;
+            margin-top: -2rem; 
+            font-size: 19px;
+            font-weight: bolder;
+        }
+        
+        /* Print-only elements */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .id-card, .id-card * {
+                visibility: visible;
+            }
+            .id-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -140,7 +170,6 @@
         <div class="logo">HM</div>
         
         <div class="header">
-           
             <p>Staff Identification Card</p>
         </div>
         
@@ -186,6 +215,16 @@
         <div class="footer">
             Issued: {{ staff.created_at.strftime('%Y-%m-%d') }}
         </div>
+        
+        <!-- Add download button for HTML version -->
+        {% if not pdf %}
+        <div style="position: absolute; bottom: 10px; left: 10px;">
+            <a href="{{ url_for('staff_id_card', staff_id=staff.id) }}.pdf" 
+               class="btn btn-sm btn-primary">
+                Download as PDF
+            </a>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>

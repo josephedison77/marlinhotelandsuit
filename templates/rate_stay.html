@@ -1,27 +1,71 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-<div class="container mt-5" style="max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h2 style="color: #333; text-align: center; margin-bottom: 20px;">Rate Your Stay</h2>
-    <p style="text-align: center; color: #555; margin-bottom: 30px;">Please rate your experience for booking #{{ booking.id }}</p>
-
-    <form method="POST">
-        {{ form.hidden_tag() }}
-
-        <div class="form-group" style="margin-bottom: 20px;">
-            {{ form.rating.label(style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;") }}
-            {{ form.rating(class="form-control", style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;") }}
-            {% for error in form.rating.errors %}
-                <small class="text-danger" style="color: #dc3545; display: block; margin-top: 5px;">{{ error }}</small>
-            {% endfor %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Rate Your Stay</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        You're rating your stay at <strong>{{ booking.property.name }}</strong><br>
+                        Dates: {{ booking.check_in.strftime('%b %d, %Y') }} - {{ booking.check_out.strftime('%b %d, %Y') }}
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Rating Input -->
+                        <div class="form-group mb-4">
+                            {{ form.rating.label(class="form-label fw-bold") }}
+                            <div class="mt-2">
+                                {% for i in range(1, 6) %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" 
+                                           name="rating" id="rating-{{ i }}" 
+                                           value="{{ i }}" {{ 'checked' if form.rating.data == i }}>
+                                    <label class="form-check-label" for="rating-{{ i }}">
+                                        {% for star in range(i) %}★{% endfor %}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.rating.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.rating.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Comments -->
+                        <div class="form-group mb-4">
+                            {{ form.comments.label(class="form-label fw-bold") }}
+                            {{ form.comments(class="form-control", rows=5, placeholder="Share your experience...") }}
+                            {% if form.comments.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.comments.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{{ url_for('booking_details', booking_id=booking.id) }}" 
+                               class="btn btn-secondary me-md-2">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Submit Rating
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group" style="margin-bottom: 30px;">
-            {{ form.comments.label(style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;") }}
-            {{ form.comments(class="form-control", rows=4, style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; resize: vertical;") }}
-        </div>
-
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Submit Rating</button>
-    </form>
+    </div>
 </div>
 {% endblock %}
