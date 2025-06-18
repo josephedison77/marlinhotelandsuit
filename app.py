@@ -118,14 +118,15 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-secret-key-for
 app.config['ADMIN_REG_TOKEN'] = os.environ.get('ADMIN_REG_TOKEN', 'default-admin-token')
 app.config['SESSION_COOKIE_NAME'] = 'marlin_session'  # Add this line
 
-# app.py - Corrected Configuration
+# Corrected configuration for PythonAnywhere
 if os.environ.get('PYTHONANYWHERE_DOMAIN'):
-    password = "Jojh007007"  # Use environment variables for security in production!
+    # Get password from environment variable (safer than hardcoding)
+    password = os.environ.get('DB_PASSWORD', 'Jojh007007')
     
     app.config['SQLALCHEMY_DATABASE_URI'] = (
-        'mysql+pymysql://marlinhotelsuit2:' + password + '@' +
-        'marlinhotelsuit2025.mysql.pythonanywhere-services.com/' +
-        'marlinhotelsuit2$marlindb'  # Database name matches PythonAnywhere
+        f'mysql+pymysql://marlinhotelsuit2025:{password}@'
+        'marlinhotelsuit2025.mysql.pythonanywhere-services.com/'
+        'marlinhotelsuit2025$marlindb?charset=utf8mb4'
     )
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_recycle': 299,
@@ -134,7 +135,6 @@ if os.environ.get('PYTHONANYWHERE_DOMAIN'):
 else:
     # Local SQLite configuration
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance/marlin.db')
-
 
 
 # 3. JWT Configuration
