@@ -119,8 +119,10 @@ app.config['ADMIN_REG_TOKEN'] = os.environ.get('ADMIN_REG_TOKEN', 'default-admin
 app.config['SESSION_COOKIE_NAME'] = 'marlin_session'  # Add this line
 
 # Corrected configuration for PythonAnywhere
+# Database Configuration
 if os.environ.get('PYTHONANYWHERE_DOMAIN'):
-    password = os.environ.get('DB_PASSWORD', '')  # No default password!
+    # Get password from environment variable
+    password = os.environ.get('DB_PASSWORD', '')  # No default password
     
     app.config['SQLALCHEMY_DATABASE_URI'] = (
         f'mysql+pymysql://marlinhotelsuit2025:{password}@'
@@ -134,8 +136,6 @@ if os.environ.get('PYTHONANYWHERE_DOMAIN'):
 else:
     # Local SQLite configuration
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance/marlin.db')
-
-
 # 3. JWT Configuration
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=30)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=7)
@@ -8290,6 +8290,15 @@ def approve_inventory_request(request_id):
         return redirect(url_for('view_inventory_requests'))
 
 
+@app.route('/db-test')
+def db_test():
+    from sqlalchemy import text
+    try:
+        with db.engine.connect() as connection:
+            result = connection.execute(text("SELECT 1"))
+            return "Database connection successful! Result: " + str(result.scalar())
+    except Exception as e:
+        return f"Database connection failed: {str(e)}", 500
 if __name__ == '__main__':
     with app.app_context():
         # Create all database tables
