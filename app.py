@@ -120,8 +120,7 @@ app.config['SESSION_COOKIE_NAME'] = 'marlin_session'  # Add this line
 
 # Corrected configuration for PythonAnywhere
 if os.environ.get('PYTHONANYWHERE_DOMAIN'):
-    # Get password from environment variable (safer than hardcoding)
-    password = os.environ.get('DB_PASSWORD', 'Jojh007007')
+    password = os.environ.get('DB_PASSWORD', '')  # No default password!
     
     app.config['SQLALCHEMY_DATABASE_URI'] = (
         f'mysql+pymysql://marlinhotelsuit2025:{password}@'
