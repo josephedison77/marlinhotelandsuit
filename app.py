@@ -74,14 +74,15 @@ ext = Sitemap(app)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-secret-key-for-development')
 app.config['ADMIN_REG_TOKEN'] = os.environ.get('ADMIN_REG_TOKEN', 'default-admin-token')
 
-password = r"Jojh007//"
 
+# app.py - Corrected Configuration
 if os.environ.get('PYTHONANYWHERE_DOMAIN'):
-    # PythonAnywhere MySQL configuration
+    password = "Jojh007007"  # Use environment variables for security in production!
+    
     app.config['SQLALCHEMY_DATABASE_URI'] = (
-        'mysql+pymysql://marlinhotelsuit2025:' + password + '@' +
+        'mysql+pymysql://marlinhotelsuit2:' + password + '@' +
         'marlinhotelsuit2025.mysql.pythonanywhere-services.com/' +
-        'marlinhotelsuit2$marlindb'
+        'marlinhotelsuit2$marlindb'  # Database name matches PythonAnywhere
     )
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_recycle': 299,
