@@ -66,14 +66,57 @@ from dotenv import load_dotenv
 load_dotenv() 
 from flask_sitemap import Sitemap
 import uuid
-basedir = os.path.abspath(os.path.dirname(__file__))       
+basedir = os.path.abspath(os.path.dirname(__file__))  
+
+from flask.sessions import SessionInterface
+
+
+
+
 app = Flask(__name__)
-# Configuration - Security First Approach
+from flask.sessions import SecureCookieSessionInterface
+from werkzeug.datastructures import CallbackDict
+from datetime import datetime
+class CustomSessionInterface(SecureCookieSessionInterface):
+    def save_session(self, app, session, response):
+        domain = self.get_cookie_domain(app)
+        path = self.get_cookie_path(app)
+        secure = self.get_cookie_secure(app)
+        samesite = self.get_cookie_samesite(app)
+        httponly = self.get_cookie_httponly(app)
+
+        # Get session cookie name from config
+        cookie_name = app.config.get('SESSION_COOKIE_NAME', 'session')  # Modified line
+
+        # Remove partitioned argument
+        if session:
+            expires = self.get_expiration_time(app, session)
+            val = self.get_signing_serializer(app).dumps(dict(session))
+            response.set_cookie(
+                cookie_name,  # Use variable here
+                val,
+                expires=expires,
+                domain=domain,
+                path=path,
+                secure=secure,
+                httponly=httponly,
+                samesite=samesite
+            )
+        else:
+            response.delete_cookie(
+                cookie_name,  # Use variable here
+                domain=domain,
+                path=path,
+                secure=secure,
+                httponly=httponly,
+                samesite=samesite
+            )
+
 ext = Sitemap(app)
 # 1. Application Security - ADDED FALLBACK DEFAULTS
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-secret-key-for-development')
 app.config['ADMIN_REG_TOKEN'] = os.environ.get('ADMIN_REG_TOKEN', 'default-admin-token')
-
+app.config['SESSION_COOKIE_NAME'] = 'marlin_session'  # Add this line
 
 # app.py - Corrected Configuration
 if os.environ.get('PYTHONANYWHERE_DOMAIN'):
@@ -145,7 +188,7 @@ from models import (
 
 # Initialize extensions
 csrf = CSRFProtect(app)
-db = SQLAlchemy(app)
+db.init_app(app) 
 migrate = Migrate(app, db)
 mail = Mail(app)
 mail.init_app(app)
