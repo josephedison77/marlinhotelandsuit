@@ -3662,9 +3662,12 @@ def staff_register():
 
             hashed_password = generate_password_hash(form.password.data)
             new_user = User(
-                username=form.email.data,
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                email=form.email.data,
                 password=hashed_password,
-                email=form.email.data
+                phone_number=form.phone_number.data,
+                username=form.username.data,
             )
             db.session.add(new_user)
             db.session.flush()
