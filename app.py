@@ -2125,174 +2125,46 @@ def cleanup_pending_payments():
             db.session.rollback()
             app.logger.error(f"Error cleaning pending payments: {str(e)}")
 # Initialize scheduler
+# Define a function to run jobs with application context
+def run_with_context(func):
+    def wrapper():
+        with app.app_context():
+            func()
+    return wrapper
+
+# Initialize scheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=check_booking_expiry, trigger="interval", hours=1, id='check_booking_expiry')
-scheduler.start()
 
-scheduler.add_job(
-    func=send_shift_reminders,
-    trigger="interval",
-    minutes=30,
-    id='shift_reminders'
-)
+# Update all jobs to use the context wrapper
+scheduler.add_job(run_with_context(check_booking_expiry), trigger="interval", hours=1, id='check_booking_expiry')
+scheduler.add_job(run_with_context(send_shift_reminders), trigger="interval", minutes=30, id='shift_reminders')
+scheduler.add_job(run_with_context(assign_dirty_rooms), trigger="interval", minutes=5, id='assign_dirty_rooms')
+scheduler.add_job(run_with_context(cleanup_pending_payments), trigger="interval", minutes=10, id='cleanup_pending_payments')
+scheduler.add_job(run_with_context(handle_missed_shifts), trigger="interval", minutes=10, id='missed_shifts_handler')
+scheduler.add_job(run_with_context(cleanup_expired_bookings), trigger="interval", minutes=30, id='cleanup_expired_bookings')
+scheduler.add_job(run_with_context(send_shift_otp_job), trigger="interval", minutes=10, id='shift_otp_job_generator')
+scheduler.add_job(run_with_context(check_booking_expiry), trigger="interval", minutes=5, id='booking_expiry_check')
+scheduler.add_job(run_with_context(generate_rotational_shifts), trigger="cron", hour=0, id='generate_shifts')
+scheduler.add_job(run_with_context(auto_checkout_overdue_bookings), trigger="cron", hour=12, minute=0, timezone=NIGERIA_TZ, id='auto_checkout_daily')
+scheduler.add_job(run_with_context(send_checkout_reminders), trigger="cron", hour=11, minute=30, timezone=NIGERIA_TZ, id='checkout_reminder_30min')
+scheduler.add_job(run_with_context(check_missed_checkouts), trigger="interval", minutes=3, id='missed_checkouts_checker')
+scheduler.add_job(run_with_context(generate_daily_reports), trigger="cron", hour=23, minute=30, id='daily_reports')
+scheduler.add_job(run_with_context(assign_housekeeping_tasks), trigger="cron", hour=8, minute=30, id='morning_cleaning_assignment')
+scheduler.add_job(run_with_context(assign_housekeeping_tasks), trigger="cron", hour=16, minute=0, id='afternoon_cleaning_assignment')
+scheduler.add_job(run_with_context(generate_shift_otps), trigger="interval", minutes=5, id='shift_otp_generator')
+scheduler.add_job(run_with_context(generate_shift_otp_job), trigger="interval", minutes=20, id='shift_otp_generators')
+scheduler.add_job(run_with_context(check_shift_notifications), trigger="interval", minutes=5, id='shift_notifications')
+scheduler.add_job(run_with_context(update_overdue_bookings_and_rooms), trigger="interval", minutes=5, id='update_overdue_bookings')
 
-# Run every 5 minutes
-scheduler.add_job(
-    func=assign_dirty_rooms,
-    trigger="interval",
-    minutes=5,
-    id='assign_dirty_rooms'
-)
-
-# Add to scheduler initialization
-scheduler.add_job(
-    func=cleanup_pending_payments,
-    trigger="interval",
-    minutes=10,  # Run every 1minutes
-    id='cleanup_pending_payments'
-)
-
-scheduler.add_job(
-    func=handle_missed_shifts,
-    trigger="interval",
-    minutes=10,
-    id='missed_shifts_handler'
-)
-
-scheduler.add_job(
-    func=cleanup_expired_bookings,
-    trigger="interval",
-    minutes=30,
-    id='cleanup_expired_bookings'
-)
-
-scheduler.add_job(
-    func=send_shift_otp_job,
-    trigger="interval",
-    minutes=10,
-    id='shift_otp_job_generator'
-)
-
-scheduler.add_job(
-    func=check_booking_expiry,
-    trigger="interval",
-    minutes=5,
-    id='booking_expiry_check'
-)
-
-scheduler.add_job(
-    func=generate_rotational_shifts,
-    trigger="cron",
-    hour=0,
-    id='generate_shifts'
-)
-
-# Run auto checkout daily at 12:00 PM
-scheduler.add_job(
-    func=auto_checkout_overdue_bookings,
-    trigger="cron",
-    hour=12, minute=0,
-    timezone=NIGERIA_TZ,
-    id='auto_checkout_daily'
-)
-
-
-scheduler.add_job(
-    func=send_checkout_reminders,
-    trigger="cron",
-    hour=11, minute=30,
-    timezone=NIGERIA_TZ,
-    id='checkout_reminder_30min'
-)
-
-# Check for missed checkouts every 30 minutes
-scheduler.add_job(
-    func=check_missed_checkouts,
-    trigger="interval",
-    minutes=3,
-    id='missed_checkouts_checker'
-)
-
-# Remove this duplicate job as its function doesn't exist
-# scheduler.add_job(
-#     func=auto_checkout_and_notifications,
-#     trigger="interval",
-#     minutes=5,
-#     id='auto_checkout'
-# )
-
-scheduler.add_job(
-    func=generate_daily_reports,
-    trigger="cron",
-    hour=23,
-    minute=30,
-    id='daily_reports'
-)
-
-# In scheduler setup
-scheduler.add_job(
-    func=assign_housekeeping_tasks,
-    trigger="cron",
-    hour=8, minute=30,  # 7:30 AM UTC (8:30 AM Nigeria)
-    id='morning_cleaning_assignment'
-)
-
-scheduler.add_job(
-    func=assign_housekeeping_tasks,
-    trigger="cron",
-    hour=16, minute=0,  # 3:00 PM UTC (4:00 PM Nigeria)
-    id='afternoon_cleaning_assignment'
-)
-
-scheduler.add_job(
-    func=generate_shift_otps,
-    trigger="interval",
-    minutes=5,
-    id='shift_otp_generator'
-)
-
-# Make sure OTP job is running
-scheduler.add_job(
-    func=generate_shift_otp_job,
-    trigger="interval",
-    minutes=20,
-    id='shift_otp_generators'
-)
-
-scheduler.add_job(
-    func=check_shift_notifications,
-    trigger="interval",
-    minutes=5,
-    id='shift_notifications'
-)
-
-scheduler.add_job(
-    func=update_overdue_bookings_and_rooms,
-    trigger="interval",
-    minutes=5,
-    id='update_overdue_bookings'
-)
-
-# Remove existing housekeeping jobs
+# Remove and replace housekeeping jobs
 scheduler.remove_job('morning_cleaning_assignment')
 scheduler.remove_job('afternoon_cleaning_assignment')
+scheduler.add_job(run_with_context(assign_scheduled_cleaning), trigger="cron", hour=8, minute=0, timezone=NIGERIA_TZ, id='morning_cleaning_assignment')
+scheduler.add_job(run_with_context(assign_scheduled_cleaning), trigger="cron", hour=16, minute=0, timezone=NIGERIA_TZ, id='afternoon_cleaning_assignment')
 
-# Add new scheduled jobs
-scheduler.add_job(
-    func=assign_scheduled_cleaning,
-    trigger="cron",
-    hour=8, minute=0,  # 8:00 AM
-    timezone=NIGERIA_TZ,
-    id='morning_cleaning_assignment'
-)
-
-scheduler.add_job(
-    func=assign_scheduled_cleaning,
-    trigger="cron",
-    hour=16, minute=0,  # 4:00 PM
-    timezone=NIGERIA_TZ,
-    id='afternoon_cleaning_assignment'
-)
+# Start scheduler conditionally
+if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+    scheduler.start()
 
 
 def run_automations(trigger_type, context=None):
