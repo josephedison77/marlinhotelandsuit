@@ -8290,15 +8290,7 @@ def approve_inventory_request(request_id):
         return redirect(url_for('view_inventory_requests'))
 
 
-@app.route('/db-test')
-def db_test():
-    from sqlalchemy import text
-    try:
-        with db.engine.connect() as connection:
-            result = connection.execute(text("SELECT 1"))
-            return "Database connection successful! Result: " + str(result.scalar())
-    except Exception as e:
-        return f"Database connection failed: {str(e)}", 500
+
 if __name__ == '__main__':
     with app.app_context():
         # Create all database tables
