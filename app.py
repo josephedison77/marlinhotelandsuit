@@ -126,8 +126,8 @@ if os.environ.get('PYTHONANYWHERE_DOMAIN'):
     
     app.config['SQLALCHEMY_DATABASE_URI'] = (
         f'mysql+pymysql://marlinhotelsuit2025:{password}@'
-        'marlinhotelsuit2025.mysql.pythonanywhere-services.com/'
-        'marlinhotelsuit2025$marlindb?charset=utf8mb4'
+        'marlinhotelsuit2025.mysql.pythonanywhere-services.com'
+        'marlinhotelsuit2$marlindb?charset=utf8mb4'
     )
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_recycle': 299,
