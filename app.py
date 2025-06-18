@@ -1,4 +1,9 @@
 from flask import Flask, jsonify, request, make_response, render_template, redirect, url_for, session, flash, abort,send_from_directory
+
+from flask import Flask, Response, render_template, request, abort  # Add Response here
+import pdfkit
+import os
+
 from flask_migrate import Migrate
 from functools import wraps
 import jwt
@@ -61,7 +66,7 @@ from dotenv import load_dotenv
 load_dotenv() 
 from flask_sitemap import Sitemap
 import uuid
-        
+basedir = os.path.abspath(os.path.dirname(__file__))       
 app = Flask(__name__)
 # Configuration - Security First Approach
 ext = Sitemap(app)
@@ -69,9 +74,24 @@ ext = Sitemap(app)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-secret-key-for-development')
 app.config['ADMIN_REG_TOKEN'] = os.environ.get('ADMIN_REG_TOKEN', 'default-admin-token')
 
-# 2. Database Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///hotel.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+if os.environ.get('PYTHONANYWHERE_DOMAIN'):
+    # PythonAnywhere MySQL configuration
+    app.config['SQLALCHEMY_DATABASE_URI'] = (
+        'mysql+pymysql://marlinhotelsuit2025:Jojh007//@' +
+        'marlinhotelsuit2025.mysql.pythonanywhere-services.com/' +
+        'marlinhotelsuit2025$marlindb'
+    )
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_recycle': 299,
+        'pool_pre_ping': True
+    }
+else:
+    # Local SQLite configuration
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance/marlin.db')
+
+
 
 # 3. JWT Configuration
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=30)
@@ -110,7 +130,7 @@ os.makedirs(app.config['BAR_ITEM_UPLOAD_FOLDER'], exist_ok=True)
 
 from forms import LoginForm, BookingForm, InventoryForm,RegistrationForm, ExpenseForm,RoomForm,RatingForm, EditProfileForm, PostForm, AdminLoginForm,AdminRegistrationForm, StaffRegistrationForm, AutomationForm, ReportForm, NotificationForm,ContactForm, ResetPasswordForm, ResetPasswordRequestForm, StaffEditForm, BarItemForm,UserSettingsForm, InventoryUsageForm, InventoryRequestForm
 import requests
-
+from flask_sqlalchemy import SQLAlchemy
 # Initialize serializer - FIXED WITH DEFAULT SECRET
 ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
@@ -124,7 +144,7 @@ from models import (
 
 # Initialize extensions
 csrf = CSRFProtect(app)
-db.init_app(app)
+db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 mail = Mail(app)
 mail.init_app(app)
@@ -7732,7 +7752,12 @@ def rate_booking(booking_id):
     
     return render_template('rate_stay.html', form=form, booking=booking)
 
-from flask_weasyprint import HTML, render_pdf
+from flask import Flask, Response, render_template, request, abort, current_app
+import pdfkit
+import os
+
+# ... other imports and app setup ...
+
 @app.route('/staff/id_card/<int:staff_id>', defaults={'pdf': False})
 @app.route('/staff/id_card/<int:staff_id>.pdf')
 @role_required(['super_admin', 'staff'])
@@ -7749,10 +7774,47 @@ def staff_id_card(staff_id, pdf=False):
     # Render PDF version
     if pdf:
         html = render_template('staff_id_card.html', staff=staff, pdf=True)
-        return render_pdf(HTML(string=html))
+        
+        try:
+            # Set path to wkhtmltopdf based on environment
+            if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+                # PythonAnywhere path
+                wkhtml_path = '/usr/bin/wkhtmltopdf'
+            else:
+                # Local Windows path - update if different
+                wkhtml_path = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+            
+            # PDFKit configuration
+            config = pdfkit.configuration(wkhtmltopdf=wkhtml_path)
+            
+            # Generate PDF
+            pdf_content = pdfkit.from_string(
+                html, 
+                False, 
+                configuration=config,
+                options={
+                    'page-width': '220px',
+                    'page-height': '350px',
+                    'margin-top': '0',
+                    'margin-right': '0',
+                    'margin-bottom': '0',
+                    'margin-left': '0',
+                    'disable-smart-shrinking': ''
+                }
+            )
+            
+            # Return PDF response
+            response = Response(pdf_content, mimetype='application/pdf')
+            response.headers['Content-Disposition'] = 'inline; filename=staff_id_card.pdf'
+            return response
+            
+        except Exception as e:
+            current_app.logger.error(f"PDF generation failed: {str(e)}")
+            return "PDF generation failed", 500
     
     # Render HTML version
     return render_template('staff_id_card.html', staff=staff, pdf=False)
+
 
 @app.route('/finance/dashboard')
 @role_required(['finance_admin', 'super_admin'])

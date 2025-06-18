@@ -4,69 +4,38 @@
     <title>Staff ID Card</title>
     <style>
         /* PDF specific adjustments */
-        {% if pdf %}
+        body {
+            width: 220px;
+            height: 350px;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: Arial, sans-serif;
+        }
+
+        @media print {
             body {
                 margin: 0;
                 padding: 0;
-                background-color: white !important;
             }
             .id-card {
+                page-break-inside: avoid;
                 box-shadow: none !important;
-                margin: 0 auto;
             }
-        {% else %}
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f0f0f0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-                margin: 0;
-            }
-        {% endif %}
-        
+        }
 
-        /* Add to staff_id_card.html's style */
-@page {
-    size: 220px 350px;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    width: 220px;
-    height: 350px;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-.id-card {
-    box-shadow: none;
-    page-break-inside: avoid;
-}
         /* Common Styles */
         .id-card {
             width: 220px;
             height: 350px;
-            background-image: url('{{ url_for('static', filename='uploads/MARLIN TEMP.png') }}');
-            background-size: contain;
+            background-image: url('{{ url_for("static", filename="uploads/MARLIN TEMP.png") }}');
+            background-size: cover;
+            background-position: center;
             border-radius: 15px;
-            {% if not pdf %}box-shadow: 0 10px 20px rgba(0,0,0,0.2);{% endif %}
             padding: 20px;
             color: white;
             position: relative;
             overflow: hidden;
-        }
-        
-        .id-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            box-sizing: border-box;
         }
         
         .header {
@@ -96,7 +65,6 @@ body {
             display: flex;
             position: relative;
             margin-top: 13rem;
-            position: relative;
         }
         
         .photo {
@@ -104,14 +72,12 @@ body {
             height: 120px;
             background-color: #fff;
             border: 3px solid white;
-            border-radius: 5px;
+            border-radius: 50%;
             overflow: hidden;
             position: absolute;
             margin-top: -8rem;
             margin-left: 3rem;
-            border-radius: 50%;
             width: 55%;
-            {% if not pdf %}box-shadow: 0 4px 8px rgba(0,0,0,0.2);{% endif %}
         }
         
         .photo img {
@@ -151,16 +117,6 @@ body {
             text-align: right;
         }
         
-        .logo {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 32px;
-            font-weight: bold;
-            opacity: 0.2;
-            display: none;
-        }
-
         .detail-row1 {
             position: absolute;
             margin-top: -2rem; 
@@ -168,26 +124,21 @@ body {
             font-weight: bolder;
         }
         
-        /* Print-only elements */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .id-card, .id-card * {
-                visibility: visible;
-            }
-            .id-card {
-                position: absolute;
-                left: 0;
-                top: 0;
-            }
+        .download-btn {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
     <div class="id-card">
-        <div class="logo">HM</div>
-        
         <div class="header">
             <p>Staff Identification Card</p>
         </div>
@@ -205,7 +156,6 @@ body {
             
             <div class="details">
                 <div class="detail-row1">
-                    <span class="label1">Name:</span>
                     {{ staff.first_name }} {{ staff.last_name }}
                 </div>
                 
@@ -235,14 +185,11 @@ body {
             Issued: {{ staff.created_at.strftime('%Y-%m-%d') }}
         </div>
         
-        <!-- Add download button for HTML version -->
+        <!-- Download button only shown in HTML view -->
         {% if not pdf %}
-        <div style="position: absolute; bottom: 10px; left: 10px;">
-            <a href="{{ url_for('staff_id_card', staff_id=staff.id) }}.pdf" 
-               class="btn btn-sm btn-primary">
-                Download as PDF
-            </a>
-        </div>
+        <a href="{{ url_for('staff_id_card', staff_id=staff.id) }}.pdf" class="download-btn">
+            Download PDF
+        </a>
         {% endif %}
     </div>
 </body>
